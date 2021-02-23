@@ -11,10 +11,10 @@
     "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@app/core": [
+      "@transformer/core": [
         "libs/core/src"
       ],
-      "@app/core/*": [
+      "@transformer/core/*": [
         "libs/core/src/*"
       ],
       "@adapters/kafka": [
