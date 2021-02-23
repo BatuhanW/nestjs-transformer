@@ -16,6 +16,12 @@
       ],
       "@app/core/*": [
         "libs/core/src/*"
+      ],
+      "@adapters/kafka": [
+        "libs/kafka/src"
+      ],
+      "@adapters/kafka/*": [
+        "libs/kafka/src/*"
       ]
     }
   },
