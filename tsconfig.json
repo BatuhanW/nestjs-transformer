@@ -11,11 +11,11 @@
     "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@core/transformer-core": [
-        "libs/transformer-core/src"
+      "@app/core": [
+        "libs/core/src"
       ],
-      "@core/transformer-core/*": [
-        "libs/transformer-core/src/*"
+      "@app/core/*": [
+        "libs/core/src/*"
       ]
     }
   },

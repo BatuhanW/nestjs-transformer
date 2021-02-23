@@ -23,6 +23,7 @@
   "dependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
+    "@nestjs/microservices": "^7.6.13",
     "@nestjs/platform-express": "^7.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -68,8 +69,8 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "@core/transformer-core/(.*)": "<rootDir>/libs/transformer-core/src/$1",
-      "@core/transformer-core": "<rootDir>/libs/transformer-core/src"
+      "@app/core/(.*)": "<rootDir>/libs/core/src/$1",
+      "@app/core": "<rootDir>/libs/core/src"
     }
   }
 }
