@@ -1,6 +1,6 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/nest-transformer/src",
   "projects": {
     "core": {
       "type": "library",
@@ -19,9 +19,21 @@
       "compilerOptions": {
         "tsConfigPath": "libs/kafka/tsconfig.lib.json"
       }
+    },
+    "nest-transformer": {
+      "type": "application",
+      "root": "apps/nest-transformer",
+      "entryFile": "main",
+      "sourceRoot": "apps/nest-transformer/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/nest-transformer/tsconfig.app.json"
+      }
     }
   },
   "compilerOptions": {
-    "webpack": true
-  }
+    "webpack": true,
+    "tsConfigPath": "apps/nest-transformer/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/nest-transformer"
 }
