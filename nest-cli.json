@@ -1,4 +1,18 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "projects": {
+    "transformer-core": {
+      "type": "library",
+      "root": "libs/transformer-core",
+      "entryFile": "index",
+      "sourceRoot": "libs/transformer-core/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/transformer-core/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true
+  }
 }
