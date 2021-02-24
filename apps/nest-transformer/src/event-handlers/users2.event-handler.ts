@@ -4,8 +4,10 @@ import { KafkaSubscriber } from '../../../../libs/kafka/src/kafka-subscriber.dec
 import { Selector } from '../selector.decorator';
 
 @Injectable()
-@KafkaSubscriber({ topicName: 'users', eventName: 'user_email_change' })
-export class UsersHandler {
+@KafkaSubscriber({ topicName: 'users', eventName: 'swag' })
+export class Users2Handler {
+  static ee = 'hey';
+
   async test(payload: any) {
     console.log('Inside method');
     console.log(payload);
