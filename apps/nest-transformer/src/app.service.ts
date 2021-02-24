@@ -7,8 +7,8 @@ export class AppService {
     return 'Hello World!';
   }
 
-  @SubscribeTo('test')
-  async test(payload: any) {
-    console.log(JSON.parse(payload).test);
-  }
+  // @SubscribeTo('test')
+  // async test(payload: any) {
+  //   console.log(JSON.parse(payload).test);
+  // }
 }

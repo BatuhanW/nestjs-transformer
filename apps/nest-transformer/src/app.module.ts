@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from '@adapters/kafka';
+import { TestHandler } from './event-handlers/test.event-handler';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { KafkaModule } from '@adapters/kafka';
     ),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TestHandler],
 })
 export class AppModule {}

@@ -1,3 +1,13 @@
 {
-  "test": "123"
+  "event_name": "user_email_change",
+  "payload": {
+    "old_email": "phillipe+mix1@grover.com",
+    "new_email": "phillipe+mix@grover.com",
+    "override_email": true,
+    "email": "phillipe+mix1@grover.com",
+    "confirmed_at": "2021-01-04T16:38:02.563Z",
+    "locale": "en",
+    "store_code": "de",
+    "user_id": 902102
+  }
 }
