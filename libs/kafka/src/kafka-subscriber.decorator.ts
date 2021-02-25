@@ -7,11 +7,5 @@ export interface KafkaSubscriberParams {
   eventName: string;
 }
 
-export const KafkaSubscriber = ({
-  topicName,
-  eventName,
-}: KafkaSubscriberParams) =>
-  SetMetadata<string, KafkaSubscriberParams>(KAFKA_SUBSCRIBER_KEY, {
-    topicName,
-    eventName,
-  });
+export const KafkaSubscriber = (params: KafkaSubscriberParams) =>
+  SetMetadata<string, KafkaSubscriberParams>(KAFKA_SUBSCRIBER_KEY, params);
