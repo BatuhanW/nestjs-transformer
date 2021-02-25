@@ -1,7 +1,7 @@
-import { BaseTransformer } from '@core/transformer/base-transformer';
+import { BaseTransformer } from '@core/transformer/base.transformer';
 import { TestDataPayload, TestDataResult } from '../interfaces';
 
-export class TestTransformer extends BaseTransformer {
+export class TestTransformer implements BaseTransformer {
   transform(payload: TestDataPayload): TestDataResult {
     return {
       data: payload
