@@ -1,13 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 import { Consumer, Kafka, KafkaConfig, ConsumerConfig } from 'kafkajs';
-import { wrap } from 'module';
 import { KAFKA_SUBSCRIBER_KEY } from './kafka-subscriber.decorator';
-
-import {
-  SUBSCRIBER_FN_REF_MAP,
-  SUBSCRIBER_OBJ_REF_MAP,
-} from './kafka.decorator';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
@@ -61,7 +55,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     });
 
     await this.consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ topic, message }) => {
         const subscribedEvents = topicsToSubscribe.get(topic);
 
         const payload = JSON.parse(message.value.toString());

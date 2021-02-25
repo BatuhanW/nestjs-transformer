@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka/kafka-subscriber.decorator';
 
 @Injectable()
-@KafkaSubscriber({ topicName: 'other', eventName: 'other' })
+@KafkaSubscriber({ topicName: 'test', eventName: 'test' })
 export class TestHandler {
   async test(payload: any) {
     console.log('Inside method');
