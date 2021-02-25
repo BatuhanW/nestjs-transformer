@@ -1,0 +1,3 @@
+interface TransformerDecoratorParams {
+  handler: Function;
+}

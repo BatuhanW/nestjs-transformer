@@ -7,6 +7,7 @@ import { LogAction } from './test/actions/log.action';
 import { Log2Action } from './test/actions/log2.action';
 import { TestTransformer } from './test/transformers/test.transformer';
 import { TestEnricher } from './test/enrichers/test.enricher';
+import { Test2Handler } from './test/handlers/test2.handler';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TestEnricher } from './test/enrichers/test.enricher';
   providers: [
     AppService,
     TestHandler,
+    Test2Handler,
     TestTransformer,
     TestEnricher,
     LogAction,

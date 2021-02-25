@@ -3,9 +3,9 @@ import { KafkaSubscriber } from '@adapters/kafka/kafka-subscriber.decorator';
 
 @Injectable()
 @KafkaSubscriber({ topicName: 'test', eventName: 'test' })
-export class TestHandler {
+export class Test2Handler {
   async handle(payload: any) {
-    console.log('Inside method');
+    console.log('Inside method 2');
     console.log(payload);
   }
 }
