@@ -8,10 +8,10 @@ import { OtherHandler } from './event-handlers/other.event-handler';
 
 @Module({
   imports: [
-    KafkaModule.register(
-      { clientId: 'test', brokers: ['localhost:9092'] },
-      { groupId: 'test' },
-    ),
+    KafkaModule.register({
+      kafkaConfig: { clientId: 'test', brokers: ['localhost:9092'] },
+      consumerConfig: { groupId: 'test' },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, UsersHandler, Users2Handler, OtherHandler],

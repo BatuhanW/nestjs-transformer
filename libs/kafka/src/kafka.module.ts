@@ -1,32 +1,32 @@
-import {
-  DynamicModule,
-  FactoryProvider,
-  Global,
-  Module,
-  Provider,
-} from '@nestjs/common';
+import { DynamicModule, FactoryProvider, Global, Module } from '@nestjs/common';
 import { DiscoveryModule, DiscoveryService } from '@nestjs/core';
 import { ConsumerConfig, KafkaConfig } from 'kafkajs';
 
 import { KafkaService } from './kafka.service';
 
+const KAFKA_MODULE_REGISTER_OPTIONS = 'KAFKA_MODULE_REGISTER_OPTIONS';
+
+interface KafkaModuleRegisterOptions {
+  kafkaConfig: KafkaConfig;
+  consumerConfig: ConsumerConfig;
+}
+
 const kafkaServiceProvider: FactoryProvider<KafkaService> = {
   provide: KafkaService,
   useFactory(
     discoveryService: DiscoveryService,
-    { kafkaConfig, consumerConfig }: any,
+    { kafkaConfig, consumerConfig }: KafkaModuleRegisterOptions,
   ) {
     return new KafkaService(kafkaConfig, consumerConfig, discoveryService);
   },
-  inject: [DiscoveryService, 'KAFKA_OPTIONS'],
+  inject: [DiscoveryService, KAFKA_MODULE_REGISTER_OPTIONS],
 };
 
 @Global()
 @Module({})
 export class KafkaModule {
   static register(
-    kafkaConfig: KafkaConfig,
-    consumerConfig: ConsumerConfig,
+    kafkaModuleRegisterOptions: KafkaModuleRegisterOptions,
   ): DynamicModule {
     return {
       global: true,
@@ -34,12 +34,11 @@ export class KafkaModule {
       imports: [DiscoveryModule],
       providers: [
         {
-          provide: 'KAFKA_OPTIONS',
-          useValue: { kafkaConfig, consumerConfig },
+          provide: KAFKA_MODULE_REGISTER_OPTIONS,
+          useValue: kafkaModuleRegisterOptions,
         },
-        kafkaServiceProvider
+        kafkaServiceProvider,
       ],
-      exports: [KafkaService],
     };
   }
 }
