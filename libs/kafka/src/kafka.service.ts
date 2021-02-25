@@ -27,41 +27,39 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
     const wrappers = this.discoveryService.getProviders();
 
-    const subscribedServices = wrappers.filter(wrapper => {
-      return (
-        wrapper.metatype &&
-        Reflect.getMetadata(KAFKA_SUBSCRIBER_KEY, wrapper.metatype)
-      );
-    });
+    const topicSubscribers = new Map();
 
-    const topicsToSubscribe = new Map();
+    wrappers.forEach(wrapper => {
+      if (!wrapper.metatype) return;
 
-    subscribedServices.forEach(wrapper => {
-      const options = Reflect.getMetadata(
+      const kafkaSubscriberOptions = Reflect.getMetadata(
         KAFKA_SUBSCRIBER_KEY,
         wrapper.metatype,
       );
 
-      const existingNames = topicsToSubscribe.get(options.topicName) || [];
+      if (kafkaSubscriberOptions) {
+        const existingTopicSubscribers =
+          topicSubscribers.get(kafkaSubscriberOptions.topicName) || [];
 
-      topicsToSubscribe.set(options.topicName, [
-        ...existingNames,
-        { wrapper, options },
-      ]);
+        topicSubscribers.set(kafkaSubscriberOptions.topicName, [
+          ...existingTopicSubscribers,
+          { wrapper, options: kafkaSubscriberOptions },
+        ]);
+      }
     });
 
-    topicsToSubscribe.forEach(async (_eventNames, topicName) => {
+    topicSubscribers.forEach(async (_eventNames, topicName) => {
       await this.subscribeToTopic(topicName);
     });
 
     await this.consumer.run({
       eachMessage: async ({ topic, message }) => {
-        const subscribedEvents = topicsToSubscribe.get(topic);
+        const subscribedHandlers = topicSubscribers.get(topic);
 
         const payload = JSON.parse(message.value.toString());
         try {
-          subscribedEvents.forEach(subEvent => {
-            subEvent.wrapper.metatype.prototype.handle(payload)
+          subscribedHandlers.forEach(subEvent => {
+            subEvent.wrapper.metatype.prototype.handle(payload);
           });
         } catch (e) {
           console.error(e);
