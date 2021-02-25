@@ -1,10 +1,11 @@
-import { Users2Handler } from './event-handlers/users2.event-handler';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from '@adapters/kafka';
-import { UsersHandler } from './event-handlers/users.event-handler';
-import { OtherHandler } from './event-handlers/other.event-handler';
+import { TestHandler } from './test/handlers/test.handler';
+import { LogAction } from './test/actions/log.action';
+import { Log2Action } from './test/actions/log2.action';
+import { TestTransformer } from './test/transformers/test.transformer';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { OtherHandler } from './event-handlers/other.event-handler';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, UsersHandler, Users2Handler, OtherHandler],
+  providers: [AppService, TestHandler, TestTransformer, LogAction, Log2Action],
 })
 export class AppModule {}

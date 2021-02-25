@@ -71,8 +71,8 @@
       "<rootDir>/apps/"
     ],
     "moduleNameMapper": {
-      "@transformer/core/(.*)": "<rootDir>/libs/core/src/$1",
-      "@transformer/core": "<rootDir>/libs/core/src",
+      "@core/(.*)": "<rootDir>/libs/core/src/$1",
+      "@core": "<rootDir>/libs/core/src",
       "@adapters/kafka/(.*)": "<rootDir>/libs/kafka/src/$1",
       "@adapters/kafka": "<rootDir>/libs/kafka/src"
     }
