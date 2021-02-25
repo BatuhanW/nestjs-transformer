@@ -1,8 +1,9 @@
 import { BaseEnricher } from '@core/enricher/base.enricher';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { Enricher } from '@core/decorators/enricher.decorator';
 import { EnrichedTestData, TestDataResult } from '../interfaces';
 
+@Injectable()
 @Enricher({ handler: 'TestHandler' })
 @Enricher({ handler: 'Test2Handler' })
 export class TestEnricher implements BaseEnricher {
