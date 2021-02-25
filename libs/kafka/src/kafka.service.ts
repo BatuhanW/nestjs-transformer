@@ -61,9 +61,6 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         const payload = JSON.parse(message.value.toString());
         try {
           subscribedEvents.forEach(subEvent => {
-            console.log(subEvent);
-            console.log(subEvent.wrapper.metatype);
-            console.log(subEvent.wrapper.metatype['ee']);
             subEvent.wrapper.metatype.prototype.handle(payload)
           });
         } catch (e) {

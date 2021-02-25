@@ -3,7 +3,7 @@ import { SetMetadata } from '@nestjs/common';
 export const ACTION_KEY = 'transformer-action';
 
 interface ActionDecoratorParams {
-  handler: Function;
+  handler: string;
 }
 
 export const Action = (params: ActionDecoratorParams) =>
