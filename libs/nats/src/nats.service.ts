@@ -1,11 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { NatsModuleRegisterOptions } from './nats.module';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
 @Injectable()
-export class NatsService {
+export class NatsService implements OnModuleInit {
+  private client: any;
+  private readonly options: NatsModuleRegisterOptions;
+
   constructor(
-    url: string,
-    queue: string,
+    private readonly natsOptions: NatsModuleRegisterOptions,
     private readonly discoveryService: DiscoveryService,
-  ) {}
+  ) {
+  }
+
+  async onModuleInit() {
+  }
 }

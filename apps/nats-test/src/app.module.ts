@@ -11,7 +11,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [CoreModule.register(), NatsModule, HttpModule],
+  imports: [
+    CoreModule.register(),
+    NatsModule.register({ url: 'nats://127.0.0.1:4222', queue: 'test' }),
+    HttpModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
