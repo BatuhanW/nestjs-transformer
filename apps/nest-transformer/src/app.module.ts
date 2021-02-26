@@ -12,11 +12,11 @@ import { CoreModule } from '../../../libs/core/src';
 
 @Module({
   imports: [
+    CoreModule.register(),
     KafkaModule.register({
       kafkaConfig: { clientId: 'test', brokers: ['localhost:9092'] },
       consumerConfig: { groupId: 'test' },
     }),
-    CoreModule.register(),
     HttpModule
   ],
   controllers: [AppController],

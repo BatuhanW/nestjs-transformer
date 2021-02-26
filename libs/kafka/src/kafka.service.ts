@@ -17,6 +17,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       clientId: this.kafkaConfig.clientId,
       brokers: this.kafkaConfig.brokers,
     });
+
     this.consumer = this.kafka.consumer({
       groupId: this.consumerConfig.groupId,
     });
@@ -59,7 +60,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         const payload = JSON.parse(message.value.toString());
         try {
           subscribedHandlers.forEach(subEvent => {
-            subEvent.provider.metatype.prototype.handle(payload);
+            subEvent.provider.instance.handle(payload.payload);
           });
         } catch (e) {
           console.error(e);

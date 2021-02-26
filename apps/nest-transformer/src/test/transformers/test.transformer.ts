@@ -5,7 +5,6 @@ import { TestDataPayload, TestDataResult } from '../interfaces';
 
 @Injectable()
 @Transformer({ handler: 'TestHandler' })
-@Transformer({ handler: 'Test2Handler' })
 export class TestTransformer implements BaseTransformer {
   transform(payload: TestDataPayload): TestDataResult {
     return {

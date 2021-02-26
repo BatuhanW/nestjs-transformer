@@ -5,20 +5,19 @@ import { EnrichedTestData, TestDataResult } from '../interfaces';
 
 @Injectable()
 @Enricher({ handler: 'TestHandler' })
-@Enricher({ handler: 'Test2Handler' })
 export class TestEnricher implements BaseEnricher {
   constructor(private readonly httpClient: HttpService) {}
 
   async enrich(payload: TestDataResult): Promise<EnrichedTestData> {
     const { data } = await this.httpClient
-      .get('https://api.agify.io', {
+      .get('https://jsonplaceholder.typicode.com/todos/1', {
         params: { name: payload.data.test },
       })
       .toPromise();
 
     return {
       data: {
-        ...payload,
+        ...payload.data,
         ...data,
       },
     };
