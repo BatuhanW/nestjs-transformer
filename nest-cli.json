@@ -1,6 +1,6 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/kafka-test/src",
+  "sourceRoot": "apps/nats-test/src",
   "projects": {
     "core": {
       "type": "library",
@@ -28,12 +28,21 @@
       "compilerOptions": {
         "tsConfigPath": "apps/kafka-test/tsconfig.app.json"
       }
+    },
+    "nats-test": {
+      "type": "application",
+      "root": "apps/nats-test",
+      "entryFile": "main",
+      "sourceRoot": "apps/nats-test/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/nats-test/tsconfig.app.json"
+      }
     }
   },
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/kafka-test/tsconfig.app.json"
+    "tsConfigPath": "apps/nats-test/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/kafka-test"
+  "root": "apps/nats-test"
 }
