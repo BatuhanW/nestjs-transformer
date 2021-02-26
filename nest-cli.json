@@ -1,6 +1,6 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/nest-transformer/src",
+  "sourceRoot": "apps/kafka-test/src",
   "projects": {
     "core": {
       "type": "library",
@@ -20,20 +20,20 @@
         "tsConfigPath": "libs/kafka/tsconfig.lib.json"
       }
     },
-    "nest-transformer": {
+    "kafka-test": {
       "type": "application",
-      "root": "apps/nest-transformer",
+      "root": "apps/kafka-test",
       "entryFile": "main",
-      "sourceRoot": "apps/nest-transformer/src",
+      "sourceRoot": "apps/kafka-test/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/nest-transformer/tsconfig.app.json"
+        "tsConfigPath": "apps/kafka-test/tsconfig.app.json"
       }
     }
   },
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/nest-transformer/tsconfig.app.json"
+    "tsConfigPath": "apps/kafka-test/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/nest-transformer"
+  "root": "apps/kafka-test"
 }

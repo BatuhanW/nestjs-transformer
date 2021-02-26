@@ -1,5 +1,5 @@
 {
-  "name": "nest-transformer",
+  "name": "kafka-test",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/nest-transformer/test/jest-e2e.json",
+    "test:e2e": "jest --config ./apps/kafka-test/test/jest-e2e.json",
     "publish": "kafkacat -P -b localhost:9092 -t test -F kafkacat.conf payload.json"
   },
   "dependencies": {
