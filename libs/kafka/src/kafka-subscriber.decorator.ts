@@ -4,7 +4,7 @@ export const KAFKA_SUBSCRIBER_KEY = 'kafka-subscriber';
 
 export interface KafkaSubscriberParams {
   topicName: string;
-  eventName: string;
+  filter: (message: Record<string, any>) => boolean;
 }
 
 export const KafkaSubscriber = (params: KafkaSubscriberParams) =>

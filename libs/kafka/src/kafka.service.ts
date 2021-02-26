@@ -57,12 +57,13 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       eachMessage: async ({ topic, message }) => {
         const subscribedHandlers = topicSubscribers.get(topic);
 
-        const { event_name, payload } = JSON.parse(message.value.toString());
+        const messageObject = JSON.parse(message.value.toString());
+
         try {
           subscribedHandlers
-            .filter(({ options }) => options.eventName === event_name)
+            .filter(({ options: { filter } }) => filter(message))
             .forEach(({ provider }) => {
-              provider.instance.handle(payload);
+              provider.instance.handle(messageObject.payload);
             });
         } catch (e) {
           console.error(e);
