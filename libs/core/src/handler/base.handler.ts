@@ -48,7 +48,9 @@ export class BaseHandler implements OnModuleInit {
         provider.metatype,
       );
 
-      if (transformerDecoratorParams?.handler === this.constructor.name) {
+      if (
+        transformerDecoratorParams?.handlers.includes(this.constructor.name)
+      ) {
         this.transformer = provider.instance;
       }
 
@@ -57,7 +59,7 @@ export class BaseHandler implements OnModuleInit {
         provider.metatype,
       );
 
-      if (enricherDecoratorParams?.handler === this.constructor.name) {
+      if (enricherDecoratorParams?.handlers.includes(this.constructor.name)) {
         this.enricher = provider.instance;
       }
 
@@ -66,7 +68,7 @@ export class BaseHandler implements OnModuleInit {
         provider.metatype,
       );
 
-      if (actionDecoratorParams?.handler === this.constructor.name) {
+      if (actionDecoratorParams?.handlers.includes(this.constructor.name)) {
         this.actions.push(provider.instance);
       }
     });

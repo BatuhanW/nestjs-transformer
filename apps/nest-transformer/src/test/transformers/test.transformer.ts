@@ -4,7 +4,7 @@ import { Transformer } from '../../../../../libs/core/src/decorators/transformer
 import { TestDataPayload, TestDataResult } from '../interfaces';
 
 @Injectable()
-@Transformer({ handler: 'TestHandler' })
+@Transformer({ handlers: ['TestHandler', 'Test2Handler'] })
 export class TestTransformer implements BaseTransformer {
   transform(payload: TestDataPayload): TestDataResult {
     return {

@@ -3,7 +3,7 @@ import { SetMetadata } from '@nestjs/common';
 export const ENRICHER_KEY = 'transformer-enricher';
 
 export interface EnricherDecoratorParams {
-  handler: string;
+  handlers: string[];
 }
 
 export const Enricher = (params: EnricherDecoratorParams) =>

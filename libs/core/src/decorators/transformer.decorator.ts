@@ -2,7 +2,7 @@ import { SetMetadata } from '@nestjs/common';
 
 export const TRANSFORMER_KEY = 'transformer-transformer';
 export interface TransformerDecoratorParams {
-  handler: string;
+  handlers: string[];
 }
 
 export const Transformer = (params: TransformerDecoratorParams) =>
