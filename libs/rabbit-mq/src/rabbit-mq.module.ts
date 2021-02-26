@@ -8,13 +8,13 @@ export interface RabbitMQModuleRegisterOptions {
   queue: string;
 }
 
-const natsServiceProvider: FactoryProvider<RabbitMQService> = {
+const rabbitMQServiceProvider: FactoryProvider<RabbitMQService> = {
   provide: RabbitMQService,
   useFactory(
     discoveryService: DiscoveryService,
-    natsOptions: RabbitMQModuleRegisterOptions,
+    rabbitMQOptions: RabbitMQModuleRegisterOptions,
   ) {
-    return new RabbitMQService(natsOptions, discoveryService);
+    return new RabbitMQService(rabbitMQOptions, discoveryService);
   },
   inject: [DiscoveryService, RABBIT_MQ_MODULE_REGISTER_OPTIONS],
 };
@@ -23,7 +23,7 @@ const natsServiceProvider: FactoryProvider<RabbitMQService> = {
 @Module({})
 export class RabbitMQModule {
   static register(
-    natsModuleRegisterOptions: RabbitMQModuleRegisterOptions,
+    rabbitMQModuleRegisterOptions: RabbitMQModuleRegisterOptions,
   ): DynamicModule {
     return {
       global: true,
@@ -32,9 +32,9 @@ export class RabbitMQModule {
       providers: [
         {
           provide: RABBIT_MQ_MODULE_REGISTER_OPTIONS,
-          useValue: natsModuleRegisterOptions,
+          useValue: rabbitMQModuleRegisterOptions,
         },
-        natsServiceProvider,
+        rabbitMQServiceProvider,
       ],
     };
   }

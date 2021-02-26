@@ -8,7 +8,7 @@ export class RabbitMQService implements OnModuleInit {
   private readonly options: RabbitMQModuleRegisterOptions;
 
   constructor(
-    private readonly natsOptions: RabbitMQModuleRegisterOptions,
+    private readonly rabbitMQOptions: RabbitMQModuleRegisterOptions,
     private readonly discoveryService: DiscoveryService,
   ) {
   }
