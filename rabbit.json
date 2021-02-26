@@ -1,0 +1,9 @@
+{
+  "pattern": "test",
+  "data": {
+    "event_name": "test",
+    "payload": {
+      "test": "Oley"
+    }
+  }
+}

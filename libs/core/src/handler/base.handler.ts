@@ -15,6 +15,8 @@ import {
 } from '../decorators/transformer.decorator';
 import { BaseEnricher } from '../enricher/base.enricher';
 import { BaseTransformer } from '../transformer/base.transformer';
+import { of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 @Injectable()
 export class BaseHandler implements OnModuleInit {
@@ -26,6 +28,7 @@ export class BaseHandler implements OnModuleInit {
 
   async handle(payload: any) {
     console.log('Handlinggg', this);
+
     const transformedPayload = await this.transformer.transform(payload);
 
     const enrichedPayload = await this.enricher.enrich(transformedPayload);
