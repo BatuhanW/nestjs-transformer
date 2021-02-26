@@ -17,11 +17,28 @@ import { BaseEnricher } from '../enricher/base.enricher';
 import { BaseTransformer } from '../transformer/base.transformer';
 
 @Injectable()
-export class BaseHandler {
-  constructor(private readonly discoveryService: DiscoveryService) {
+export class BaseHandler implements OnModuleInit {
+  constructor(private readonly discoveryService: DiscoveryService) {}
+
+  private transformer: BaseTransformer;
+  private enricher: BaseEnricher;
+  private actions: BaseAction[] = [];
+
+  async handle(payload: any) {
+    console.log('Handlinggg', this);
+    const transformedPayload = await this.transformer.transform(payload);
+
+    const enrichedPayload = await this.enricher.enrich(transformedPayload);
+
+    await Promise.all(
+      this.actions.map(action => action.perform(enrichedPayload)),
+    );
+  }
+
+  onModuleInit() {
     if (this.constructor.name === 'BaseHandler') return;
 
-    const providers = discoveryService.getProviders();
+    const providers = this.discoveryService.getProviders();
 
     providers.forEach(provider => {
       if (!provider.metatype) return;
@@ -53,20 +70,5 @@ export class BaseHandler {
         this.actions.push(provider.instance);
       }
     });
-  }
-
-  private transformer: BaseTransformer;
-  private enricher: BaseEnricher;
-  private actions: BaseAction[] = [];
-
-  async handle(payload: any) {
-    console.log("Handlinggg", this)
-    const transformedPayload = await this.transformer.transform(payload);
-
-    const enrichedPayload = await this.enricher.enrich(transformedPayload);
-
-    await Promise.all(
-      this.actions.map(action => action.perform(enrichedPayload)),
-    );
   }
 }
