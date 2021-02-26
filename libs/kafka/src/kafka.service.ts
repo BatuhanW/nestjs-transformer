@@ -25,16 +25,16 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit(): Promise<void> {
     await this.consumer.connect();
 
-    const wrappers = this.discoveryService.getProviders();
+    const providers = this.discoveryService.getProviders();
 
     const topicSubscribers = new Map();
 
-    wrappers.forEach(wrapper => {
-      if (!wrapper.metatype) return;
+    providers.forEach(provider => {
+      if (!provider.metatype) return;
 
       const kafkaSubscriberOptions = Reflect.getMetadata(
         KAFKA_SUBSCRIBER_KEY,
-        wrapper.metatype,
+        provider.metatype,
       );
 
       if (kafkaSubscriberOptions) {
@@ -43,7 +43,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
         topicSubscribers.set(kafkaSubscriberOptions.topicName, [
           ...existingTopicSubscribers,
-          { wrapper, options: kafkaSubscriberOptions },
+          { provider, options: kafkaSubscriberOptions },
         ]);
       }
     });
@@ -59,7 +59,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         const payload = JSON.parse(message.value.toString());
         try {
           subscribedHandlers.forEach(subEvent => {
-            subEvent.wrapper.metatype.prototype.handle(payload);
+            subEvent.provider.metatype.prototype.handle(payload);
           });
         } catch (e) {
           console.error(e);
