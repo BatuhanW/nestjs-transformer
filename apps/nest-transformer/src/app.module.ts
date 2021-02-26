@@ -8,6 +8,7 @@ import { Log2Action } from './test/actions/log2.action';
 import { TestTransformer } from './test/transformers/test.transformer';
 import { TestEnricher } from './test/enrichers/test.enricher';
 import { Test2Handler } from './test/handlers/test2.handler';
+import { CoreModule } from '../../../libs/core/src';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { Test2Handler } from './test/handlers/test2.handler';
       kafkaConfig: { clientId: 'test', brokers: ['localhost:9092'] },
       consumerConfig: { groupId: 'test' },
     }),
+    CoreModule.register(),
     HttpModule
   ],
   controllers: [AppController],

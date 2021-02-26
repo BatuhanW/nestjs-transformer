@@ -1,8 +1,17 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Global, Module } from '@nestjs/common';
+import { DiscoveryModule, DiscoveryService } from '@nestjs/core';
 import { CoreService } from './core.service';
 
-@Module({
-  providers: [CoreService],
-  exports: [CoreService],
-})
-export class CoreModule {}
+@Global()
+@Module({})
+export class CoreModule {
+  static register(): DynamicModule {
+    return {
+      global: true,
+      module: CoreModule,
+      imports: [DiscoveryModule],
+      providers: [CoreService, DiscoveryService],
+      exports: [DiscoveryService],
+    };
+  }
+}
