@@ -20,7 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/kafka-test/test/jest-e2e.json",
     "kafka": "kafkacat -P -b localhost:9092 -t test -F kafkacat.conf payload.json",
-    "nats": "nats pub test payload.json"
+    "rabbit-mq": "rabbit-mq pub test payload.json"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -76,8 +76,8 @@
       "@core": "<rootDir>/libs/core/src",
       "@adapters/kafka/(.*)": "<rootDir>/libs/kafka/src/$1",
       "@adapters/kafka": "<rootDir>/libs/kafka/src",
-      "@adapters/nats/(.*)": "<rootDir>/libs/nats/src/$1",
-      "@adapters/nats": "<rootDir>/libs/nats/src"
+      "@adapters/rabbit-mq/(.*)": "<rootDir>/libs/rabbit-mq/src/$1",
+      "@adapters/rabbit-mq": "<rootDir>/libs/rabbit-mq/src"
     }
   }
 }

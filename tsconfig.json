@@ -23,11 +23,11 @@
       "@adapters/kafka/*": [
         "libs/kafka/src/*"
       ],
-      "@adapters/nats": [
-        "libs/nats/src"
+      "@adapters/rabbit-mq": [
+        "libs/rabbit-mq/src"
       ],
-      "@adapters/nats/*": [
-        "libs/nats/src/*"
+      "@adapters/rabbit-mq/*": [
+        "libs/rabbit-mq/src/*"
       ]
     }
   },

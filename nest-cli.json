@@ -1,6 +1,6 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/nats-test/src",
+  "sourceRoot": "apps/rabbit-mq-test/src",
   "projects": {
     "core": {
       "type": "library",
@@ -29,29 +29,29 @@
         "tsConfigPath": "apps/kafka-test/tsconfig.app.json"
       }
     },
-    "nats-test": {
+    "rabbit-mq-test": {
       "type": "application",
-      "root": "apps/nats-test",
+      "root": "apps/rabbit-mq-test",
       "entryFile": "main",
-      "sourceRoot": "apps/nats-test/src",
+      "sourceRoot": "apps/rabbit-mq-test/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/nats-test/tsconfig.app.json"
+        "tsConfigPath": "apps/rabbit-mq-test/tsconfig.app.json"
       }
     },
-    "nats": {
+    "rabbit-mq": {
       "type": "library",
-      "root": "libs/nats",
+      "root": "libs/rabbit-mq",
       "entryFile": "index",
-      "sourceRoot": "libs/nats/src",
+      "sourceRoot": "libs/rabbit-mq/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/nats/tsconfig.lib.json"
+        "tsConfigPath": "libs/rabbit-mq/tsconfig.lib.json"
       }
     }
   },
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/nats-test/tsconfig.app.json"
+    "tsConfigPath": "apps/rabbit-mq-test/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/nats-test"
+  "root": "apps/rabbit-mq-test"
 }
