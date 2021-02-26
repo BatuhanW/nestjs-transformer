@@ -75,7 +75,9 @@
       "@core/(.*)": "<rootDir>/libs/core/src/$1",
       "@core": "<rootDir>/libs/core/src",
       "@adapters/kafka/(.*)": "<rootDir>/libs/kafka/src/$1",
-      "@adapters/kafka": "<rootDir>/libs/kafka/src"
+      "@adapters/kafka": "<rootDir>/libs/kafka/src",
+      "@adapters/nats/(.*)": "<rootDir>/libs/nats/src/$1",
+      "@adapters/nats": "<rootDir>/libs/nats/src"
     }
   }
 }

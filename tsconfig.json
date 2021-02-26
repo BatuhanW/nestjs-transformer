@@ -22,6 +22,12 @@
       ],
       "@adapters/kafka/*": [
         "libs/kafka/src/*"
+      ],
+      "@adapters/nats": [
+        "libs/nats/src"
+      ],
+      "@adapters/nats/*": [
+        "libs/nats/src/*"
       ]
     }
   },
