@@ -1,11 +1,7 @@
 import { SetMetadata } from '@nestjs/common';
 
-export const KAFKA_SUBSCRIBER_KEY = 'kafka-subscriber';
+import { KAFKA_SUBSCRIBER_KEY } from './constants';
+import { KafkaSubscriberDecoratorParams } from './interfaces';
 
-export interface KafkaSubscriberParams {
-  topicName: string;
-  filter: (message: Record<string, any>) => boolean;
-}
-
-export const KafkaSubscriber = (params: KafkaSubscriberParams) =>
-  SetMetadata<string, KafkaSubscriberParams>(KAFKA_SUBSCRIBER_KEY, params);
+export const KafkaSubscriber = (params: KafkaSubscriberDecoratorParams) =>
+  SetMetadata<string, KafkaSubscriberDecoratorParams>(KAFKA_SUBSCRIBER_KEY, params);

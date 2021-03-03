@@ -19,7 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/nest-transformer/test/jest-e2e.json",
-    "publish": "kafkacat -P -b localhost:9092 -t test -F kafkacat.conf payload.json"
+    "publish": "kafkacat -P -t test -F kafkacat.conf payload.json",
+    "consume": "kafkacat -t test -F kafkacat.conf"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",

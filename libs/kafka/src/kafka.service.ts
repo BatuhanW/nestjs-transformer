@@ -1,7 +1,14 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
-import { Consumer, Kafka, KafkaConfig, ConsumerConfig } from 'kafkajs';
-import { KAFKA_SUBSCRIBER_KEY } from './kafka-subscriber.decorator';
+import { Consumer, Kafka } from 'kafkajs';
+
+import { KAFKA_MODULE_REGISTER_OPTIONS, KAFKA_SUBSCRIBER_KEY } from './constants';
+import { KafkaModuleRegisterOptions } from './interfaces';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
@@ -9,17 +16,19 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private consumer: Consumer;
 
   constructor(
-    private readonly kafkaConfig: KafkaConfig,
-    private readonly consumerConfig: ConsumerConfig,
+    @Inject(KAFKA_MODULE_REGISTER_OPTIONS)
+    private readonly kafkaModuleRegisterOptions: KafkaModuleRegisterOptions,
     private readonly discoveryService: DiscoveryService,
   ) {
+    const { kafkaConfig, consumerConfig } = this.kafkaModuleRegisterOptions;
+
     this.kafka = new Kafka({
-      clientId: this.kafkaConfig.clientId,
-      brokers: this.kafkaConfig.brokers,
+      clientId: kafkaConfig.clientId,
+      brokers: kafkaConfig.brokers,
     });
 
     this.consumer = this.kafka.consumer({
-      groupId: this.consumerConfig.groupId,
+      groupId: consumerConfig.groupId,
     });
   }
 
@@ -27,6 +36,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     await this.consumer.connect();
 
     const providers = this.discoveryService.getProviders();
+
+    console.log(providers)
 
     const topicSubscribers = new Map();
 

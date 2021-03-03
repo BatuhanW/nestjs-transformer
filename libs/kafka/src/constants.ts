@@ -1,0 +1,3 @@
+export const KAFKA_MODULE_REGISTER_OPTIONS = 'KAFKA_MODULE_REGISTER_OPTION';
+
+export const KAFKA_SUBSCRIBER_KEY = 'kafka-subscriber';

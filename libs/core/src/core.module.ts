@@ -11,8 +11,8 @@ export class CoreModule {
       global: true,
       module: CoreModule,
       imports: [DiscoveryModule],
-      providers: [CoreService, DiscoveryService, BaseHandler],
-      exports: [DiscoveryService, BaseHandler],
+      providers: [CoreService, BaseHandler],
+      exports: [BaseHandler],
     };
   }
 }
