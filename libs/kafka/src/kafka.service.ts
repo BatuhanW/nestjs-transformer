@@ -33,7 +33,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleInit(): Promise<void> {
-    await this.consumer.connect();
+    this.consumer.connect();
 
     const providers = this.discoveryService.getProviders();
 
@@ -72,7 +72,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
         try {
           subscribedHandlers
-            .filter(({ options: { filter } }) => filter(message))
+            .filter(({ options: { filter } }) => filter ? filter(message) : true)
             .forEach(({ provider }) => {
               provider.instance.handle(messageObject.payload);
             });

@@ -1,5 +1,5 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { DiscoveryModule, DiscoveryService } from '@nestjs/core';
+import { DiscoveryModule } from '@nestjs/core';
 
 import { KAFKA_MODULE_REGISTER_OPTIONS } from './constants';
 import { KafkaModuleRegisterOptions } from './interfaces';
@@ -23,6 +23,7 @@ export class KafkaModule {
         },
         KafkaService,
       ],
+      exports: [DiscoveryModule]
     };
   }
 }
