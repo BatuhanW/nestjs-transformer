@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka/kafka-subscriber.decorator';
-import { Handler } from '@core/decorators/handler.decorator';
-import { BaseHandler } from '@core/handler/base.handler';
+import { Handler, BaseHandler } from '@core';
 
 @Injectable()
 @KafkaSubscriber({ topicName: 'test'})

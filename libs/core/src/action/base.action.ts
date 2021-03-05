@@ -1,3 +1,2 @@
-export interface BaseAction {
-  perform(payload: {}): void | Promise<void>;
-}
+import { Performable } from '../interfaces/performable.interface';
+export type BaseAction<Payload> = Performable<Payload, Promise<void>>

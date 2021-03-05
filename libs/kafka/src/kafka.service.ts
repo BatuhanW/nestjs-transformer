@@ -3,7 +3,6 @@ import {
   Injectable,
   OnModuleDestroy,
   OnModuleInit,
-  Provider,
 } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
@@ -45,7 +44,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       { provider: InstanceWrapper; options: KafkaSubscriberDecoratorParams }[]
     >();
 
-    providers.forEach(provider => {
+    providers.forEach((provider) => {
       if (!provider.metatype) return;
 
       const kafkaSubscriberOptions = Reflect.getMetadata(
@@ -64,7 +63,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       }
     });
 
-    for (const [topicName, _] of topicSubscribers) {
+    for (const [topicName] of topicSubscribers) {
       await this.subscribeToTopic(topicName);
     }
 
@@ -88,7 +87,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       },
     });
 
-    console.log("Finit0")
+    console.log('Finit0');
   }
 
   async stop(): Promise<void> {

@@ -1,12 +1,12 @@
-import { BaseAction } from '@core/action/base.action';
-import { Action } from '@core/decorators/action.decorator';
 import { Injectable } from '@nestjs/common';
+
+import { Action, BaseAction } from '@core';
 import { TestDataResult } from '../interfaces';
 
 @Injectable()
 @Action({ handlers: ['TestHandler', 'Test2Handler'] })
-export class Log2Action implements BaseAction {
-  perform(payload: TestDataResult): void {
+export class Log2Action implements BaseAction<TestDataResult> {
+  async perform(payload: TestDataResult): Promise<void> {
     console.log("Data received 2")
     console.log(payload)
   }

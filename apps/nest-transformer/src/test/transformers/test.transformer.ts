@@ -1,6 +1,6 @@
-import { BaseTransformer } from '@core/transformer/base.transformer';
+import { } from '@core/transformer/base.transformer';
 import { Injectable } from '@nestjs/common';
-import { Transformer } from '../../../../../libs/core/src/decorators/transformer.decorator';
+import { Transformer,BaseTransformer   } from '@core';
 import { TestDataPayload, TestDataResult } from '../interfaces';
 
 @Injectable()

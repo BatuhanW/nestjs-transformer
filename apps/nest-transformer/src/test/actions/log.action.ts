@@ -1,6 +1,5 @@
-import { BaseAction } from '@core/action/base.action';
-import { Action } from '@core/decorators/action.decorator';
 import { Injectable } from '@nestjs/common';
+import { Action, BaseAction } from '@core';
 import { TestDataResult } from '../interfaces';
 
 @Injectable()

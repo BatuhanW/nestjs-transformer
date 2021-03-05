@@ -1,18 +1,18 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { DiscoveryService } from '@nestjs/core';
 import {
   ActionDecoratorParams,
   ACTION_KEY,
-} from './../decorators/action.decorator';
+} from '../action/action.decorator';
 import {
   EnricherDecoratorParams,
   ENRICHER_KEY,
-} from './../decorators/enricher.decorator';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+} from '../enricher/enricher.decorator';
 import { BaseAction } from '../action/base.action';
 import {
   TransformerDecoratorParams,
   TRANSFORMER_KEY,
-} from '../decorators/transformer.decorator';
+} from '../transformer/transformer.decorator';
 import { BaseEnricher } from '../enricher/base.enricher';
 import { BaseTransformer } from '../transformer/base.transformer';
 
@@ -24,7 +24,7 @@ export class BaseHandler implements OnModuleInit {
   private enricher: BaseEnricher;
   private actions: BaseAction[] = [];
 
-  async handle(payload: any) {
+  async handle(payload: Record<string, any>): Promise<void> {
     console.log('Handlinggg', this);
     const transformedPayload = await this.transformer.transform(payload);
 
@@ -35,10 +35,12 @@ export class BaseHandler implements OnModuleInit {
     );
   }
 
-  onModuleInit() {
+  onModuleInit(): void {
     if (this.constructor.name === 'BaseHandler') return;
 
+    console.log("Getting providers", this.constructor.name)
     const providers = this.discoveryService.getProviders();
+    console.log("Got providers")
 
     providers.forEach(provider => {
       if (!provider.metatype) return;

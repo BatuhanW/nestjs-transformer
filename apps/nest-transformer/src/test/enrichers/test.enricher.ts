@@ -1,11 +1,10 @@
-import { BaseEnricher } from '@core/enricher/base.enricher';
 import { HttpService, Injectable } from '@nestjs/common';
-import { Enricher } from '@core/decorators/enricher.decorator';
+import { Enricher, BaseEnricher } from '@core';
 import { EnrichedTestData, TestDataResult } from '../interfaces';
 
 @Injectable()
 @Enricher({ handlers: ['TestHandler', 'Test2Handler'] })
-export class TestEnricher implements BaseEnricher {
+export class TestEnricher implements BaseEnricher<EnrichedTestData, TestDataResult> {
   constructor(private readonly httpClient: HttpService) {}
 
   async enrich(payload: TestDataResult): Promise<EnrichedTestData> {

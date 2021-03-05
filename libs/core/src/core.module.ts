@@ -1,5 +1,5 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { DiscoveryModule, DiscoveryService } from '@nestjs/core';
+import { DiscoveryModule } from '@nestjs/core';
 import { CoreService } from './core.service';
 import { BaseHandler } from './handler/base.handler';
 

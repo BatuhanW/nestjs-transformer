@@ -1,2 +1,2 @@
-export * from './kafka.module';
-export * from './kafka.service';
+export {KafkaModule} from './kafka.module';
+export {KafkaSubscriber} from './kafka-subscriber.decorator'
