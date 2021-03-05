@@ -1,4 +1,4 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
 import { KAFKA_MODULE_REGISTER_OPTIONS } from './constants';
@@ -6,7 +6,6 @@ import { KafkaModuleRegisterOptions } from './interfaces';
 
 import { KafkaService } from './kafka.service';
 
-@Global()
 @Module({})
 export class KafkaModule {
   static register(

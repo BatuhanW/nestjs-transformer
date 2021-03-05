@@ -3,12 +3,20 @@ import {
   Injectable,
   OnModuleDestroy,
   OnModuleInit,
+  Provider,
 } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Consumer, Kafka } from 'kafkajs';
 
-import { KAFKA_MODULE_REGISTER_OPTIONS, KAFKA_SUBSCRIBER_KEY } from './constants';
-import { KafkaModuleRegisterOptions } from './interfaces';
+import {
+  KAFKA_MODULE_REGISTER_OPTIONS,
+  KAFKA_SUBSCRIBER_KEY,
+} from './constants';
+import {
+  KafkaModuleRegisterOptions,
+  KafkaSubscriberDecoratorParams,
+} from './interfaces';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
@@ -22,24 +30,20 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   ) {
     const { kafkaConfig, consumerConfig } = this.kafkaModuleRegisterOptions;
 
-    this.kafka = new Kafka({
-      clientId: kafkaConfig.clientId,
-      brokers: kafkaConfig.brokers,
-    });
+    this.kafka = new Kafka(kafkaConfig);
 
-    this.consumer = this.kafka.consumer({
-      groupId: consumerConfig.groupId,
-    });
+    this.consumer = this.kafka.consumer(consumerConfig);
   }
 
-  async onModuleInit(): Promise<void> {
-    this.consumer.connect();
+  async start(): Promise<void> {
+    await this.consumer.connect();
 
     const providers = this.discoveryService.getProviders();
 
-    console.log(providers)
-
-    const topicSubscribers = new Map();
+    const topicSubscribers = new Map<
+      string,
+      { provider: InstanceWrapper; options: KafkaSubscriberDecoratorParams }[]
+    >();
 
     providers.forEach(provider => {
       if (!provider.metatype) return;
@@ -60,9 +64,9 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       }
     });
 
-    topicSubscribers.forEach(async (_eventNames, topicName) => {
+    for (const [topicName, _] of topicSubscribers) {
       await this.subscribeToTopic(topicName);
-    });
+    }
 
     await this.consumer.run({
       eachMessage: async ({ topic, message }) => {
@@ -72,7 +76,9 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
         try {
           subscribedHandlers
-            .filter(({ options: { filter } }) => filter ? filter(message) : true)
+            .filter(({ options: { filter } }) =>
+              filter ? filter(message) : true,
+            )
             .forEach(({ provider }) => {
               provider.instance.handle(messageObject.payload);
             });
@@ -81,13 +87,23 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         }
       },
     });
+
+    console.log("Finit0")
   }
 
-  async onModuleDestroy(): Promise<void> {
+  async stop(): Promise<void> {
     await this.consumer.disconnect();
   }
 
-  async subscribeToTopic(topic: string) {
+  async onModuleInit(): Promise<void> {
+    this.start();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.stop();
+  }
+
+  async subscribeToTopic(topic: string): Promise<void> {
     await this.consumer.subscribe({ topic, fromBeginning: false });
   }
 }

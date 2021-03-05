@@ -14,8 +14,8 @@ import { CoreModule } from '../../../libs/core/src';
   imports: [
     CoreModule.register(),
     KafkaModule.register({
-      kafkaConfig: { clientId: 'test', brokers: ['localhost:9092'] },
-      consumerConfig: { groupId: 'test' },
+      kafkaConfig: { clientId: 'test-client', brokers: ['localhost:9092'] },
+      consumerConfig: { groupId: 'test-group' },
     }),
     HttpModule
   ],
