@@ -1,9 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
-import {
-  ActionDecoratorParams,
-  ACTION_KEY,
-} from '../action/action.decorator';
+import { ActionDecoratorParams, ACTION_KEY } from '../action/action.decorator';
 import {
   EnricherDecoratorParams,
   ENRICHER_KEY,
@@ -31,18 +28,18 @@ export class BaseHandler implements OnModuleInit {
     const enrichedPayload = await this.enricher.enrich(transformedPayload);
 
     await Promise.all(
-      this.actions.map(action => action.perform(enrichedPayload)),
+      this.actions.map((action) => action.perform(enrichedPayload)),
     );
   }
 
   onModuleInit(): void {
     if (this.constructor.name === 'BaseHandler') return;
 
-    console.log("Getting providers", this.constructor.name)
+    console.log('Getting providers', this.constructor.name);
     const providers = this.discoveryService.getProviders();
-    console.log("Got providers")
+    console.log('Got providers');
 
-    providers.forEach(provider => {
+    providers.forEach((provider) => {
       if (!provider.metatype) return;
 
       const transformerDecoratorParams: TransformerDecoratorParams = Reflect.getMetadata(

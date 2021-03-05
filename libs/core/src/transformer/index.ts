@@ -1,2 +1,2 @@
-export {Transformer} from './transformer.decorator'
-export {BaseTransformer} from './base.transformer'
+export { Transformer } from './transformer.decorator';
+export { BaseTransformer } from './base.transformer';

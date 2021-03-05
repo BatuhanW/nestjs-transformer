@@ -1,2 +1,2 @@
-export {KafkaModule} from './kafka.module';
-export {KafkaSubscriber} from './kafka-subscriber.decorator'
+export { KafkaModule } from './kafka.module';
+export { KafkaSubscriber } from './kafka-subscriber.decorator';

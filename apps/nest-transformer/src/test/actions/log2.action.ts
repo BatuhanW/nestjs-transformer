@@ -7,7 +7,7 @@ import { TestDataResult } from '../interfaces';
 @Action({ handlers: ['TestHandler', 'Test2Handler'] })
 export class Log2Action implements BaseAction<TestDataResult> {
   async perform(payload: TestDataResult): Promise<void> {
-    console.log("Data received 2")
-    console.log(payload)
+    console.log('Data received 2');
+    console.log(payload);
   }
 }

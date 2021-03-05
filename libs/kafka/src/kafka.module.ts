@@ -22,7 +22,7 @@ export class KafkaModule {
         },
         KafkaService,
       ],
-      exports: [DiscoveryModule]
+      exports: [DiscoveryModule],
     };
   }
 }

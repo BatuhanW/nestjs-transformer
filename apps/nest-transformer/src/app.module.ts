@@ -17,7 +17,7 @@ import { CoreModule } from '../../../libs/core/src';
       kafkaConfig: { clientId: 'test-client', brokers: ['localhost:9092'] },
       consumerConfig: { groupId: 'test-group' },
     }),
-    HttpModule
+    HttpModule,
   ],
   controllers: [AppController],
   providers: [

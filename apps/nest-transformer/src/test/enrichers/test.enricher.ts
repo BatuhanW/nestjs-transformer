@@ -4,7 +4,8 @@ import { EnrichedTestData, TestDataResult } from '../interfaces';
 
 @Injectable()
 @Enricher({ handlers: ['TestHandler', 'Test2Handler'] })
-export class TestEnricher implements BaseEnricher<EnrichedTestData, TestDataResult> {
+export class TestEnricher
+  implements BaseEnricher<EnrichedTestData, TestDataResult> {
   constructor(private readonly httpClient: HttpService) {}
 
   async enrich(payload: TestDataResult): Promise<EnrichedTestData> {
