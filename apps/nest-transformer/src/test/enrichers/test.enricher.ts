@@ -5,10 +5,10 @@ import { EnrichedTestData, TestDataResult } from '../interfaces';
 @Injectable()
 @Enricher({ handlers: ['TestHandler', 'Test2Handler'] })
 export class TestEnricher
-  implements BaseEnricher<EnrichedTestData, TestDataResult> {
+  implements BaseEnricher<TestDataResult, Promise<EnrichedTestData>> {
   constructor(private readonly httpClient: HttpService) {}
 
-  async enrich(payload: TestDataResult): Promise<EnrichedTestData> {
+  async perform(payload: TestDataResult): Promise<EnrichedTestData> {
     const { data } = await this.httpClient
       .get('https://jsonplaceholder.typicode.com/todos/1', {
         params: { name: payload.data.test },

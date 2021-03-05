@@ -17,15 +17,15 @@ import { BaseTransformer } from '../transformer/base.transformer';
 export class BaseHandler implements OnModuleInit {
   constructor(private readonly discoveryService: DiscoveryService) {}
 
-  private transformer: BaseTransformer;
-  private enricher: BaseEnricher;
-  private actions: BaseAction[] = [];
+  private transformer: BaseTransformer<Record<string, any>, Record<string, any>>;
+  private enricher: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
+  private actions: BaseAction<Record<string, any>>[] = [];
 
   async handle(payload: Record<string, any>): Promise<void> {
     console.log('Handlinggg', this);
-    const transformedPayload = await this.transformer.transform(payload);
+    const transformedPayload =  this.transformer.perform(payload);
 
-    const enrichedPayload = await this.enricher.enrich(transformedPayload);
+    const enrichedPayload = await this.enricher.perform(transformedPayload);
 
     await Promise.all(
       this.actions.map((action) => action.perform(enrichedPayload)),
