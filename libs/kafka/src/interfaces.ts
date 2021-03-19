@@ -7,5 +7,5 @@ export interface KafkaModuleRegisterOptions {
 
 export interface KafkaSubscriberDecoratorParams {
   topicName: string;
-  filter?: (message: Record<string, any>) => boolean;
+  filter?: <IncomingPayload extends Record<string, any>>(message: IncomingPayload) => boolean;
 }
