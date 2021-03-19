@@ -60,6 +60,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
           ...existingTopicSubscribers,
           { provider, options: kafkaSubscriberOptions },
         ]);
+
+        console.log('[Kafka Service] Found provider', provider.name);
       }
     });
 
