@@ -6,21 +6,25 @@ Transformer implementation for any message broker. Only Kafka is supported for n
 
 ```bash
   # Optional. If you have a any other running kafka and zookeper images, you should stop them.
-  docker stop $(docker ps -aq)
+  $ docker stop $(docker ps -aq)
 
   # Start docker in daemon mode (background).
-  docker-compose up -d
+  $ docker-compose up -d
 
   # Install dependencies
-  npm i
+  $ npm i
 
   # Start the application
-  npm run start:dev
+  $ npm run start:dev
 
   # Publish events for testing
-  npm run publish:users
+
+  # Install kafkacat to publish events to local kafka
+  brew install kafkacat
+
+  $ npm run publish:users
   OR
-  npm run publish:id_check
+  $ npm run publish:id_check
 ```
 
 ### KafkaSubscriber Decorator
