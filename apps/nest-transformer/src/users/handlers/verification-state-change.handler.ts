@@ -14,5 +14,5 @@ const topics = [
   topicName: 'users',
   filter: (message) => topics.includes(message.event_name),
 })
-@Handler({ name: 'VerificationStateChangeHandler' })
+@Handler()
 export class VerificationStateChangeHandler extends BaseHandler {}
