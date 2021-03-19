@@ -3,8 +3,8 @@ import { KafkaSubscriber } from '@adapters/kafka';
 import { Handler, BaseHandler } from '@core';
 import { VerificationRequestTransformer } from '../transformers/verification-request.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
-import { AmplitudeAction } from '../actions/amplitude.action';
-import { BrazeAction } from '../actions/braze.action';
+import { AmplitudeDestination } from '../destinations/amplitude.destination';
+import { BrazeAction } from '../destinations/braze.action';
 
 @Injectable()
 @KafkaSubscriber({
@@ -16,7 +16,7 @@ export class VerificationRequestHandler extends BaseHandler {
   constructor(
     private transformer: VerificationRequestTransformer,
     private enricher: UserEnricher,
-    private ampAction: AmplitudeAction,
+    private ampAction: AmplitudeDestination,
     private brazeAction: BrazeAction,
   ) {
     super();

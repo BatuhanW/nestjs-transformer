@@ -3,8 +3,8 @@ import { KafkaSubscriber } from '@adapters/kafka';
 import { Handler, BaseHandler } from '@core';
 import { VerificationStateChangeTransformer } from '../transformers/verification-state-change.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
-import { AmplitudeAction } from '../actions/amplitude.action';
-import { BrazeAction } from '../actions/braze.action';
+import { AmplitudeDestination } from '../destinations/amplitude.destination';
+import { BrazeAction } from '../destinations/braze.action';
 
 const topics = [
   'verification_not_started',
@@ -23,7 +23,7 @@ export class VerificationStateChangeHandler extends BaseHandler {
   constructor(
     private transformer: VerificationStateChangeTransformer,
     private enricher: UserEnricher,
-    private ampAction: AmplitudeAction,
+    private ampAction: AmplitudeDestination,
     private brazeAction: BrazeAction,
   ) {
     super();
