@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseAction } from '../action/base.action';
+import { BaseDestination } from '../destination/base.destination';
 import { BaseEnricher } from '../enricher/base.enricher';
 import { BaseTransformer } from '../transformer/base.transformer';
 
@@ -7,7 +7,7 @@ import { BaseTransformer } from '../transformer/base.transformer';
 export class BaseHandler {
   protected transformers: BaseTransformer<Record<string, any>, Record<string, any>>[];
   protected enrichers: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>[];
-  protected actions: BaseAction<Record<string, any>>[];
+  protected actions: BaseDestination<Record<string, any>>[];
 
   async handle(payload: Record<string, any>): Promise<void> {
     console.log('--------------------------------------------');
