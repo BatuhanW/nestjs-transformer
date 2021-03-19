@@ -1,0 +1,12 @@
+{
+  "event_name": "verification_verified",
+  "payload": {
+    "user_id": 1,
+    "old": {
+      "verification_state": "pending"
+    },
+    "new": {
+      "verification_state": "verified"
+    }
+  }
+}

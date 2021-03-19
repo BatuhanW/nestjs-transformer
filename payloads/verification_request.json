@@ -1,0 +1,9 @@
+{
+  "event_name": "id_check_request",
+  "payload": {
+    "user_id": 1,
+    "order_number": "1",
+    "verification_state": "pending",
+    "requester_id": 2
+  }
+}
