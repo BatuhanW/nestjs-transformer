@@ -6,8 +6,7 @@ import { EnrichedTestData, TestDataResult } from '../interfaces';
 @Enricher({
   handlers: ['VerificationRequestHandler', 'VerificationStateChangeHandler'],
 })
-export class UserEnricher
-  implements BaseEnricher<TestDataResult, Promise<EnrichedTestData>> {
+export class UserEnricher implements BaseEnricher<TestDataResult, Promise<EnrichedTestData>> {
   constructor(private readonly httpClient: HttpService) {}
 
   async perform(payload: TestDataResult): Promise<EnrichedTestData> {

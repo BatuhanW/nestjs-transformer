@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { KafkaSubscriber } from '@adapters/kafka/kafka-subscriber.decorator';
+import { KafkaSubscriber } from '@adapters/kafka';
 import { Handler, BaseHandler } from '@core';
 
 @Injectable()

@@ -1,75 +1,238 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+### Nest Transformer
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Transformer implementation for any message broker. Only Kafka is supported for now.
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+### Running
 
 ```bash
-$ npm install
+  # Optional. If you have a any other running kafka and zookeper images, you should stop them.
+  docker stop $(docker ps -aq)
+
+  # Start docker in daemon mode (background).
+  docker-compose up -d
+
+  # Install dependencies
+  npm i
+
+  # Start the application
+  npm run start:dev
+
+  # Publish events for testing
+  npm run publish:users
+  OR
+  npm run publish:id_check
 ```
 
-## Running the app
+### KafkaSubscriber Decorator
+
+This decorator subscribes to the given topic with ability to filter events.
+Then triggers `handle` method of the decorated class when matching event is consumed.
+Only `Handler` classes should be decorated with this decorator.
+
+```typescript
+@KafkaSubscriber({
+  topicName: 'users',
+  filter: (payload) => payload.event_name === 'deleted',
+})
+```
+
+### Handler Decorator
+
+Marks the decorated class as `Handler`. Decorated Handler class doesn't need to have any methods.
+Decorated class should be extended from `BaseHandler`. (`import { BaseHandler } from '@core'`)
+Then the BaseHandler takes care of assigning other classes like `Transformer`, `Enricher` and `Action`s to decorated class.
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+import { KafkaSubscriber } from '@adapters/kafka';
+import { Handler, BaseHandler } from '@core';
+
+@Injectable()
+@KafkaSubscriber({
+  topicName: 'users',
+  filter: (payload) => payload.event_name === 'deleted',
+})
+@Handler({ name: 'UserDeletedHandler' })
+export class UserDeletedHandler extends BaseHandler {}
+```
+
+### Transformer Decorator
+
+Marks the decorated class as `Transformer` and assignes to the given `Handler`(s).
+
+Transformers accepts the passed event payload from Handler and transforms it then returns result to the next class.
+
+Marked class should `implement` BaseTransformer generic.
+BaseTransformer's first parameter is input and the second one is output type.
+
+`export class UserTransformer implements BaseTransformer<IncomingPayload, TransformedPayload> { ... }`
+
+The decorated class should have `perform` which handles the transformation.
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+import { Transformer, BaseTransformer } from '@core';
+import { UsersTopicPayload, UsersTransformedPayload } from '../interfaces';
+
+@Injectable()
+@Transformer({ handlers: ['UserDeletedHandler', 'UserCreatedHandler'] })
+export class UserTransformer implements BaseTransformer<UsersTopicPayload, UsersTransformedPayload> {
+  perform(payload: UsersTopicPayload): UsersTransformedPayload {
+    return {
+      // Place payload under "data" key.
+      data: payload,
+    };
+  }
+}
+```
+
+### Enricher Decorator
+
+Marks the decorated class as `Enricher` and assignes to the given `Handler`(s).
+
+Enrichers accepts the transformed payload and Enriches it through some API requests.
+Perhaps you have `user_id` in the event payload but not `email`.
+With enrichers, you can get other required fields for the user from your API.
+
+Marked class should `implement` BaseEnricher generic.
+BaseEnricher's first parameter is input and the second one is output type.
+
+`export class UserEnricher implements BaseEnricher<UsersTransformedPayload, Promise<UsersEnrichedPayload>> { ... }`
+
+The decorated class should have `perform` method which handles the enrichment.
+
+```typescript
+import { HttpService, Injectable } from '@nestjs/common';
+
+import { Enricher, BaseEnricher } from '@core';
+import { UsersTransformedPayload, UsersEnrichedPayload } from '../interfaces';
+
+@Injectable()
+@Enricher({
+  handlers: ['UserDeletedHandler', 'UserCreatedHandler'],
+})
+export class UserEnricher implements BaseEnricher<UsersTransformedPayload, Promise<UsersEnrichedPayload>> {
+  constructor(private readonly httpClient: HttpService) {}
+
+  async perform(payload: UsersTransformedPayload): Promise<UsersEnrichedPayload> {
+    const { data: userResponse } = await this.httpClient.get('https://api.example.com/users/1').toPromise();
+
+    return {
+      data: {
+        ...payload.data,
+        ...userResponse,
+      },
+    };
+  }
+}
+```
+
+## Action Decorator
+
+Marks the decorated class as `Action` and assignes to the given `Handler`(s).
+
+Actions accepts the enriched payload and sends it to the 3rd party providers through some API requests.
+
+Marked class should `implement` BaseAction generic.
+BaseAction's first parameter is incoming payload type.
+
+`export class AmplitudeAction implements BaseAction<UsersEnrichedPayload>`
+
+The decorated class should have `perform` method which handles the action.
+
+```typescript
+import { HttpService, Injectable } from '@nestjs/common';
+
+import { Action, BaseAction } from '@core';
+import { UsersEnrichedPayload } from '../interfaces';
+
+@Injectable()
+@Action({
+  handlers: ['UserDeletedHandler', 'UserCreatedHandler'],
+})
+export class AmplitudeAction implements BaseAction<UsersEnrichedPayload> {
+  constructor(private readonly httpClient: HttpService) {}
+
+  async perform(payload: UsersEnrichedPayload): Promise<void> {
+    await this.httpClient.post('https://api.amplitude.com/events');
+  }
+}
+```
+
+### Entire lifecycle of event from Handler to Actions
 
 ```bash
-# development
-$ npm run start
+--------------------------------------------
+[Kafka Service] Received payload {
+  event_name: 'id_check_request',
+  payload: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2
+  }
+}
+--------------------------------------------
+--------------------------------------------
+[VerificationRequestHandler] handling event for payload {
+  user_id: 1,
+  order_number: '1',
+  verification_state: 'pending',
+  requester_id: 2
+}
 
-# watch mode
-$ npm run start:dev
+[VerificationRequestHandler] transformed payload {
+  data: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2
+  }
+}
 
-# production mode
-$ npm run start:prod
+[VerificationRequestHandler] enriched payload {
+  data: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2,
+    userId: 1,
+    id: 1,
+    title: 'delectus aut autem',
+    completed: false
+  }
+}
+
+[VerificationRequestHandler] calling action AmplitudeAction
+
+[AmplitudeAction] perform triggered with payload {
+  data: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2,
+    userId: 1,
+    id: 1,
+    title: 'delectus aut autem',
+    completed: false
+  }
+}
+[VerificationRequestHandler] calling action BrazeAction
+
+[BrazeAction] perform triggered with payload {
+  data: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2,
+    userId: 1,
+    id: 1,
+    title: 'delectus aut autem',
+    completed: false
+  }
+}
+[VerificationRequestHandler] handling completed.
+--------------------------------------------
 ```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-  Nest is [MIT licensed](LICENSE).
