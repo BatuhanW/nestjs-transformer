@@ -8,7 +8,8 @@ import { TestDataResult } from '../interfaces';
 })
 export class AmplitudeAction implements BaseAction<TestDataResult> {
   async perform(payload: TestDataResult): Promise<void> {
-    console.log('Data received');
-    console.log(payload);
+    console.log(`[${this.constructor.name}] perform triggered with payload`, {
+      ...payload,
+    });
   }
 }

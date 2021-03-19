@@ -9,7 +9,8 @@ import { TestDataResult } from '../interfaces';
 })
 export class BrazeAction implements BaseAction<TestDataResult> {
   async perform(payload: TestDataResult): Promise<void> {
-    console.log('Data received 2');
-    console.log(payload);
+    console.log(`[${this.constructor.name}] perform triggered with payload`, {
+      ...payload,
+    });
   }
 }

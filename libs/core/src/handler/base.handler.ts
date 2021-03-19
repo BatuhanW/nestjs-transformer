@@ -28,14 +28,38 @@ export class BaseHandler implements OnModuleInit {
   private actions: BaseAction<Record<string, any>>[] = [];
 
   async handle(payload: Record<string, any>): Promise<void> {
-    console.log('Handlinggg', this);
+    console.log('--------------------------------------------');
+    console.log(
+      `[${this.constructor.name}] handling event for payload`,
+      { ...payload },
+      '\n',
+    );
     const transformedPayload = this.transformer.perform(payload);
+    console.log(
+      `[${this.constructor.name}] transformed payload`,
+      { ...transformedPayload },
+      '\n',
+    );
 
     const enrichedPayload = await this.enricher.perform(transformedPayload);
+    console.log(
+      `[${this.constructor.name}] enriched payload`,
+      { ...enrichedPayload },
+      '\n',
+    );
 
     await Promise.all(
-      this.actions.map((action) => action.perform(enrichedPayload)),
+      this.actions.map((action) => {
+        console.log(
+          `[${this.constructor.name}] calling action ${action.constructor.name}`,
+          '\n',
+        );
+
+        action.perform(enrichedPayload);
+      }),
     );
+    console.log(`[${this.constructor.name}] handling completed.`);
+    console.log('--------------------------------------------');
   }
 
   onModuleInit(): void {
