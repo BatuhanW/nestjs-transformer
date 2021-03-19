@@ -1,21 +1,10 @@
-import {
-  Inject,
-  Injectable,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Consumer, Kafka } from 'kafkajs';
 
-import {
-  KAFKA_MODULE_REGISTER_OPTIONS,
-  KAFKA_SUBSCRIBER_KEY,
-} from './constants';
-import {
-  KafkaModuleRegisterOptions,
-  KafkaSubscriberDecoratorParams,
-} from './interfaces';
+import { KAFKA_MODULE_REGISTER_OPTIONS, KAFKA_SUBSCRIBER_KEY } from './constants';
+import { KafkaModuleRegisterOptions, KafkaSubscriberDecoratorParams } from './interfaces';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
@@ -47,10 +36,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     providers.forEach((provider) => {
       if (!provider.metatype) return;
 
-      const kafkaSubscriberOptions = Reflect.getMetadata(
-        KAFKA_SUBSCRIBER_KEY,
-        provider.metatype,
-      );
+      const kafkaSubscriberOptions = Reflect.getMetadata(KAFKA_SUBSCRIBER_KEY, provider.metatype);
 
       if (kafkaSubscriberOptions) {
         const existingTopicSubscribers =
@@ -87,9 +73,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
         try {
           subscribedHandlers
-            .filter(({ options: { filter } }) =>
-              filter ? filter(messageObject) : true,
-            )
+            .filter(({ options: { filter } }) => (filter ? filter(messageObject) : true))
             .forEach(({ provider }) => {
               provider.instance.handle(messageObject.payload);
             });
