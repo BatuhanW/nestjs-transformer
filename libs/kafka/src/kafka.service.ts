@@ -78,7 +78,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         try {
           subscribedHandlers
             .filter(({ options: { filter } }) =>
-              filter ? filter(message) : true,
+              filter ? filter(messageObject) : true,
             )
             .forEach(({ provider }) => {
               provider.instance.handle(messageObject.payload);

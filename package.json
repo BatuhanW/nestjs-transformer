@@ -19,7 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/nest-transformer/test/jest-e2e.json",
-    "publish": "kafkacat -P -t users -F kafkacat.conf",
+    "publish:users": "kafkacat -P -t users -F kafkacat.conf payloads/verification_state_change.json",
+    "publish:id_check": "kafkacat -P -t risk.users.queue -F kafkacat.conf payloads/verification_request.json",
     "consume": "kafkacat -t users -F kafkacat.conf"
   },
   "dependencies": {
