@@ -1,11 +1,8 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { Enricher, BaseEnricher } from '@core';
+import { BaseEnricher } from '@core';
 import { EnrichedTestData, TestDataResult } from '../interfaces';
 
 @Injectable()
-// @Enricher({
-//   handlers: ['VerificationRequestHandler', 'VerificationStateChangeHandler'],
-// })
 export class UserEnricher implements BaseEnricher<TestDataResult, Promise<EnrichedTestData>> {
   constructor(private readonly httpClient: HttpService) {}
 
