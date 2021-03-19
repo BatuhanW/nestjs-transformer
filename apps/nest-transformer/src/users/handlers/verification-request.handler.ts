@@ -4,7 +4,7 @@ import { Handler, BaseHandler } from '@core';
 import { VerificationRequestTransformer } from '../transformers/verification-request.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
 import { AmplitudeDestination } from '../destinations/amplitude.destination';
-import { BrazeAction } from '../destinations/braze.action';
+import { BrazeDestination } from '../destinations/braze.destination';
 
 @Injectable()
 @KafkaSubscriber({
@@ -17,7 +17,7 @@ export class VerificationRequestHandler extends BaseHandler {
     private transformer: VerificationRequestTransformer,
     private enricher: UserEnricher,
     private ampAction: AmplitudeDestination,
-    private brazeAction: BrazeAction,
+    private brazeAction: BrazeDestination,
   ) {
     super();
 

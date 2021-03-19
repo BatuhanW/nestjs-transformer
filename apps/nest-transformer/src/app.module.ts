@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { KafkaModule } from '@adapters/kafka';
 import { VerificationRequestHandler } from './users/handlers/verification-request.handler';
 import { AmplitudeDestination } from './users/destinations/amplitude.destination';
-import { BrazeAction } from './users/destinations/braze.action';
+import { BrazeDestination } from './users/destinations/braze.destination';
 import { VerificationRequestTransformer } from './users/transformers/verification-request.transformer';
 import { VerificationStateChangeTransformer } from './users/transformers/verification-state-change.transformer';
 import { UserEnricher } from './users/enrichers/user.enricher';
@@ -29,7 +29,7 @@ import { CoreModule } from '../../../libs/core/src';
     VerificationStateChangeTransformer,
     UserEnricher,
     AmplitudeDestination,
-    BrazeAction,
+    BrazeDestination,
   ],
 })
 export class AppModule {}

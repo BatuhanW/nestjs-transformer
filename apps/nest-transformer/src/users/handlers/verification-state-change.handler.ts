@@ -4,7 +4,7 @@ import { Handler, BaseHandler } from '@core';
 import { VerificationStateChangeTransformer } from '../transformers/verification-state-change.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
 import { AmplitudeDestination } from '../destinations/amplitude.destination';
-import { BrazeAction } from '../destinations/braze.action';
+import { BrazeDestination } from '../destinations/braze.destination';
 
 const topics = [
   'verification_not_started',
@@ -24,7 +24,7 @@ export class VerificationStateChangeHandler extends BaseHandler {
     private transformer: VerificationStateChangeTransformer,
     private enricher: UserEnricher,
     private ampAction: AmplitudeDestination,
-    private brazeAction: BrazeAction,
+    private brazeAction: BrazeDestination,
   ) {
     super();
 
