@@ -42,7 +42,7 @@ export class BaseHandler implements OnModuleInit {
     if (this.constructor.name === 'BaseHandler') return;
 
     console.log('--------------------------------------------');
-    console.log('Getting providers for', this.constructor.name, '\n');
+    console.log(`[${this.constructor.name}] Initialazing providers...`, '\n');
 
     const providers = this.discoveryService.getProviders();
 
@@ -58,7 +58,12 @@ export class BaseHandler implements OnModuleInit {
         transformerDecoratorParams?.handlers.includes(this.constructor.name)
       ) {
         this.transformer = provider.instance;
-        console.log('Pushed transformer ', provider.name, '\n');
+        console.log(
+          `[${this.constructor.name}]`,
+          provider.name,
+          'assigned',
+          '\n',
+        );
       }
 
       const enricherDecoratorParams: EnricherDecoratorParams = Reflect.getMetadata(
@@ -68,7 +73,12 @@ export class BaseHandler implements OnModuleInit {
 
       if (enricherDecoratorParams?.handlers.includes(this.constructor.name)) {
         this.enricher = provider.instance;
-        console.log('Pushed enricher ', provider.name, '\n');
+        console.log(
+          `[${this.constructor.name}]`,
+          provider.name,
+          'assigned',
+          '\n',
+        );
       }
 
       const actionDecoratorParams: ActionDecoratorParams = Reflect.getMetadata(
@@ -78,7 +88,12 @@ export class BaseHandler implements OnModuleInit {
 
       if (actionDecoratorParams?.handlers.includes(this.constructor.name)) {
         this.actions.push(provider.instance);
-        console.log('Pushed action ', provider.name, '\n');
+        console.log(
+          `[${this.constructor.name}]`,
+          provider.name,
+          'assigned',
+          '\n',
+        );
       }
     });
 

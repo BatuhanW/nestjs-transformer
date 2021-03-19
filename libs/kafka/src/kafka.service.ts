@@ -61,11 +61,17 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
           { provider, options: kafkaSubscriberOptions },
         ]);
 
+        console.log('--------------------------------------------');
         console.log('[Kafka Service] Found provider', provider.name);
+        console.log('--------------------------------------------', '\n');
       }
     });
 
-    for (const [topicName] of topicSubscribers) {
+    for (const [topicName, data] of topicSubscribers) {
+      console.log('--------------------------------------------');
+      console.log(`[Kafka Service] Subscribing to ${topicName}`);
+      data.map(({ provider }) => console.log('For', provider.name));
+      console.log('--------------------------------------------');
       await this.subscribeToTopic(topicName);
     }
 
@@ -74,6 +80,10 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         const subscribedHandlers = topicSubscribers.get(topic);
 
         const messageObject = JSON.parse(message.value.toString());
+
+        console.log('--------------------------------------------');
+        console.log('[Kafka Service] Received payload', { ...messageObject });
+        console.log('--------------------------------------------');
 
         try {
           subscribedHandlers
@@ -89,7 +99,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       },
     });
 
-    console.log('Finit0');
+    console.log('[Kafka Service] Initialized');
   }
 
   async stop(): Promise<void> {
