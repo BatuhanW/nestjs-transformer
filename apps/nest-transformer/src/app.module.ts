@@ -1,15 +1,22 @@
 import { HttpModule, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
+import { CoreModule } from '@core';
 import { KafkaModule } from '@adapters/kafka';
+
+import { AppController } from './app.controller';
+
+import { AppService } from './app.service';
+
 import { VerificationRequestHandler } from './users/handlers/verification-request.handler';
-import { AmplitudeDestination } from './users/destinations/amplitude.destination';
-import { BrazeDestination } from './users/destinations/braze.destination';
+import { VerificationStateChangeHandler } from './users/handlers/verification-state-change.handler';
+
 import { VerificationRequestTransformer } from './users/transformers/verification-request.transformer';
 import { VerificationStateChangeTransformer } from './users/transformers/verification-state-change.transformer';
+
 import { UserEnricher } from './users/enrichers/user.enricher';
-import { VerificationStateChangeHandler } from './users/handlers/verification-state-change.handler';
-import { CoreModule } from '../../../libs/core/src';
+
+import { AmplitudeDestination } from './users/destinations/amplitude.destination';
+import { BrazeDestination } from './users/destinations/braze.destination';
 
 @Module({
   imports: [
