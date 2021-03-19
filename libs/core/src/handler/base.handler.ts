@@ -17,13 +17,19 @@ import { BaseTransformer } from '../transformer/base.transformer';
 export class BaseHandler implements OnModuleInit {
   constructor(private readonly discoveryService: DiscoveryService) {}
 
-  private transformer: BaseTransformer<Record<string, any>, Record<string, any>>;
-  private enricher: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
+  private transformer: BaseTransformer<
+    Record<string, any>,
+    Record<string, any>
+  >;
+  private enricher: BaseEnricher<
+    Record<string, any>,
+    Promise<Record<string, any>>
+  >;
   private actions: BaseAction<Record<string, any>>[] = [];
 
   async handle(payload: Record<string, any>): Promise<void> {
     console.log('Handlinggg', this);
-    const transformedPayload =  this.transformer.perform(payload);
+    const transformedPayload = this.transformer.perform(payload);
 
     const enrichedPayload = await this.enricher.perform(transformedPayload);
 
@@ -35,9 +41,10 @@ export class BaseHandler implements OnModuleInit {
   onModuleInit(): void {
     if (this.constructor.name === 'BaseHandler') return;
 
-    console.log('Getting providers', this.constructor.name);
+    console.log('--------------------------------------------');
+    console.log('Getting providers for', this.constructor.name, '\n');
+
     const providers = this.discoveryService.getProviders();
-    console.log('Got providers');
 
     providers.forEach((provider) => {
       if (!provider.metatype) return;
@@ -51,6 +58,7 @@ export class BaseHandler implements OnModuleInit {
         transformerDecoratorParams?.handlers.includes(this.constructor.name)
       ) {
         this.transformer = provider.instance;
+        console.log('Pushed transformer ', provider.name, '\n');
       }
 
       const enricherDecoratorParams: EnricherDecoratorParams = Reflect.getMetadata(
@@ -60,6 +68,7 @@ export class BaseHandler implements OnModuleInit {
 
       if (enricherDecoratorParams?.handlers.includes(this.constructor.name)) {
         this.enricher = provider.instance;
+        console.log('Pushed enricher ', provider.name, '\n');
       }
 
       const actionDecoratorParams: ActionDecoratorParams = Reflect.getMetadata(
@@ -69,7 +78,10 @@ export class BaseHandler implements OnModuleInit {
 
       if (actionDecoratorParams?.handlers.includes(this.constructor.name)) {
         this.actions.push(provider.instance);
+        console.log('Pushed action ', provider.name, '\n');
       }
     });
+
+    console.log('--------------------------------------------', '\n');
   }
 }
