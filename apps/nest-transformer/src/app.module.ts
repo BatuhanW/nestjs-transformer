@@ -2,12 +2,13 @@ import { HttpModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from '@adapters/kafka';
-import { TestHandler } from './test/handlers/test.handler';
-import { LogAction } from './test/actions/log.action';
-import { Log2Action } from './test/actions/log2.action';
-import { TestTransformer } from './test/transformers/test.transformer';
-import { TestEnricher } from './test/enrichers/test.enricher';
-import { Test2Handler } from './test/handlers/test2.handler';
+import { VerificationRequestHandler } from './users/handlers/verification-request.handler';
+import { AmplitudeAction } from './users/actions/amplitude.action';
+import { BrazeAction } from './users/actions/braze.action';
+import { VerificationRequestTransformer } from './users/transformers/verification-request.transformer';
+import { VerificationStateChangeTransformer } from './users/transformers/verification-state-change.transformer';
+import { UserEnricher } from './users/enrichers/user.enricher';
+import { VerificationStateChangeHandler } from './users/handlers/verification-state-change.handler';
 import { CoreModule } from '../../../libs/core/src';
 
 @Module({
@@ -22,12 +23,13 @@ import { CoreModule } from '../../../libs/core/src';
   controllers: [AppController],
   providers: [
     AppService,
-    TestHandler,
-    Test2Handler,
-    TestTransformer,
-    TestEnricher,
-    LogAction,
-    Log2Action,
+    VerificationRequestHandler,
+    VerificationStateChangeHandler,
+    VerificationRequestTransformer,
+    VerificationStateChangeTransformer,
+    UserEnricher,
+    AmplitudeAction,
+    BrazeAction,
   ],
 })
 export class AppModule {}

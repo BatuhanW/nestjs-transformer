@@ -3,8 +3,10 @@ import { Enricher, BaseEnricher } from '@core';
 import { EnrichedTestData, TestDataResult } from '../interfaces';
 
 @Injectable()
-@Enricher({ handlers: ['TestHandler', 'Test2Handler'] })
-export class TestEnricher
+@Enricher({
+  handlers: ['VerificationRequestHandler', 'VerificationStateChangeHandler'],
+})
+export class UserEnricher
   implements BaseEnricher<TestDataResult, Promise<EnrichedTestData>> {
   constructor(private readonly httpClient: HttpService) {}
 

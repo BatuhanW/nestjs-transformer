@@ -4,8 +4,8 @@ import { Transformer, BaseTransformer } from '@core';
 import { TestDataPayload, TestDataResult } from '../interfaces';
 
 @Injectable()
-@Transformer({ handlers: ['TestHandler', 'Test2Handler'] })
-export class TestTransformer
+@Transformer({ handlers: ['VerificationStateChangeHandler'] })
+export class VerificationStateChangeTransformer
   implements BaseTransformer<TestDataPayload, TestDataResult> {
   perform(payload: TestDataPayload): TestDataResult {
     return {
