@@ -1,6 +1,5 @@
 import { HttpModule, Module } from '@nestjs/common';
 
-import { CoreModule } from '@core';
 import { KafkaModule } from '@adapters/kafka';
 
 import { AppController } from './app.controller';
@@ -22,7 +21,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    CoreModule.register(),
     KafkaModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
