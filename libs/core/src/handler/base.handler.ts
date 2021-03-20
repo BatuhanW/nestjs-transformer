@@ -7,7 +7,7 @@ import { BaseTransformer } from '../transformer/base.transformer';
 export class BaseHandler<IncomingPayload = Record<string, any>> {
   protected transformer: BaseTransformer<Record<string, any>, Record<string, any>>;
   protected enricher: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
-  protected actions: BaseDestination<Record<string, any>>[];
+  protected destinations: BaseDestination<Record<string, any>>[];
 
   async handle(payload: IncomingPayload): Promise<void> {
     console.log('--------------------------------------------');
@@ -19,7 +19,7 @@ export class BaseHandler<IncomingPayload = Record<string, any>> {
     console.log(`[${this.constructor.name}] enriched payload`, { ...enrichedPayload }, '\n');
 
     await Promise.all(
-      this.actions.map((action) => {
+      this.destinations.map((action) => {
         console.log(`[${this.constructor.name}] calling action ${action.constructor.name}`, '\n');
 
         action.perform(enrichedPayload);

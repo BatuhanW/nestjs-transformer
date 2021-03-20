@@ -23,13 +23,13 @@ export class VerificationStateChangeHandler extends BaseHandler {
   constructor(
     private verificationStateChangeTransformer: VerificationStateChangeTransformer,
     private userEnricher: UserEnricher,
-    private ampAction: AmplitudeDestination,
-    private brazeAction: BrazeDestination,
+    private ampDestination: AmplitudeDestination,
+    private brazeDestination: BrazeDestination,
   ) {
     super();
 
     this.transformer = this.verificationStateChangeTransformer;
     this.enricher = this.userEnricher;
-    this.actions = [this.ampAction, this.brazeAction];
+    this.destinations = [this.ampDestination, this.brazeDestination];
   }
 }

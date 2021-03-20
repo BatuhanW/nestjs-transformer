@@ -16,13 +16,13 @@ export class VerificationRequestHandler extends BaseHandler {
   constructor(
     private verificationRequestTransformer: VerificationRequestTransformer,
     private userEnricher: UserEnricher,
-    private ampAction: AmplitudeDestination,
-    private brazeAction: BrazeDestination,
+    private ampDestination: AmplitudeDestination,
+    private brazeDestination: BrazeDestination,
   ) {
     super();
 
     this.transformer = this.verificationRequestTransformer;
     this.enricher = this.userEnricher;
-    this.actions = [this.ampAction, this.brazeAction];
+    this.destinations = [this.ampDestination, this.brazeDestination];
   }
 }
