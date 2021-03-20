@@ -35,8 +35,5 @@ export class BaseHandler<IncomingPayload = Record<string, any>> {
           }),
         ),
       );
-
-    console.log(`[${this.constructor.name}] handling completed.`);
-    console.log('--------------------------------------------');
   }
 }

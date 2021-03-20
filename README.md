@@ -42,9 +42,9 @@ Only `Handler` classes should be decorated with this decorator.
 
 ### Handler Decorator
 
-Marks the decorated class as `Handler`. Decorated Handler class doesn't need to have any methods.
+Marks the decorated class as `Handler`.
+The decorated class is responsible for providing a `Transformer`, `Enricher`, and `Destination`(s).
 Decorated class should be extended from `BaseHandler`. (`import { BaseHandler } from '@core'`)
-Then the BaseHandler takes care of assigning other classes like `Transformer`, `Enricher` and `Action`s to decorated class.
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -52,75 +52,90 @@ import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka';
 import { Handler, BaseHandler } from '@core';
 
+import { UserTransformer } from '../transformers/user.transformer';
+import { UserEnricher } from '../enrichers/user.enricher';
+
+import { AmplitudeDestination } from '../destinations/amplitude.destination';
+import { BrazeDestination } from '../destinations/braze.destination';
+
 @Injectable()
 @KafkaSubscriber({
   topicName: 'users',
-  filter: (payload) => payload.event_name === 'deleted',
+  filter: (payload) => payload.event_name === 'created',
 })
-@Handler({ name: 'UserDeletedHandler' })
-export class UserDeletedHandler extends BaseHandler {}
-```
+@Handler()
+export class UserDeletedHandler extends BaseHandler {
+  constructor(
+    private userTransformer: UserTransformer,
+    private userEnricher: UserEnricher,
+    private amplitudeDestination: AmplitudeDestination,
+    private brazeDestination: BrazeDestination,
+  ) {
+    super();
 
-### Transformer Decorator
-
-Marks the decorated class as `Transformer` and assignes to the given `Handler`(s).
-
-Transformers accepts the passed event payload from Handler and transforms it then returns result to the next class.
-
-Marked class should `implement` BaseTransformer generic.
-BaseTransformer's first parameter is input and the second one is output type.
-
-`export class UserTransformer implements BaseTransformer<IncomingPayload, TransformedPayload> { ... }`
-
-The decorated class should have `perform` which handles the transformation.
-
-```typescript
-import { Injectable } from '@nestjs/common';
-
-import { Transformer, BaseTransformer } from '@core';
-import { UsersTopicPayload, UsersTransformedPayload } from '../interfaces';
-
-@Injectable()
-@Transformer({ handlers: ['UserDeletedHandler', 'UserCreatedHandler'] })
-export class UserTransformer implements BaseTransformer<UsersTopicPayload, UsersTransformedPayload> {
-  perform(payload: UsersTopicPayload): UsersTransformedPayload {
-    return {
-      // Place payload under "data" key.
-      data: payload,
-    };
+    this.transformer = this.userTransformer;
+    this.enricher = this.userEnricher;
+    this.destinations = [this.amplitudeDestination, this.brazeDestination];
   }
 }
 ```
 
-### Enricher Decorator
+### Transformer
 
-Marks the decorated class as `Enricher` and assignes to the given `Handler`(s).
+Transformers accepts the passed event payload from Handler, transforms it then returns result to the next class, it could be an `Enricher` if defined, or `Destination`(s).
 
-Enrichers accepts the transformed payload and Enriches it through some API requests.
-Perhaps you have `user_id` in the event payload but not `email`.
+Transformer classes should `implement` BaseTransformer generic.
+BaseTransformer's first parameter is input and the second one is output type.
+
+`export class UserTransformer implements BaseTransformer<IncomingPayload, TransformedPayload> { ... }`
+
+Transformer classes should have `perform` method which handles the transformation.
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+import { BaseTransformer } from '@core';
+
+import { UsersTopicPayload, UsersTransformedPayload } from '../interfaces';
+
+@Injectable()
+export class UserTransformer implements BaseTransformer<UsersTopicPayload, UsersTransformedPayload> {
+  perform(payload: UsersTopicPayload): UsersTransformedPayload {
+    // payload => { user_id: 1 }
+    return {
+      data: payload,
+    };
+    // result => { data: { user_id: 1 } }
+  }
+}
+```
+
+### Enricher
+
+Enrichers accepts the transformed payload from `Transformer` class if defined or gets passed payload from the event and Enriches it through some API requests.
+Perhaps you have `user_id` in the event payload but don't have user's `email`.
 With enrichers, you can get other required fields for the user from your API.
 
-Marked class should `implement` BaseEnricher generic.
+Enricher classes should `implement` BaseEnricher generic.
 BaseEnricher's first parameter is input and the second one is output type.
 
 `export class UserEnricher implements BaseEnricher<UsersTransformedPayload, Promise<UsersEnrichedPayload>> { ... }`
 
-The decorated class should have `perform` method which handles the enrichment.
+Enricher classses should have `perform` method which handles the enrichment.
 
 ```typescript
 import { HttpService, Injectable } from '@nestjs/common';
 
-import { Enricher, BaseEnricher } from '@core';
+import { BaseEnricher } from '@core';
+
 import { UsersTransformedPayload, UsersEnrichedPayload } from '../interfaces';
 
 @Injectable()
-@Enricher({
-  handlers: ['UserDeletedHandler', 'UserCreatedHandler'],
-})
 export class UserEnricher implements BaseEnricher<UsersTransformedPayload, Promise<UsersEnrichedPayload>> {
   constructor(private readonly httpClient: HttpService) {}
 
   async perform(payload: UsersTransformedPayload): Promise<UsersEnrichedPayload> {
+    // payload => { data: { user_id: 1 } }
     const { data: userResponse } = await this.httpClient.get('https://api.example.com/users/1').toPromise();
 
     return {
@@ -129,114 +144,124 @@ export class UserEnricher implements BaseEnricher<UsersTransformedPayload, Promi
         ...userResponse,
       },
     };
+    // result => { user_id: 1, email: 'test@example.com' }
   }
 }
 ```
 
-## Action Decorator
+## Destination Decorator
 
-Marks the decorated class as `Action` and assignes to the given `Handler`(s).
+Destinations accepts the enriched payload if defined any or transformed payload and sends it to the 3rd party providers through some API requests.
 
-Actions accepts the enriched payload and sends it to the 3rd party providers through some API requests.
+Marked class should `implement` BaseDestination generic.
+BaseDestination's first parameter is incoming payload type.
 
-Marked class should `implement` BaseAction generic.
-BaseAction's first parameter is incoming payload type.
+`export class AmplitudeDestination implements BaseDestination<UsersEnrichedPayload>`
 
-`export class AmplitudeAction implements BaseAction<UsersEnrichedPayload>`
-
-The decorated class should have `perform` method which handles the action.
+Destination classses should have `perform` method which handles API request(s).
 
 ```typescript
 import { HttpService, Injectable } from '@nestjs/common';
 
-import { Action, BaseAction } from '@core';
+import { BaseDestination } from '@core';
 import { UsersEnrichedPayload } from '../interfaces';
 
 @Injectable()
-@Action({
-  handlers: ['UserDeletedHandler', 'UserCreatedHandler'],
-})
-export class AmplitudeAction implements BaseAction<UsersEnrichedPayload> {
+export class AmplitudeDestination implements BaseDestination<UsersEnrichedPayload> {
   constructor(private readonly httpClient: HttpService) {}
 
   async perform(payload: UsersEnrichedPayload): Promise<void> {
-    await this.httpClient.post('https://api.amplitude.com/events');
+    // payload => { data: { user_id: 1, email: 'test@example.com' } }
+    await this.httpClient.post('https://api.amplitude.com/events', { payload });
   }
 }
 ```
 
-### Entire lifecycle of event from Handler to Actions
+### Entire lifecycle of event from Handler to Destinations
 
 ```bash
 --------------------------------------------
-[Kafka Service] Received payload {
-  event_name: 'id_check_request',
-  payload: {
+
+  [Kafka Service] Received payload {
+    event_name: 'id_check_request',
+    payload: {
+      user_id: 1,
+      order_number: '1',
+      verification_state: 'pending',
+      requester_id: 2
+    }
+  }
+
+--------------------------------------------
+
+  [VerificationRequestHandler] handling event for payload {
     user_id: 1,
     order_number: '1',
     verification_state: 'pending',
     requester_id: 2
   }
-}
+
 --------------------------------------------
+
+  [VerificationRequestHandler] transformed payload {
+    data: {
+      user_id: 1,
+      order_number: '1',
+      verification_state: 'pending',
+      requester_id: 2
+    }
+  }
+
 --------------------------------------------
-[VerificationRequestHandler] handling event for payload {
-  user_id: 1,
-  order_number: '1',
-  verification_state: 'pending',
-  requester_id: 2
-}
 
-[VerificationRequestHandler] transformed payload {
-  data: {
-    user_id: 1,
-    order_number: '1',
-    verification_state: 'pending',
-    requester_id: 2
+  [VerificationRequestHandler] enriched payload {
+    data: {
+      user_id: 1,
+      order_number: '1',
+      verification_state: 'pending',
+      requester_id: 2,
+      id: 1,
+      name: 'Leanne Graham',
+      username: 'Bret',
+      email: 'Sincere@april.biz',
+    }
   }
-}
 
-[VerificationRequestHandler] enriched payload {
-  data: {
-    user_id: 1,
-    order_number: '1',
-    verification_state: 'pending',
-    requester_id: 2,
-    userId: 1,
-    id: 1,
-    title: 'delectus aut autem',
-    completed: false
-  }
-}
-
-[VerificationRequestHandler] calling action AmplitudeAction
-
-[AmplitudeAction] perform triggered with payload {
-  data: {
-    user_id: 1,
-    order_number: '1',
-    verification_state: 'pending',
-    requester_id: 2,
-    userId: 1,
-    id: 1,
-    title: 'delectus aut autem',
-    completed: false
-  }
-}
-[VerificationRequestHandler] calling action BrazeAction
-
-[BrazeAction] perform triggered with payload {
-  data: {
-    user_id: 1,
-    order_number: '1',
-    verification_state: 'pending',
-    requester_id: 2,
-    userId: 1,
-    id: 1,
-    title: 'delectus aut autem',
-    completed: false
-  }
-}
-[VerificationRequestHandler] handling completed.
 --------------------------------------------
+
+  [VerificationRequestHandler] calling destination AmplitudeDestination
+
+--------------------------------------------
+
+  [AmplitudeDestination] perform triggered with payload {
+    data: {
+      user_id: 1,
+      order_number: '1',
+      verification_state: 'pending',
+      requester_id: 2,
+      id: 1,
+      name: 'Leanne Graham',
+      username: 'Bret',
+      email: 'Sincere@april.biz',
+    }
+  }
+
+--------------------------------------------
+
+  [VerificationRequestHandler] calling destination BrazeDestination
+
+--------------------------------------------
+
+  [BrazeDestination] perform triggered with payload {
+    data: {
+      user_id: 1,
+      order_number: '1',
+      verification_state: 'pending',
+      requester_id: 2,
+      id: 1,
+      name: 'Leanne Graham',
+      username: 'Bret',
+      email: 'Sincere@april.biz',
+    }
+  }
 ```
