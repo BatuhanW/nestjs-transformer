@@ -23,7 +23,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     this.consumer = this.kafka.consumer(consumerConfig);
   }
 
-  async start(): Promise<void> {
+  async connect(): Promise<void> {
+    await this.disconnect();
     await this.consumer.connect();
 
     const providers = this.discoveryService.getProviders();
@@ -86,16 +87,16 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     console.log('[Kafka Service] Initialized');
   }
 
-  async stop(): Promise<void> {
+  async disconnect(): Promise<void> {
     await this.consumer.disconnect();
   }
 
   async onModuleInit(): Promise<void> {
-    this.start();
+    this.connect();
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.stop();
+    await this.disconnect();
   }
 
   async subscribeToTopic(topic: string): Promise<void> {
