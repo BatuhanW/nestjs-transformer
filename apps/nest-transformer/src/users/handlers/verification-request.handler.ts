@@ -14,15 +14,15 @@ import { BrazeDestination } from '../destinations/braze.destination';
 @Handler()
 export class VerificationRequestHandler extends BaseHandler {
   constructor(
-    private transformer: VerificationRequestTransformer,
-    private enricher: UserEnricher,
+    private verificationRequestTransformer: VerificationRequestTransformer,
+    private userEnricher: UserEnricher,
     private ampAction: AmplitudeDestination,
     private brazeAction: BrazeDestination,
   ) {
     super();
 
-    this.transformers = [this.transformer];
-    this.enrichers = [this.enricher];
+    this.transformer = this.verificationRequestTransformer;
+    this.enricher = this.userEnricher;
     this.actions = [this.ampAction, this.brazeAction];
   }
 }

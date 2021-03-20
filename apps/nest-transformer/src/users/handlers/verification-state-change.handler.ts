@@ -21,15 +21,15 @@ const topics = [
 @Handler()
 export class VerificationStateChangeHandler extends BaseHandler {
   constructor(
-    private transformer: VerificationStateChangeTransformer,
-    private enricher: UserEnricher,
+    private verificationStateChangeTransformer: VerificationStateChangeTransformer,
+    private userEnricher: UserEnricher,
     private ampAction: AmplitudeDestination,
     private brazeAction: BrazeDestination,
   ) {
     super();
 
-    this.transformers = [this.transformer];
-    this.enrichers = [this.enricher];
+    this.transformer = this.verificationStateChangeTransformer;
+    this.enricher = this.userEnricher;
     this.actions = [this.ampAction, this.brazeAction];
   }
 }

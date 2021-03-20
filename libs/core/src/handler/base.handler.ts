@@ -5,17 +5,17 @@ import { BaseTransformer } from '../transformer/base.transformer';
 
 @Injectable()
 export class BaseHandler {
-  protected transformers: BaseTransformer<Record<string, any>, Record<string, any>>[];
-  protected enrichers: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>[];
+  protected transformer: BaseTransformer<Record<string, any>, Record<string, any>>;
+  protected enricher: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
   protected actions: BaseDestination<Record<string, any>>[];
 
   async handle(payload: Record<string, any>): Promise<void> {
     console.log('--------------------------------------------');
     console.log(`[${this.constructor.name}] handling event for payload`, { ...payload }, '\n');
-    const transformedPayload = this.transformers[0].perform(payload);
+    const transformedPayload = this.transformer.perform(payload);
     console.log(`[${this.constructor.name}] transformed payload`, { ...transformedPayload }, '\n');
 
-    const enrichedPayload = await this.enrichers[0].perform(transformedPayload);
+    const enrichedPayload = await this.enricher.perform(transformedPayload);
     console.log(`[${this.constructor.name}] enriched payload`, { ...enrichedPayload }, '\n');
 
     await Promise.all(
