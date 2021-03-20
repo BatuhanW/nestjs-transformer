@@ -8,9 +8,7 @@ export class UserEnricher implements BaseEnricher<TestDataResult, Promise<Enrich
 
   async perform(payload: TestDataResult): Promise<EnrichedTestData> {
     const { data } = await this.httpClient
-      .get('https://jsonplaceholder.typicode.com/todos/1', {
-        params: { name: payload.data.test },
-      })
+      .get('https://jsonplaceholder.typicode.com/users/1')
       .toPromise();
 
     return {
