@@ -1,30 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { BaseDestination } from '../destination/base.destination';
-import { BaseEnricher } from '../enricher/base.enricher';
+import { of } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs/operators';
+
 import { BaseTransformer } from '../transformer/base.transformer';
+import { BaseEnricher } from '../enricher/base.enricher';
+import { BaseDestination } from '../destination/base.destination';
 
 @Injectable()
 export class BaseHandler<IncomingPayload = Record<string, any>> {
-  protected transformer: BaseTransformer<Record<string, any>, Record<string, any>>;
-  protected enricher: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
+  protected transformer?: BaseTransformer<Record<string, any>, Record<string, any>>;
+  protected enricher?: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
   protected destinations: BaseDestination<Record<string, any>>[];
 
   async handle(payload: IncomingPayload): Promise<void> {
     console.log('--------------------------------------------');
     console.log(`[${this.constructor.name}] handling event for payload`, { ...payload }, '\n');
-    const transformedPayload = this.transformer.perform(payload);
-    console.log(`[${this.constructor.name}] transformed payload`, { ...transformedPayload }, '\n');
+    of(payload)
+      .pipe(
+        map((val) => (this.transformer ? this.transformer.perform(val) : val)),
+        tap((val) =>
+          console.log(`[${this.constructor.name}] transformed payload`, { ...val }, '\n'),
+        ),
+        mergeMap((val) => (this.enricher ? this.enricher.perform(val) : Promise.resolve(val))),
+        tap((val) => console.log(`[${this.constructor.name}] enriched payload`, { ...val }, '\n')),
+      )
+      .forEach((val) =>
+        Promise.all(
+          this.destinations.map((destination) => {
+            console.log(
+              `[${this.constructor.name}] calling destination ${destination.constructor.name}`,
+              '\n',
+            );
+            return destination.perform(val);
+          }),
+        ),
+      );
 
-    const enrichedPayload = await this.enricher.perform(transformedPayload);
-    console.log(`[${this.constructor.name}] enriched payload`, { ...enrichedPayload }, '\n');
-
-    await Promise.all(
-      this.destinations.map((action) => {
-        console.log(`[${this.constructor.name}] calling action ${action.constructor.name}`, '\n');
-
-        action.perform(enrichedPayload);
-      }),
-    );
     console.log(`[${this.constructor.name}] handling completed.`);
     console.log('--------------------------------------------');
   }
