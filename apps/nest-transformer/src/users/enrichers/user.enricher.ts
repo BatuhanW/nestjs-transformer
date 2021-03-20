@@ -3,7 +3,7 @@ import { BaseEnricher } from '@core';
 import { EnrichedTestData, TestDataResult } from '../interfaces';
 
 @Injectable()
-export class UserEnricher implements BaseEnricher<TestDataResult, Promise<EnrichedTestData>> {
+export class UserEnricher implements BaseEnricher<TestDataResult, EnrichedTestData> {
   constructor(private readonly httpClient: HttpService) {}
 
   async perform(payload: TestDataResult): Promise<EnrichedTestData> {

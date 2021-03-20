@@ -9,7 +9,7 @@ import { BaseDestination } from '../destination/base.destination';
 @Injectable()
 export class BaseHandler<IncomingPayload = Record<string, any>> {
   protected transformer?: BaseTransformer<Record<string, any>, Record<string, any>>;
-  protected enricher?: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
+  protected enricher?: BaseEnricher<Record<string, any>, Record<string, any>>;
   protected destinations: BaseDestination<Record<string, any>>[];
 
   async handle(payload: IncomingPayload): Promise<void> {
