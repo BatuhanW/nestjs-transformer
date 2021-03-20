@@ -17,14 +17,30 @@ import { UserEnricher } from './users/enrichers/user.enricher';
 
 import { AmplitudeDestination } from './users/destinations/amplitude.destination';
 import { BrazeDestination } from './users/destinations/braze.destination';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     CoreModule.register(),
-    KafkaModule.register({
-      kafkaConfig: { clientId: 'test-client', brokers: ['localhost:9092'] },
-      consumerConfig: { groupId: 'test-group' },
+    KafkaModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        kafkaConfig: {
+          clientId: configService.get('KAFKA_CLIENT_ID'),
+          brokers: configService
+            .get('KAFKA_BROKERS')
+            .split(',')
+            .map((broker) => broker.trim()),
+        },
+        consumerConfig: { groupId: configService.get('KAFKA_GROUP_ID') },
+      }),
+      inject: [ConfigService],
     }),
+    // KafkaModule.register({
+    //   kafkaConfig: { clientId: 'test-client', brokers: ['localhost:9092'] },
+    //   consumerConfig: { groupId: 'test-group' },
+    // }),
     HttpModule,
   ],
   controllers: [AppController],

@@ -3,8 +3,8 @@ import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Consumer, Kafka } from 'kafkajs';
 
-import { KAFKA_MODULE_REGISTER_OPTIONS, KAFKA_SUBSCRIBER_KEY } from './constants';
-import { KafkaModuleRegisterOptions, KafkaSubscriberDecoratorParams } from './interfaces';
+import { KAFKA_MODULE_OPTIONS, KAFKA_SUBSCRIBER_KEY } from './constants';
+import { KafkaModuleOptions, KafkaSubscriberDecoratorParams } from './interfaces';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
@@ -12,8 +12,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private consumer: Consumer;
 
   constructor(
-    @Inject(KAFKA_MODULE_REGISTER_OPTIONS)
-    private readonly kafkaModuleRegisterOptions: KafkaModuleRegisterOptions,
+    @Inject(KAFKA_MODULE_OPTIONS)
+    private readonly kafkaModuleRegisterOptions: KafkaModuleOptions,
     private readonly discoveryService: DiscoveryService,
   ) {
     const { kafkaConfig, consumerConfig } = this.kafkaModuleRegisterOptions;
