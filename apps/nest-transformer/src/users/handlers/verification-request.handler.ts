@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka';
-import { Handler, BaseHandler } from '@core';
+import { BaseHandler } from '@core';
 import { VerificationRequestTransformer } from '../transformers/verification-request.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
 import { AmplitudeDestination } from '../destinations/amplitude.destination';
@@ -11,7 +11,6 @@ import { BrazeDestination } from '../destinations/braze.destination';
   topicName: 'risk.users.queue',
   filter: (payload) => payload.event_name === 'id_check_request',
 })
-@Handler()
 export class VerificationRequestHandler extends BaseHandler {
   constructor(
     private verificationRequestTransformer: VerificationRequestTransformer,

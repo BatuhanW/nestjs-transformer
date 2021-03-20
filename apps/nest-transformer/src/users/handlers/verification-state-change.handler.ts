@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka';
-import { Handler, BaseHandler } from '@core';
+import { BaseHandler } from '@core';
 import { VerificationStateChangeTransformer } from '../transformers/verification-state-change.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
 import { AmplitudeDestination } from '../destinations/amplitude.destination';
@@ -18,7 +18,6 @@ const topics = [
   topicName: 'users',
   filter: (message) => topics.includes(message.event_name),
 })
-@Handler()
 export class VerificationStateChangeHandler extends BaseHandler {
   constructor(
     private verificationStateChangeTransformer: VerificationStateChangeTransformer,

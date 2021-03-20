@@ -40,7 +40,7 @@ Only `Handler` classes should be decorated with this decorator.
 })
 ```
 
-### Handler Decorator
+### Handler
 
 Marks the decorated class as `Handler`.
 The decorated class is responsible for providing a `Transformer`, `Enricher`, and `Destination`(s).
@@ -50,7 +50,7 @@ Decorated class should be extended from `BaseHandler`. (`import { BaseHandler } 
 import { Injectable } from '@nestjs/common';
 
 import { KafkaSubscriber } from '@adapters/kafka';
-import { Handler, BaseHandler } from '@core';
+import { BaseHandler } from '@core';
 
 import { UserTransformer } from '../transformers/user.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
@@ -63,7 +63,6 @@ import { BrazeDestination } from '../destinations/braze.destination';
   topicName: 'users',
   filter: (payload) => payload.event_name === 'created',
 })
-@Handler()
 export class UserDeletedHandler extends BaseHandler {
   constructor(
     private userTransformer: UserTransformer,
