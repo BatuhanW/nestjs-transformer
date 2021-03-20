@@ -4,12 +4,12 @@ import { BaseEnricher } from '../enricher/base.enricher';
 import { BaseTransformer } from '../transformer/base.transformer';
 
 @Injectable()
-export class BaseHandler {
+export class BaseHandler<IncomingPayload = Record<string, any>> {
   protected transformer: BaseTransformer<Record<string, any>, Record<string, any>>;
   protected enricher: BaseEnricher<Record<string, any>, Promise<Record<string, any>>>;
   protected actions: BaseDestination<Record<string, any>>[];
 
-  async handle(payload: Record<string, any>): Promise<void> {
+  async handle(payload: IncomingPayload): Promise<void> {
     console.log('--------------------------------------------');
     console.log(`[${this.constructor.name}] handling event for payload`, { ...payload }, '\n');
     const transformedPayload = this.transformer.perform(payload);
