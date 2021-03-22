@@ -1,8 +1,8 @@
-interface ValidationSuccessResult {
+export interface ValidationSuccessResult {
   success: true;
 }
 
-interface ValidationFailResult {
+export interface ValidationFailResult {
   success: false;
   message: string;
 }
