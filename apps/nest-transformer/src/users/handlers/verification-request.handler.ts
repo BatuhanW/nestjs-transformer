@@ -30,4 +30,8 @@ export class VerificationRequestHandler extends BaseHandler {
     console.log('--------------------------------------------');
     console.log(`[${this.constructor.name}] handling event for payload`, { ...payload }, '\n');
   }
+
+  onSuccess(): void {
+    console.log(`[${this.constructor.name}] Success!`, '\n');
+  }
 }

@@ -5,6 +5,7 @@ import { VerificationStateChangeTransformer } from '../transformers/verification
 import { UserEnricher } from '../enrichers/user.enricher';
 import { AmplitudeDestination } from '../destinations/amplitude.destination';
 import { BrazeDestination } from '../destinations/braze.destination';
+import { TestDataPayload } from '../interfaces';
 
 const topics = [
   'verification_not_started',
@@ -18,7 +19,7 @@ const topics = [
   topicName: 'users',
   filter: (message) => topics.includes(message.event_name),
 })
-export class VerificationStateChangeHandler extends BaseHandler {
+export class VerificationStateChangeHandler extends BaseHandler<TestDataPayload> {
   constructor(
     private verificationStateChangeTransformer: VerificationStateChangeTransformer,
     private userEnricher: UserEnricher,
@@ -30,5 +31,14 @@ export class VerificationStateChangeHandler extends BaseHandler {
     this.transformer = this.verificationStateChangeTransformer;
     this.enricher = this.userEnricher;
     this.destinations = [this.ampDestination, this.brazeDestination];
+  }
+
+  onStart(payload: TestDataPayload): void {
+    console.log('--------------------------------------------');
+    console.log(`[${this.constructor.name}] handling event for payload`, { ...payload }, '\n');
+  }
+
+  onSuccess(): void {
+    console.log(`[${this.constructor.name}] Success!`, '\n');
   }
 }
