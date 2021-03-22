@@ -1,10 +1,19 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { BaseEnricher } from '@core';
+import { BaseEnricher, ValidationResult } from '@core';
 import { EnrichedTestData, TestDataResult } from '../interfaces';
 
 @Injectable()
-export class UserEnricher implements BaseEnricher<TestDataResult, EnrichedTestData> {
-  constructor(private readonly httpClient: HttpService) {}
+export class UserEnricher extends BaseEnricher<TestDataResult, EnrichedTestData> {
+  constructor(private readonly httpClient: HttpService) {
+    super();
+  }
+
+  validate(_payload: TestDataResult): ValidationResult {
+    return {
+      success: false,
+      message: 'Enricher failed',
+    };
+  }
 
   async perform(payload: TestDataResult): Promise<EnrichedTestData> {
     const { data } = await this.httpClient
@@ -17,5 +26,9 @@ export class UserEnricher implements BaseEnricher<TestDataResult, EnrichedTestDa
         ...data,
       },
     };
+  }
+
+  onSuccess(payload: TestDataResult): void {
+    console.log(`[${this.constructor.name}] enriched payload`, { ...payload }, '\n');
   }
 }

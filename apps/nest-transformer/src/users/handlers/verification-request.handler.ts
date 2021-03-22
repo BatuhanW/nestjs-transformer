@@ -5,6 +5,7 @@ import { VerificationRequestTransformer } from '../transformers/verification-req
 import { UserEnricher } from '../enrichers/user.enricher';
 import { AmplitudeDestination } from '../destinations/amplitude.destination';
 import { BrazeDestination } from '../destinations/braze.destination';
+import { TestDataPayload } from '../interfaces';
 
 @Injectable()
 @KafkaSubscriber({
@@ -23,5 +24,10 @@ export class VerificationRequestHandler extends BaseHandler {
     this.transformer = this.verificationRequestTransformer;
     this.enricher = this.userEnricher;
     this.destinations = [this.ampDestination, this.brazeDestination];
+  }
+
+  onStart(payload: TestDataPayload): void {
+    console.log('--------------------------------------------');
+    console.log(`[${this.constructor.name}] handling event for payload`, { ...payload }, '\n');
   }
 }
