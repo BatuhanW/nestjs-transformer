@@ -1,25 +1,21 @@
 import { BaseTransformer } from '../transformer/base.transformer';
 import { BaseEnricher } from '../enricher/base.enricher';
 import { BaseDestination } from '../destination/base.destination';
-import { onHandlerError } from '../interfaces';
+import { DefaultObject, onError } from '../types';
+import EmptyEnricher from '../enricher/empty.enricher';
+import { EmptyTransformer } from '../transformer/empty.transformer';
 
-export class CoreHandler implements onHandlerError {
-  private defaultTransformer: BaseTransformer<Record<string, any>, Record<string, any>> = {
-    validate: (_val) => ({ success: true }),
-    perform: (val) => val,
-  };
-  private defaultEnricher: BaseEnricher<Record<string, any>, Record<string, any>> = {
-    validate: (_val) => ({ success: true }),
-    perform: async (val) => val,
-  };
+export abstract class CoreHandler<Payload = DefaultObject> implements onError {
+  protected transformer?: BaseTransformer = new EmptyTransformer();
+  protected enricher?: BaseEnricher = new EmptyEnricher();
+  protected destinations: BaseDestination[] = [];
 
-  protected transformer?: BaseTransformer<Record<string, any>, Record<string, any>> = this
-    .defaultTransformer;
-  protected enricher?: BaseEnricher<Record<string, any>, Record<string, any>> = this
-    .defaultEnricher;
-  protected destinations: BaseDestination<Record<string, any>>[];
+  /* eslint-disable @typescript-eslint/no-empty-function */
+  protected onStart(_payload: Payload): void | Promise<void> {}
+  protected onSuccess(): void | Promise<void> {}
+  /* eslint-enable @typescript-eslint/no-empty-function */
 
-  onHandlerError(error: Error): void | Promise<void> {
+  onError(error: Error): void | Promise<void> {
     console.dir({
       level: 'ERROR',
       timestamp: new Date().toISOString(),
