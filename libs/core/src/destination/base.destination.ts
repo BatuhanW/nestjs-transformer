@@ -1,3 +1,8 @@
-import { Performable } from '../interfaces';
+import { DefaultObject } from '../types';
 
-export type BaseDestination<Payload> = Performable<Payload, Promise<void>>;
+export abstract class BaseDestination<Payload = DefaultObject> {
+  abstract perform(payload: Payload): void;
+
+  // eslint-disable-next-line
+  onSuccess(): void | Promise<void> {}
+}
