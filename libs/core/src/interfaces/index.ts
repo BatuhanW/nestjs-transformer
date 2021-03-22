@@ -1,9 +1,9 @@
 export {
-  OnHandlerStart,
-  OnHandlerEnd,
-  OnPerformableStart,
-  OnPerformableEnd,
-  OnError,
-  OnSuccess,
+  onHandlerStart,
+  onHandlerEnd,
+  onPerformableStart,
+  onPerformableEnd,
+  onHandlerError,
+  onHandlerSuccess,
 } from './hooks.interface';
-export { Performable } from './performable.interface';
+export { Performable, ValidationResult } from './performable.interface';

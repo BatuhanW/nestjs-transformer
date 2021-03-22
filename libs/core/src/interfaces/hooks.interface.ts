@@ -1,23 +1,28 @@
-export interface OnHandlerStart {
-  onHandlerStart<Payload>(payload: Payload): any;
+export interface onHandlerStart {
+  onHandlerStart<Payload = Record<string, any>>(payload: Payload): void;
+  onHandlerStart<Payload = Record<string, any>>(payload: Payload): Promise<void>;
 }
 
-export interface OnHandlerEnd {
-  onHandlerEnd(): any;
+export interface onHandlerEnd {
+  onHandlerEnd<Result = Record<string, any>>(result: Result): void;
+  onHandlerEnd<Result = Record<string, any>>(result: Result): Promise<void>;
 }
 
-export interface OnPerformableStart {
-  onPerformableStart(): any;
+export interface onPerformableStart {
+  onPerformableStart<Payload = Record<string, any>>(payload: Payload): void;
+  onPerformableStart<Payload = Record<string, any>>(payload: Payload): Promise<void>;
 }
 
-export interface OnPerformableEnd {
-  onPerformableEnd(): any;
+export interface onPerformableEnd {
+  onPerformableEnd<Result = Record<string, any>>(result: Result): void;
+  onPerformableEnd<Result = Record<string, any>>(result: Result): Promise<void>;
 }
 
-export interface OnError {
-  onError(e: Error): void;
+export interface onHandlerError {
+  onHandlerError(error: Error): void | Promise<void>;
 }
 
-export interface OnSuccess {
+export interface onHandlerSuccess {
   onSuccess<Payload>(payload: Payload): void;
+  onSuccess<Payload>(payload: Payload): Promise<void>;
 }

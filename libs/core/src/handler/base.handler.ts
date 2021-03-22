@@ -1,28 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { of } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { catchError, mergeMap, takeWhile, tap } from 'rxjs/operators';
 
-import { BaseTransformer } from '../transformer/base.transformer';
-import { BaseEnricher } from '../enricher/base.enricher';
-import { BaseDestination } from '../destination/base.destination';
+import { CoreHandler } from './core.handler';
 
 @Injectable()
-export class BaseHandler<IncomingPayload = Record<string, any>> {
-  protected transformer?: BaseTransformer<Record<string, any>, Record<string, any>>;
-  protected enricher?: BaseEnricher<Record<string, any>, Record<string, any>>;
-  protected destinations: BaseDestination<Record<string, any>>[];
-
+export class BaseHandler<IncomingPayload = Record<string, any>> extends CoreHandler {
   async handle(payload: IncomingPayload): Promise<void> {
     console.log('--------------------------------------------');
     console.log(`[${this.constructor.name}] handling event for payload`, { ...payload }, '\n');
     of(payload)
       .pipe(
-        map((val) => (this.transformer ? this.transformer.perform(val) : val)),
+        mergeMap((val) => of(this.transformer.perform(val))),
         tap((val) =>
           console.log(`[${this.constructor.name}] transformed payload`, { ...val }, '\n'),
         ),
-        mergeMap((val) => (this.enricher ? this.enricher.perform(val) : Promise.resolve(val))),
+        mergeMap((val) => this.enricher.perform(val)),
         tap((val) => console.log(`[${this.constructor.name}] enriched payload`, { ...val }, '\n')),
+        catchError((error) => {
+          this.onHandlerError(error);
+
+          return of({ error: true });
+        }),
+        takeWhile((val) => !val.error),
       )
       .forEach((val) =>
         Promise.all(
