@@ -20,7 +20,7 @@ export class VerificationStateChangeTransformer extends BaseTransformer<
     };
   }
 
-  onSuccess(payload: TestDataPayload): void {
+  onSuccess(payload: TestDataResult): void {
     console.log(`[${this.constructor.name}] transformed payload`, { ...payload }, '\n');
   }
 }

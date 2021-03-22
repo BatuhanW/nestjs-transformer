@@ -5,7 +5,7 @@ export abstract class BaseEnricher<Payload = DefaultObject, Result = DefaultObje
     return { success: true };
   }
 
-  abstract perform(payload: Payload): Promise<Payload | Result>;
+  abstract perform(payload: Payload): Promise<Result>;
 
   public onValidationError({ message }: ValidationFailResult): void | Promise<void> {
     console.dir({
@@ -17,5 +17,5 @@ export abstract class BaseEnricher<Payload = DefaultObject, Result = DefaultObje
   }
 
   // eslint-disable-next-line
-  public onSuccess(_payload: Payload): void | Promise<void> {}
+  public onSuccess(_payload: Result): void | Promise<void> {}
 }

@@ -5,7 +5,7 @@ export abstract class BaseTransformer<Payload = DefaultObject, Result = DefaultO
     return { success: true };
   }
 
-  abstract perform(payload: Payload): Payload | Result;
+  abstract perform(payload: Payload): Result;
 
   public onValidationError({ message }: ValidationFailResult): void | Promise<void> {
     console.dir({
@@ -17,5 +17,5 @@ export abstract class BaseTransformer<Payload = DefaultObject, Result = DefaultO
   }
 
   // eslint-disable-next-line
-  public onSuccess(_payload: Payload): void | Promise<void> {}
+  public onSuccess(_payload: Result): void | Promise<void> {}
 }
