@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { of } from 'rxjs';
 import { catchError, mergeMap, takeWhile, tap } from 'rxjs/operators';
 
 import { CoreHandler } from './core.handler';
 
-@Injectable()
 export class BaseHandler<IncomingPayload = Record<string, any>> extends CoreHandler {
   async handle(payload: IncomingPayload): Promise<void> {
     console.log('--------------------------------------------');
