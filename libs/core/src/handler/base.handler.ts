@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { catchError, mergeMap, takeWhile, tap } from 'rxjs/operators';
 import { DefaultObject } from '../types';
 
@@ -20,16 +20,30 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
         }),
         takeWhile((val) => !val.error),
       )
-      .forEach((val) =>
-        Promise.all(
-          this.destinations.map((destination) => {
-            console.log(
-              `[${this.constructor.name}] calling destination ${destination.constructor.name}`,
-              '\n',
-            );
-            return destination.perform(val);
-          }),
-        ),
+      .subscribe(
+        {
+          next: (val) => {
+            from(this.destinations)
+              .pipe(
+                tap(async (dest) =>
+                  dest
+                    .perform(val)
+                    .then(() => dest.onSuccess())
+                    .catch((error) => this.onError(error)),
+                ),
+              )
+              .subscribe();
+          },
+        },
+        // Promise.all(
+        //   this.destinations.map((destination) => {
+        //     console.log(
+        //       `[${this.constructor.name}] calling destination ${destination.constructor.name}`,
+        //       '\n',
+        //     );
+        //     return destination.perform(val);
+        //   }),
+        // ),
       );
   }
 }
