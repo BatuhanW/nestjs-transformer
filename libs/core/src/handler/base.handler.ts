@@ -10,11 +10,17 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
       .pipe(
         tap((initialPayload) => this.onStart(initialPayload)),
         mergeMap((initialPayload) => of(this.transformer.perform(initialPayload))),
+        catchError((error) => {
+          this.transformer.onError(error);
+
+          return of({ error: true });
+        }),
+        takeWhile((possibleError) => !possibleError.error),
         tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
         mergeMap((transformedPayload) => this.enricher.perform(transformedPayload)),
         tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
         catchError((error) => {
-          this.onError(error);
+          this.enricher.onError(error);
 
           return of({ error: true });
         }),
