@@ -1,4 +1,4 @@
-import { from, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, mergeMap, takeWhile, tap } from 'rxjs/operators';
 import { DefaultObject } from '../types';
 
@@ -8,42 +8,29 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
   async handle(payload: IncomingPayload): Promise<void> {
     of(payload)
       .pipe(
-        tap((val) => this.onStart(val)),
-        mergeMap((val) => of(this.transformer.perform(val))),
-        tap((val) => this.transformer.onSuccess(val)),
-        mergeMap((val) => this.enricher.perform(val)),
-        tap((val) => this.enricher.onSuccess(val)),
+        tap((initialPayload) => this.onStart(initialPayload)),
+        mergeMap((initialPayload) => of(this.transformer.perform(initialPayload))),
+        tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
+        mergeMap((transformedPayload) => this.enricher.perform(transformedPayload)),
+        tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
         catchError((error) => {
           this.onError(error);
 
           return of({ error: true });
         }),
-        takeWhile((val) => !val.error),
+        takeWhile((possibleError) => !possibleError.error),
       )
-      .subscribe(
-        {
-          next: (val) => {
-            from(this.destinations)
-              .pipe(
-                tap(async (dest) =>
-                  dest
-                    .perform(val)
-                    .then(() => dest.onSuccess())
-                    .catch((error) => this.onError(error)),
-                ),
-              )
-              .subscribe();
-          },
+      .subscribe({
+        next: async (enrichedPayload) => {
+          await Promise.all(
+            this.destinations.map((destination) =>
+              destination
+                .perform(enrichedPayload)
+                .then(() => destination.onSuccess())
+                .catch((error) => destination.onError(error)),
+            ),
+          );
         },
-        // Promise.all(
-        //   this.destinations.map((destination) => {
-        //     console.log(
-        //       `[${this.constructor.name}] calling destination ${destination.constructor.name}`,
-        //       '\n',
-        //     );
-        //     return destination.perform(val);
-        //   }),
-        // ),
-      );
+      });
   }
 }
