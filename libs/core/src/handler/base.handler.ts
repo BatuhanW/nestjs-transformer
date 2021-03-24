@@ -1,6 +1,6 @@
-import { of } from 'rxjs';
+import { iif, of, throwError } from 'rxjs';
 import { catchError, mergeMap, takeWhile, tap } from 'rxjs/operators';
-import { DefaultObject } from '../types';
+import { DefaultObject, ValidationFailResult } from '../types';
 
 import { CoreHandler } from './core.handler';
 
@@ -9,7 +9,13 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
     of(payload)
       .pipe(
         tap((initialPayload) => this.onStart(initialPayload)),
-        mergeMap((initialPayload) => of(this.transformer.perform(initialPayload))),
+        mergeMap((initialPayload) =>
+          iif(
+            () => this.transformer.validate(initialPayload).success === true,
+            of(this.transformer.perform(initialPayload)),
+            throwError((this.transformer.validate(initialPayload) as ValidationFailResult).message),
+          ),
+        ),
         catchError((error) => {
           this.transformer.onError(error);
 
@@ -17,14 +23,22 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
         }),
         takeWhile((possibleError) => !possibleError.error),
         tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
-        mergeMap((transformedPayload) => this.enricher.perform(transformedPayload)),
+        mergeMap((transformedPayload) =>
+          iif(
+            () => this.enricher.validate(transformedPayload).success === true,
+            of(this.enricher.perform(transformedPayload)),
+            throwError(
+              (this.enricher.validate(transformedPayload) as ValidationFailResult).message,
+            ),
+          ),
+        ),
         tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
         catchError((error) => {
           this.enricher.onError(error);
 
           return of({ error: true });
         }),
-        takeWhile((possibleError) => !possibleError.error),
+        takeWhile((possibleError) => 'error' in possibleError),
       )
       .subscribe({
         next: async (enrichedPayload) => {
@@ -37,6 +51,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
             ),
           );
         },
+        complete: () => console.log('Completed'),
       });
   }
 }

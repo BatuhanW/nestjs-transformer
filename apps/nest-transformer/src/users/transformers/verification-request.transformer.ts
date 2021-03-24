@@ -10,8 +10,7 @@ export class VerificationRequestTransformer extends BaseTransformer<
 > {
   validate(_payload: TestDataPayload): ValidationResult {
     return {
-      success: false,
-      message: 'Transformer failed',
+      success: true,
     };
   }
 

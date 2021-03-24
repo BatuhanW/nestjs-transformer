@@ -16,8 +16,9 @@ export class UserEnricher extends BaseEnricher<TestDataResult, EnrichedTestData>
   }
 
   async perform(payload: TestDataResult): Promise<EnrichedTestData> {
+    console.log('Im triggered for some reason', payload);
     const { data } = await this.httpClient
-      .get('https://jsonplaceholder.typicode.com/users/1')
+      .post('https://apiqa.getgrover.com.com/api/v1/oauth/tokens')
       .toPromise();
 
     return {

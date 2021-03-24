@@ -1,7 +1,7 @@
 import { DefaultObject, ValidationResult, ValidationFailResult } from '../types';
 
 export abstract class BaseTransformer<Payload = DefaultObject, Result = DefaultObject> {
-  public validate(_payload: Payload): ValidationResult | Promise<ValidationResult> {
+  public validate(_payload: Payload): ValidationResult {
     return { success: true };
   }
 

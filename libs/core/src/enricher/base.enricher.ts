@@ -1,8 +1,8 @@
 import { DefaultObject, ValidationFailResult, ValidationResult } from '../types';
 
 export abstract class BaseEnricher<Payload = DefaultObject, Result = DefaultObject> {
-  public validate(_payload: Payload): ValidationResult | Promise<ValidationResult> {
-    return { success: true };
+  public validate(_payload: Payload): ValidationResult {
+    return { success: false, message: 'swag' };
   }
 
   abstract perform(payload: Payload): Promise<Result>;
