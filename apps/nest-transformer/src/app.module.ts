@@ -23,16 +23,23 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ConfigModule.forRoot(),
     KafkaModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        kafkaConfig: {
-          clientId: configService.get('KAFKA_CLIENT_ID'),
-          brokers: configService
-            .get('KAFKA_BROKERS')
-            .split(',')
-            .map((broker) => broker.trim()),
-        },
-        consumerConfig: { groupId: configService.get('KAFKA_GROUP_ID') },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const isDev = configService.get('NODE_ENV') === 'development';
+        const groupId = `${configService.get('KAFKA_GROUP_ID')}${isDev ? Math.random() * 10 : ''}`;
+
+        return {
+          kafkaConfig: {
+            clientId: configService.get('KAFKA_CLIENT_ID'),
+            brokers: configService
+              .get<string>('KAFKA_BROKERS')
+              .split(',')
+              .map((broker) => broker.trim()),
+          },
+          consumerConfig: {
+            groupId,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
     // KafkaModule.register({
