@@ -33,30 +33,30 @@ describe('BaseHandler', () => {
       const handlerOnStartSpy = jest.spyOn(HappyHandler.prototype, 'onStart');
 
       const tfValidateSpy = jest.spyOn(happyTransformer, 'validate');
+      const tfPerformSpy = jest.spyOn(happyTransformer, 'perform');
       const tfOnSuccessSpy = jest.spyOn(happyTransformer, 'onSuccess');
 
       const enValidateSpy = jest.spyOn(happyEnricher, 'validate');
+      const enPerformSpy = jest.spyOn(happyEnricher, 'perform');
       const enOnSuccessSpy = jest.spyOn(happyEnricher, 'onSuccess');
 
+      const destPerformSpy = jest.spyOn(happyDestination, 'perform');
       const destOnSuccessSpy = jest.spyOn(happyDestination, 'onSuccess');
 
       await handler.handle(payloads.payload);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(payloads.payload);
-      expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
 
       expect(tfValidateSpy).toHaveBeenCalledWith(payloads.payload);
-      expect(tfValidateSpy).toHaveBeenCalledTimes(2);
+      expect(tfPerformSpy).toHaveBeenCalledWith(payloads.payload);
 
       expect(tfOnSuccessSpy).toHaveBeenCalledWith(payloads.transformed);
-      expect(tfOnSuccessSpy).toHaveBeenCalledTimes(1);
 
       expect(enValidateSpy).toHaveBeenCalledWith(payloads.transformed);
-      expect(enValidateSpy).toHaveBeenCalledTimes(2);
-
-      expect(enOnSuccessSpy).toHaveBeenCalledTimes(1);
+      expect(enPerformSpy).toHaveBeenCalledWith(payloads.transformed);
       expect(enOnSuccessSpy).toHaveBeenCalledWith(payloads.enriched);
 
+      expect(destPerformSpy).toHaveBeenCalledWith(payloads.enriched);
       expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
     });
   });
