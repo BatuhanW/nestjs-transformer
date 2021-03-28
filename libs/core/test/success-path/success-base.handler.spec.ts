@@ -70,19 +70,6 @@ describe('BaseHandler', () => {
       expect(destPerformSpy).toHaveBeenCalledTimes(1);
 
       expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
-
-      handlerOnStartSpy.mockClear();
-
-      tfValidateSpy.mockClear();
-      tfPerformSpy.mockClear();
-      tfOnSuccessSpy.mockClear();
-
-      enValidateSpy.mockClear();
-      enPerformSpy.mockClear();
-      enOnSuccessSpy.mockClear();
-
-      destPerformSpy.mockClear();
-      destOnSuccessSpy.mockClear();
     });
   });
 });

@@ -64,19 +64,6 @@ describe('Transformer Fail', () => {
       expect(destPerformSpy).not.toHaveBeenCalled();
 
       expect(destOnSuccessSpy).not.toHaveBeenCalled();
-
-      handlerOnStartSpy.mockClear();
-
-      tfValidateSpy.mockClear();
-      tfPerformSpy.mockClear();
-      tfOnSuccessSpy.mockClear();
-
-      enValidateSpy.mockClear();
-      enPerformSpy.mockClear();
-      enOnSuccessSpy.mockClear();
-
-      destPerformSpy.mockClear();
-      destOnSuccessSpy.mockClear();
     });
   });
 
@@ -133,19 +120,6 @@ describe('Transformer Fail', () => {
       expect(destPerformSpy).not.toHaveBeenCalled();
 
       expect(destOnSuccessSpy).not.toHaveBeenCalled();
-
-      handlerOnStartSpy.mockClear();
-
-      tfValidateSpy.mockClear();
-      tfPerformSpy.mockClear();
-      tfOnSuccessSpy.mockClear();
-
-      enValidateSpy.mockClear();
-      enPerformSpy.mockClear();
-      enOnSuccessSpy.mockClear();
-
-      destPerformSpy.mockClear();
-      destOnSuccessSpy.mockClear();
     });
   });
 });
