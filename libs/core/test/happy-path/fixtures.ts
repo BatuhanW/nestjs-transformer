@@ -50,4 +50,5 @@ export const happyEnricher = {
 export const happyDestination = {
   perform: async (_payload: HappyEnrichedPayload): Promise<void> => {},
   onSuccess: async (): Promise<void> => {},
+  onError: async (_error: Error): Promise<void> => {},
 };

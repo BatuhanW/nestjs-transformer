@@ -5,9 +5,9 @@ export class HappyDestination<Payload = DefaultObject> extends BaseDestination<P
   async perform(_payload: Payload): Promise<void> {}
 
   // eslint-disable-next-line
-  onSuccess(): void | Promise<void> {}
+  async onSuccess(): Promise<void> {}
 
-  onError(error: Error): void | Promise<void> {
+  async onError(error: Error): Promise<void> {
     console.dir({
       level: 'ERROR',
       timestamp: new Date().toISOString(),

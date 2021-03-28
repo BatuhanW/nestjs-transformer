@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HappyHandler } from './happy.handler';
 import { HappyDestination } from './happy.destination';
 
-import { emptyTransformer, emptyEnricher, payloads } from './fixtures';
+import { happyTransformer, happyEnricher, payloads, happyDestination } from './fixtures';
 import { HappyTransformer } from './happy.transformer';
 import { HappyEnricher } from './happy.enricher';
 
@@ -14,9 +14,11 @@ describe('BaseHandler', () => {
       providers: [HappyTransformer, HappyEnricher, HappyDestination, HappyHandler],
     })
       .overrideProvider(HappyTransformer)
-      .useValue(emptyTransformer)
+      .useValue(happyTransformer)
       .overrideProvider(HappyEnricher)
-      .useValue(emptyEnricher)
+      .useValue(happyEnricher)
+      .overrideProvider(HappyDestination)
+      .useValue(happyDestination)
       .compile();
 
     handler = module.get<HappyHandler>(HappyHandler);
@@ -30,21 +32,32 @@ describe('BaseHandler', () => {
     it('should be happy', async () => {
       const handlerOnStartSpy = jest.spyOn(HappyHandler.prototype, 'onStart');
 
-      const tfValidateSpy = jest.spyOn(emptyTransformer, 'validate');
-      const tfOnSuccessSpy = jest.spyOn(emptyTransformer, 'onSuccess');
+      const tfValidateSpy = jest.spyOn(happyTransformer, 'validate');
+      const tfOnSuccessSpy = jest.spyOn(happyTransformer, 'onSuccess');
 
-      const enValidateSpy = jest.spyOn(emptyEnricher, 'validate');
-      const enOnSuccessSpy = jest.spyOn(emptyEnricher, 'onSuccess');
+      const enValidateSpy = jest.spyOn(happyEnricher, 'validate');
+      const enOnSuccessSpy = jest.spyOn(happyEnricher, 'onSuccess');
+
+      const destOnSuccessSpy = jest.spyOn(happyDestination, 'onSuccess');
 
       await handler.handle(payloads.payload);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(payloads.payload);
+      expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
 
       expect(tfValidateSpy).toHaveBeenCalledWith(payloads.payload);
+      expect(tfValidateSpy).toHaveBeenCalledTimes(2);
+
       expect(tfOnSuccessSpy).toHaveBeenCalledWith(payloads.transformed);
+      expect(tfOnSuccessSpy).toHaveBeenCalledTimes(1);
 
       expect(enValidateSpy).toHaveBeenCalledWith(payloads.transformed);
+      expect(enValidateSpy).toHaveBeenCalledTimes(2);
+
+      expect(enOnSuccessSpy).toHaveBeenCalledTimes(1);
       expect(enOnSuccessSpy).toHaveBeenCalledWith(payloads.enriched);
+
+      expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
