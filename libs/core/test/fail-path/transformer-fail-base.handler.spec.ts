@@ -16,7 +16,7 @@ describe('Transformer Fail', () => {
       providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
     })
       .overrideProvider(TestTransformer)
-      .useValue(transformers.fail)
+      .useValue(transformers.fail.validation)
       .overrideProvider(TestEnricher)
       .useValue(enrichers.success)
       .overrideProvider(TestDestination)
@@ -34,9 +34,9 @@ describe('Transformer Fail', () => {
     it('should throw error and stop execution', async () => {
       const handlerOnStartSpy = jest.spyOn(TestHandler.prototype, 'onStart');
 
-      const tfValidateSpy = jest.spyOn(transformers.fail, 'validate');
-      const tfPerformSpy = jest.spyOn(transformers.fail, 'perform');
-      const tfOnSuccessSpy = jest.spyOn(transformers.fail, 'onSuccess');
+      const tfValidateSpy = jest.spyOn(transformers.fail.validation, 'validate');
+      const tfPerformSpy = jest.spyOn(transformers.fail.validation, 'perform');
+      const tfOnSuccessSpy = jest.spyOn(transformers.fail.validation, 'onSuccess');
 
       const enValidateSpy = jest.spyOn(enrichers.success, 'validate');
       const enPerformSpy = jest.spyOn(enrichers.success, 'perform');

@@ -18,7 +18,7 @@ describe('Enricher Fail', () => {
       .overrideProvider(TestTransformer)
       .useValue(transformers.success)
       .overrideProvider(TestEnricher)
-      .useValue(enrichers.fail)
+      .useValue(enrichers.fail.validation)
       .overrideProvider(TestDestination)
       .useValue(destinations.success)
       .compile();
@@ -38,9 +38,9 @@ describe('Enricher Fail', () => {
       const tfPerformSpy = jest.spyOn(transformers.success, 'perform');
       const tfOnSuccessSpy = jest.spyOn(transformers.success, 'onSuccess');
 
-      const enValidateSpy = jest.spyOn(enrichers.fail, 'validate');
-      const enPerformSpy = jest.spyOn(enrichers.fail, 'perform');
-      const enOnSuccessSpy = jest.spyOn(enrichers.fail, 'onSuccess');
+      const enValidateSpy = jest.spyOn(enrichers.fail.validation, 'validate');
+      const enPerformSpy = jest.spyOn(enrichers.fail.validation, 'perform');
+      const enOnSuccessSpy = jest.spyOn(enrichers.fail.validation, 'onSuccess');
 
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
