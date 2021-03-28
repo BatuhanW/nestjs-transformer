@@ -50,6 +50,17 @@ export const transformers = {
     },
     onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
   },
+  fail: {
+    validate: (_payload: TestPayload): ValidationResult => {
+      return fixtures.validation.fail;
+    },
+    perform: (payload: TestPayload): TestTransformedPayload => {
+      return {
+        transformed: payload,
+      };
+    },
+    onError: async (_error: Error): Promise<void> => {},
+  },
 };
 
 export const enrichers = {
@@ -63,6 +74,16 @@ export const enrichers = {
       };
     },
     onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
+  },
+  fail: {
+    validate: (_payload: TestTransformedPayload): ValidationResult => {
+      return fixtures.validation.fail;
+    },
+    perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
+      return {
+        enriched: payload,
+      };
+    },
     onError: async (_error: Error): Promise<void> => {},
   },
 };
@@ -71,7 +92,11 @@ export const destinations = {
   success: {
     perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
     onSuccess: async (): Promise<void> => {},
+  },
+  fail: {
+    perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
     onError: async (_error: Error): Promise<void> => {},
   },
 };
+
 /* eslint-enable @typescript-eslint/no-empty-function */
