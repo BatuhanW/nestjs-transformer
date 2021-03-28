@@ -23,6 +23,14 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     this.consumer = this.kafka.consumer(consumerConfig);
   }
 
+  async onModuleInit(): Promise<void> {
+    this.connect();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.disconnect();
+  }
+
   async connect(): Promise<void> {
     await this.disconnect();
     await this.consumer.connect();
@@ -72,15 +80,24 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         console.log('[Kafka Service] Received payload', { ...messageObject });
         console.log('--------------------------------------------');
 
-        try {
-          subscribedHandlers
-            .filter(({ options: { filter } }) => (filter ? filter(messageObject) : true))
-            .forEach(({ provider }) => {
-              provider.instance.handle(messageObject.payload);
-            });
-        } catch (e) {
-          console.error(e);
-        }
+        const filteredHandlers = subscribedHandlers.filter(({ options: { filter } }) =>
+          filter ? filter(messageObject) : true,
+        );
+
+        await Promise.all(
+          filteredHandlers.map(async ({ provider }) => {
+            try {
+              return await provider.instance.handle(messageObject.payload);
+            } catch (e) {
+              await provider.instance.onError(e);
+
+              throw e;
+            }
+          }),
+        ).catch(async (_) => {
+          await this.disconnect();
+          process.exit(0);
+        });
       },
     });
 
@@ -89,14 +106,6 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
   async disconnect(): Promise<void> {
     await this.consumer.disconnect();
-  }
-
-  async onModuleInit(): Promise<void> {
-    this.connect();
-  }
-
-  async onModuleDestroy(): Promise<void> {
-    await this.disconnect();
   }
 
   async subscribeToTopic(topic: string): Promise<void> {
