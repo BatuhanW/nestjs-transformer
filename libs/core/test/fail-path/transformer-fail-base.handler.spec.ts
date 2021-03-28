@@ -8,7 +8,7 @@ import { TestEnricher } from '../assets/test.enricher';
 
 import { TransformerValidationError } from '../../src/handler/errors';
 
-describe('BaseHandler', () => {
+describe('Transformer Fail', () => {
   let handler: TestHandler;
 
   beforeEach(async () => {
@@ -30,8 +30,8 @@ describe('BaseHandler', () => {
     expect(handler).toBeDefined();
   });
 
-  describe('Test Path', () => {
-    it('should be test', async () => {
+  describe('Validation error', () => {
+    it('should throw error and stop execution', async () => {
       const handlerOnStartSpy = jest.spyOn(TestHandler.prototype, 'onStart');
 
       const tfValidateSpy = jest.spyOn(transformers.fail, 'validate');
