@@ -2,7 +2,7 @@ import { BaseTransformer } from '../transformer/base.transformer';
 import { BaseEnricher } from '../enricher/base.enricher';
 import { BaseDestination } from '../destination/base.destination';
 import { DefaultObject, onError } from '../types';
-import EmptyEnricher from '../enricher/empty.enricher';
+import { EmptyEnricher } from '../enricher/empty.enricher';
 import { EmptyTransformer } from '../transformer/empty.transformer';
 
 export abstract class CoreHandler<Payload = DefaultObject> implements onError {
