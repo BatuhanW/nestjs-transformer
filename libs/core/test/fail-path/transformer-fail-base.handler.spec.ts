@@ -14,7 +14,7 @@ describe('BaseHandler', () => {
       providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
     })
       .overrideProvider(TestTransformer)
-      .useValue(transformers.success)
+      .useValue(transformers.fail)
       .overrideProvider(TestEnricher)
       .useValue(enrichers.success)
       .overrideProvider(TestDestination)
@@ -29,12 +29,12 @@ describe('BaseHandler', () => {
   });
 
   describe('Test Path', () => {
-    it('should be success', async () => {
+    it('should be test', async () => {
       const handlerOnStartSpy = jest.spyOn(TestHandler.prototype, 'onStart');
 
-      const tfValidateSpy = jest.spyOn(transformers.success, 'validate');
-      const tfPerformSpy = jest.spyOn(transformers.success, 'perform');
-      const tfOnSuccessSpy = jest.spyOn(transformers.success, 'onSuccess');
+      const tfValidateSpy = jest.spyOn(transformers.fail, 'validate');
+      const tfPerformSpy = jest.spyOn(transformers.fail, 'perform');
+      const tfOnSuccessSpy = jest.spyOn(transformers.fail, 'onSuccess');
 
       const enValidateSpy = jest.spyOn(enrichers.success, 'validate');
       const enPerformSpy = jest.spyOn(enrichers.success, 'perform');
@@ -51,25 +51,25 @@ describe('BaseHandler', () => {
       expect(tfValidateSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(tfValidateSpy).toHaveBeenCalledTimes(1);
 
-      expect(tfPerformSpy).toHaveBeenCalledWith(fixtures.payload);
-      expect(tfPerformSpy).toHaveBeenCalledTimes(1);
+      expect(tfPerformSpy).not.toHaveBeenCalledWith(fixtures.payload);
+      expect(tfPerformSpy).not.toHaveBeenCalledTimes(1);
 
-      expect(tfOnSuccessSpy).toHaveBeenCalledWith(fixtures.transformed);
-      expect(tfOnSuccessSpy).toHaveBeenCalledTimes(1);
+      expect(tfOnSuccessSpy).not.toHaveBeenCalledWith(fixtures.transformed);
+      expect(tfOnSuccessSpy).not.toHaveBeenCalledTimes(1);
 
-      expect(enValidateSpy).toHaveBeenCalledWith(fixtures.transformed);
-      expect(enValidateSpy).toHaveBeenCalledTimes(1);
+      expect(enValidateSpy).not.toHaveBeenCalledWith(fixtures.transformed);
+      expect(enValidateSpy).not.toHaveBeenCalledTimes(1);
 
-      expect(enPerformSpy).toHaveBeenCalledWith(fixtures.transformed);
-      expect(enPerformSpy).toHaveBeenCalledTimes(1);
+      expect(enPerformSpy).not.toHaveBeenCalledWith(fixtures.transformed);
+      expect(enPerformSpy).not.toHaveBeenCalledTimes(1);
 
-      expect(enOnSuccessSpy).toHaveBeenCalledWith(fixtures.enriched);
-      expect(enOnSuccessSpy).toHaveBeenCalledTimes(1);
+      expect(enOnSuccessSpy).not.toHaveBeenCalledWith(fixtures.enriched);
+      expect(enOnSuccessSpy).not.toHaveBeenCalledTimes(1);
 
-      expect(destPerformSpy).toHaveBeenCalledWith(fixtures.enriched);
-      expect(destPerformSpy).toHaveBeenCalledTimes(1);
+      expect(destPerformSpy).not.toHaveBeenCalledWith(fixtures.enriched);
+      expect(destPerformSpy).not.toHaveBeenCalledTimes(1);
 
-      expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
+      expect(destOnSuccessSpy).not.toHaveBeenCalledTimes(1);
     });
   });
 });

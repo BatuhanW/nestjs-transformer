@@ -49,6 +49,7 @@ export const transformers = {
       };
     },
     onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
+    onError: async (_error: Error): Promise<void> => {},
   },
   fail: {
     validate: (_payload: TestPayload): ValidationResult => {
@@ -59,6 +60,7 @@ export const transformers = {
         transformed: payload,
       };
     },
+    onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
     onError: async (_error: Error): Promise<void> => {},
   },
 };
@@ -74,6 +76,7 @@ export const enrichers = {
       };
     },
     onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
+    onError: async (_error: Error): Promise<void> => {},
   },
   fail: {
     validate: (_payload: TestTransformedPayload): ValidationResult => {
@@ -84,6 +87,7 @@ export const enrichers = {
         enriched: payload,
       };
     },
+    onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
     onError: async (_error: Error): Promise<void> => {},
   },
 };
@@ -92,9 +96,11 @@ export const destinations = {
   success: {
     perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
     onSuccess: async (): Promise<void> => {},
+    onError: async (_error: Error): Promise<void> => {},
   },
   fail: {
     perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
+    onSuccess: async (): Promise<void> => {},
     onError: async (_error: Error): Promise<void> => {},
   },
 };
