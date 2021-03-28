@@ -1,10 +1,12 @@
-import { iif, of, EMPTY, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
 
 import { DefaultObject } from '../types';
 import { CoreHandler } from './core.handler';
 
 export class TransformerValidationError extends Error {}
+
+export class EnricherValidationError extends Error {}
 
 export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {
@@ -16,14 +18,12 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
             ? of(this.transformer.perform(initialPayload)).pipe(
                 tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
                 mergeMap((transformedPayload) =>
-                  iif(
-                    () => this.enricher.validate(transformedPayload).success === true,
-                    of(this.enricher.perform(transformedPayload)).pipe(
-                      mergeMap((enrichedPayload) => enrichedPayload),
-                      tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
-                    ),
-                    EMPTY,
-                  ),
+                  this.enricher.validate(transformedPayload).success === true
+                    ? of(this.enricher.perform(transformedPayload)).pipe(
+                        mergeMap((enrichedPayload) => enrichedPayload),
+                        tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
+                      )
+                    : throwError(new EnricherValidationError('err')),
                 ),
               )
             : throwError(new TransformerValidationError('err')),
