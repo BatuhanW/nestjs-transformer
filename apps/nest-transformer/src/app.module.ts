@@ -24,9 +24,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     KafkaModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        const isDev = configService.get('NODE_ENV') === 'development';
-        const groupId = `${configService.get('KAFKA_GROUP_ID')}${isDev ? Math.random() * 10 : ''}`;
-
         return {
           kafkaConfig: {
             clientId: configService.get('KAFKA_CLIENT_ID'),
@@ -36,7 +33,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
               .map((broker) => broker.trim()),
           },
           consumerConfig: {
-            groupId,
+            groupId: configService.get('KAFKA_GROUP_ID'),
           },
         };
       },
