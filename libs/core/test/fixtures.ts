@@ -1,34 +1,36 @@
-import { ValidationResult, ValidationSuccessResult } from '@core';
+import { ValidationFailResult, ValidationResult, ValidationSuccessResult } from '@core';
 import { TestEnrichedPayload, TestPayload, TestTransformedPayload } from './interfaces';
 
 interface Fixtures {
-  happy: {
-    validation: ValidationSuccessResult;
-    payload: TestPayload;
-    transformed: TestTransformedPayload;
-    enriched: TestEnrichedPayload;
+  validation: {
+    success: ValidationSuccessResult;
+    fail: ValidationFailResult;
   };
+  payload: TestPayload;
+  transformed: TestTransformedPayload;
+  enriched: TestEnrichedPayload;
 }
 
 export const fixtures: Fixtures = {
-  happy: {
-    validation: { success: true },
-    payload: {
+  validation: {
+    success: { success: true },
+    fail: { success: false, message: 'Validation fail!' },
+  },
+  payload: {
+    because: "I don't know",
+    imTest: true,
+  },
+  transformed: {
+    transformed: {
       because: "I don't know",
       imTest: true,
     },
-    transformed: {
+  },
+  enriched: {
+    enriched: {
       transformed: {
         because: "I don't know",
         imTest: true,
-      },
-    },
-    enriched: {
-      enriched: {
-        transformed: {
-          because: "I don't know",
-          imTest: true,
-        },
       },
     },
   },
@@ -37,9 +39,9 @@ export const fixtures: Fixtures = {
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 export const transformers = {
-  happy: {
+  success: {
     validate: (_payload: TestPayload): ValidationResult => {
-      return fixtures.happy.validation;
+      return fixtures.validation.success;
     },
     perform: (payload: TestPayload): TestTransformedPayload => {
       return {
@@ -51,9 +53,9 @@ export const transformers = {
 };
 
 export const enrichers = {
-  happy: {
+  success: {
     validate: (_payload: TestTransformedPayload): ValidationResult => {
-      return fixtures.happy.validation;
+      return fixtures.validation.success;
     },
     perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
       return {
@@ -66,7 +68,7 @@ export const enrichers = {
 };
 
 export const destinations = {
-  happy: {
+  success: {
     perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
     onSuccess: async (): Promise<void> => {},
     onError: async (_error: Error): Promise<void> => {},
