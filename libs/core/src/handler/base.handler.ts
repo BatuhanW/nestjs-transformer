@@ -6,7 +6,7 @@ import { CoreHandler } from './core.handler';
 
 export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {
-    of(payload)
+    const finalPayload = await of(payload)
       .pipe(
         tap((initialPayload) => this.onStart(initialPayload)),
         mergeMap((initialPayload) =>
@@ -40,18 +40,15 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
         takeWhile((possibleError) => !possibleError.error),
         tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
       )
-      .subscribe({
-        next: async (enrichedPayload) => {
-          await Promise.all(
-            this.destinations.map((destination) =>
-              destination
-                .perform(enrichedPayload)
-                .then(() => destination.onSuccess())
-                .catch((error) => destination.onError(error)),
-            ),
-          );
-        },
-        complete: () => console.log('Completed'),
-      });
+      .toPromise();
+
+    await Promise.all(
+      this.destinations.map((destination) =>
+        destination
+          .perform(finalPayload)
+          .then(() => destination.onSuccess())
+          .catch((error) => destination.onError(error)),
+      ),
+    );
   }
 }
