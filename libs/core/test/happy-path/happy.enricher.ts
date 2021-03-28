@@ -2,12 +2,10 @@ import { BaseEnricher, DefaultObject } from '@core';
 
 export class HappyEnricher extends BaseEnricher {
   async perform(payload: DefaultObject): Promise<DefaultObject> {
-    return payload;
+    return { enriched: payload };
   }
 
-  onSuccess(_payload) {}
+  async onSuccess(_payload): Promise<void> {}
 
-  onError(error) {
-    console.log(error);
-  }
+  async onError(_error): Promise<void> {}
 }

@@ -22,7 +22,7 @@ export const payloads = {
   },
 };
 
-export const emptyTransformer = {
+export const happyTransformer = {
   validate: (_payload: HappyPayload): ValidationResult => {
     return { success: true };
   },
@@ -31,10 +31,10 @@ export const emptyTransformer = {
       transformed: payload,
     };
   },
-  onSuccess: (_payload: HappyTransformedPayload): void => {},
+  onSuccess: async (_payload: HappyTransformedPayload): Promise<void> => {},
 };
 
-export const emptyEnricher = {
+export const happyEnricher = {
   validate: (_payload: HappyTransformedPayload): ValidationResult => {
     return { success: true };
   },
@@ -43,8 +43,11 @@ export const emptyEnricher = {
       enriched: payload,
     };
   },
-  onSuccess: (_payload: HappyEnrichedPayload): void => {},
-  onError: (_error: Error) => {
-    console.log(_error);
-  },
+  onSuccess: async (_payload: HappyEnrichedPayload): Promise<void> => {},
+  onError: async (_error: Error) => {},
+};
+
+export const happyDestination = {
+  perform: async (_payload: HappyEnrichedPayload): Promise<void> => {},
+  onSuccess: async (): Promise<void> => {},
 };

@@ -19,7 +19,7 @@ export abstract class BaseTransformer<Payload = DefaultObject, Result = DefaultO
   // eslint-disable-next-line
   public onSuccess(_payload: Result): void | Promise<void> {}
 
-  onError(error: Error): void | Promise<void> {
+  public onError(error: Error): void | Promise<void> {
     console.dir({
       level: 'ERROR',
       timestamp: new Date().toISOString(),

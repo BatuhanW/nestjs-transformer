@@ -7,5 +7,7 @@ export class HappyTransformer extends BaseTransformer {
     return payload;
   }
 
-  async onSuccess(_payload: DefaultObject) {}
+  async onSuccess(_payload: DefaultObject): Promise<void> {}
+
+  async onError(_error): Promise<void> {}
 }
