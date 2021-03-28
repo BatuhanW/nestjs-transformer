@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HappyHandler } from './happy.handler';
 import { HappyDestination } from './happy.destination';
 
-import { happyTransformer, happyEnricher, payloads, happyDestination } from './fixtures';
+import { happyTransformer, happyEnricher, happyPayloads, happyDestination } from './fixtures';
 import { HappyTransformer } from './happy.transformer';
 import { HappyEnricher } from './happy.enricher';
 
@@ -43,20 +43,20 @@ describe('BaseHandler', () => {
       const destPerformSpy = jest.spyOn(happyDestination, 'perform');
       const destOnSuccessSpy = jest.spyOn(happyDestination, 'onSuccess');
 
-      await handler.handle(payloads.payload);
+      await handler.handle(happyPayloads.payload);
 
-      expect(handlerOnStartSpy).toHaveBeenCalledWith(payloads.payload);
+      expect(handlerOnStartSpy).toHaveBeenCalledWith(happyPayloads.payload);
 
-      expect(tfValidateSpy).toHaveBeenCalledWith(payloads.payload);
-      expect(tfPerformSpy).toHaveBeenCalledWith(payloads.payload);
+      expect(tfValidateSpy).toHaveBeenCalledWith(happyPayloads.payload);
+      expect(tfPerformSpy).toHaveBeenCalledWith(happyPayloads.payload);
 
-      expect(tfOnSuccessSpy).toHaveBeenCalledWith(payloads.transformed);
+      expect(tfOnSuccessSpy).toHaveBeenCalledWith(happyPayloads.transformed);
 
-      expect(enValidateSpy).toHaveBeenCalledWith(payloads.transformed);
-      expect(enPerformSpy).toHaveBeenCalledWith(payloads.transformed);
-      expect(enOnSuccessSpy).toHaveBeenCalledWith(payloads.enriched);
+      expect(enValidateSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(enPerformSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(enOnSuccessSpy).toHaveBeenCalledWith(happyPayloads.enriched);
 
-      expect(destPerformSpy).toHaveBeenCalledWith(payloads.enriched);
+      expect(destPerformSpy).toHaveBeenCalledWith(happyPayloads.enriched);
       expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
     });
   });

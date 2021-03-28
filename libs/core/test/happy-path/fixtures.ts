@@ -1,7 +1,7 @@
 import { ValidationResult } from '@core';
 import { HappyEnrichedPayload, HappyPayload, HappyTransformedPayload } from './interfaces';
 
-export const payloads = {
+export const happyPayloads = {
   payload: {
     because: "I don't know",
     imHappy: true,
