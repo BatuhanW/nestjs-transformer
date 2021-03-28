@@ -1,54 +1,55 @@
 import { ValidationResult } from '@core';
-import { HappyEnrichedPayload, HappyPayload, HappyTransformedPayload } from './interfaces';
+import { TestEnrichedPayload, TestPayload, TestTransformedPayload } from '../assets/interfaces';
 
 export const happyPayloads = {
   payload: {
     because: "I don't know",
-    imHappy: true,
+    imTest: true,
   },
   transformed: {
     transformed: {
       because: "I don't know",
-      imHappy: true,
+      imTest: true,
     },
   },
   enriched: {
     enriched: {
       transformed: {
         because: "I don't know",
-        imHappy: true,
+        imTest: true,
       },
     },
   },
 };
-
+/* eslint-disable @typescript-eslint/no-empty-function */
 export const happyTransformer = {
-  validate: (_payload: HappyPayload): ValidationResult => {
+  validate: (_payload: TestPayload): ValidationResult => {
     return { success: true };
   },
-  perform: (payload: HappyPayload): HappyTransformedPayload => {
+  perform: (payload: TestPayload): TestTransformedPayload => {
     return {
       transformed: payload,
     };
   },
-  onSuccess: async (_payload: HappyTransformedPayload): Promise<void> => {},
+  onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
 };
 
 export const happyEnricher = {
-  validate: (_payload: HappyTransformedPayload): ValidationResult => {
+  validate: (_payload: TestTransformedPayload): ValidationResult => {
     return { success: true };
   },
-  perform: async (payload: HappyTransformedPayload): Promise<HappyEnrichedPayload> => {
+  perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
     return {
       enriched: payload,
     };
   },
-  onSuccess: async (_payload: HappyEnrichedPayload): Promise<void> => {},
-  onError: async (_error: Error) => {},
+  onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
+  onError: async (_error: Error): Promise<void> => {},
 };
 
 export const happyDestination = {
-  perform: async (_payload: HappyEnrichedPayload): Promise<void> => {},
+  perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
   onSuccess: async (): Promise<void> => {},
   onError: async (_error: Error): Promise<void> => {},
 };
+/* eslint-enable @typescript-eslint/no-empty-function */

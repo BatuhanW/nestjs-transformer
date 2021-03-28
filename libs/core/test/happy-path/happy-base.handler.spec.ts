@@ -1,36 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HappyHandler } from './happy.handler';
-import { HappyDestination } from './happy.destination';
+import { TestHandler } from '../assets/test.handler';
+import { TestDestination } from '../assets/test.destination';
 
 import { happyTransformer, happyEnricher, happyPayloads, happyDestination } from './fixtures';
-import { HappyTransformer } from './happy.transformer';
-import { HappyEnricher } from './happy.enricher';
+import { TestTransformer } from '../assets/test.transformer';
+import { TestEnricher } from '../assets/test.enricher';
 
 describe('BaseHandler', () => {
-  let handler: HappyHandler;
+  let handler: TestHandler;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HappyTransformer, HappyEnricher, HappyDestination, HappyHandler],
+      providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
     })
-      .overrideProvider(HappyTransformer)
+      .overrideProvider(TestTransformer)
       .useValue(happyTransformer)
-      .overrideProvider(HappyEnricher)
+      .overrideProvider(TestEnricher)
       .useValue(happyEnricher)
-      .overrideProvider(HappyDestination)
+      .overrideProvider(TestDestination)
       .useValue(happyDestination)
       .compile();
 
-    handler = module.get<HappyHandler>(HappyHandler);
+    handler = module.get<TestHandler>(TestHandler);
   });
 
   it('should be defined', () => {
     expect(handler).toBeDefined();
   });
 
-  describe('Happy Path', () => {
+  describe('Test Path', () => {
     it('should be happy', async () => {
-      const handlerOnStartSpy = jest.spyOn(HappyHandler.prototype, 'onStart');
+      const handlerOnStartSpy = jest.spyOn(TestHandler.prototype, 'onStart');
 
       const tfValidateSpy = jest.spyOn(happyTransformer, 'validate');
       const tfPerformSpy = jest.spyOn(happyTransformer, 'perform');

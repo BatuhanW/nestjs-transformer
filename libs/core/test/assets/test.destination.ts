@@ -1,6 +1,6 @@
 import { BaseDestination, DefaultObject } from '@core';
 
-export class HappyDestination<Payload = DefaultObject> extends BaseDestination<Payload> {
+export class TestDestination<Payload = DefaultObject> extends BaseDestination<Payload> {
   // eslint-disable-next-line
   async perform(_payload: Payload): Promise<void> {}
 

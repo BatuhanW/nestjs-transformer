@@ -2,12 +2,13 @@ import { BaseTransformer, DefaultObject } from '@core';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class HappyTransformer extends BaseTransformer {
+export class TestTransformer extends BaseTransformer {
   perform(payload: DefaultObject): DefaultObject {
     return payload;
   }
 
+  /* eslint-disable @typescript-eslint/no-empty-function */
   async onSuccess(_payload: DefaultObject): Promise<void> {}
-
-  async onError(_error): Promise<void> {}
+  async onError(_error: Error): Promise<void> {}
+  /* eslint-enable @typescript-eslint/no-empty-function */
 }
