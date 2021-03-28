@@ -1,7 +1,7 @@
-import { iif, of, throwError } from 'rxjs';
-import { catchError, mergeMap, takeWhile, tap } from 'rxjs/operators';
-import { DefaultObject, ValidationFailResult } from '../types';
+import { iif, of, EMPTY } from 'rxjs';
+import { mergeMap, tap } from 'rxjs/operators';
 
+import { DefaultObject } from '../types';
 import { CoreHandler } from './core.handler';
 
 export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<IncomingPayload> {
@@ -12,33 +12,22 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
         mergeMap((initialPayload) =>
           iif(
             () => this.transformer.validate(initialPayload).success === true,
-            of(this.transformer.perform(initialPayload)),
-            throwError((this.transformer.validate(initialPayload) as ValidationFailResult).message),
-          ),
-        ),
-        catchError((error) => {
-          this.transformer.onError(error);
-
-          return of({ error: true });
-        }),
-        takeWhile((possibleError) => !possibleError.error),
-        tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
-        mergeMap((transformedPayload) =>
-          iif(
-            () => this.enricher.validate(transformedPayload).success === true,
-            this.enricher.perform(transformedPayload),
-            throwError(
-              (this.enricher.validate(transformedPayload) as ValidationFailResult).message,
+            of(this.transformer.perform(initialPayload)).pipe(
+              tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
+              mergeMap((transformedPayload) =>
+                iif(
+                  () => this.enricher.validate(transformedPayload).success === true,
+                  of(this.enricher.perform(transformedPayload)).pipe(
+                    mergeMap((enrichedPayload) => enrichedPayload),
+                    tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
+                  ),
+                  EMPTY,
+                ),
+              ),
             ),
+            EMPTY,
           ),
         ),
-        catchError((error) => {
-          this.enricher.onError(error);
-
-          return of({ error: true });
-        }),
-        takeWhile((possibleError) => !possibleError.error),
-        tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
       )
       .toPromise();
 
@@ -49,6 +38,8 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
           .then(() => destination.onSuccess())
           .catch((error) => destination.onError(error)),
       ),
-    );
+    ).then(async () => {
+      await this.onSuccess();
+    });
   }
 }
