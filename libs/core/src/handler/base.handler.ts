@@ -4,30 +4,48 @@ import { mergeMap, tap } from 'rxjs/operators';
 import { DefaultObject } from '../types';
 import { CoreHandler } from './core.handler';
 
-export class TransformerValidationError extends Error {}
-
-export class EnricherValidationError extends Error {}
+import { TransformerValidationError, EnricherValidationError } from './errors';
 
 export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {
     const finalPayload = await of(payload)
       .pipe(
         tap((initialPayload) => this.onStart(initialPayload)),
-        mergeMap((initialPayload) =>
-          this.transformer.validate(initialPayload).success === true
-            ? of(this.transformer.perform(initialPayload)).pipe(
-                tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
-                mergeMap((transformedPayload) =>
-                  this.enricher.validate(transformedPayload).success === true
-                    ? of(this.enricher.perform(transformedPayload)).pipe(
-                        mergeMap((enrichedPayload) => enrichedPayload),
-                        tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
-                      )
-                    : throwError(new EnricherValidationError('err')),
-                ),
-              )
-            : throwError(new TransformerValidationError('err')),
-        ),
+        mergeMap((initialPayload) => {
+          const validationResult = this.transformer.validate(initialPayload);
+
+          if (validationResult.success === true) {
+            return of(this.transformer.perform(initialPayload)).pipe(
+              tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
+              mergeMap((transformedPayload) => {
+                const validationResult = this.enricher.validate(transformedPayload);
+
+                if (validationResult.success === true) {
+                  return of(this.enricher.perform(transformedPayload)).pipe(
+                    mergeMap((enrichedPayload) => enrichedPayload),
+                    tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
+                  );
+                }
+
+                return throwError(
+                  new EnricherValidationError(
+                    this.enricher.constructor.name,
+                    transformedPayload,
+                    validationResult.message,
+                  ),
+                );
+              }),
+            );
+          }
+
+          return throwError(
+            new TransformerValidationError(
+              this.transformer.constructor.name,
+              initialPayload,
+              validationResult.message,
+            ),
+          );
+        }),
       )
       .toPromise();
 
