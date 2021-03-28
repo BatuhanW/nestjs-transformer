@@ -26,19 +26,19 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
         mergeMap((transformedPayload) =>
           iif(
             () => this.enricher.validate(transformedPayload).success === true,
-            of(this.enricher.perform(transformedPayload)),
+            this.enricher.perform(transformedPayload),
             throwError(
               (this.enricher.validate(transformedPayload) as ValidationFailResult).message,
             ),
           ),
         ),
-        tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
         catchError((error) => {
           this.enricher.onError(error);
 
           return of({ error: true });
         }),
-        takeWhile((possibleError) => 'error' in possibleError),
+        takeWhile((possibleError) => !possibleError.error),
+        tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
       )
       .subscribe({
         next: async (enrichedPayload) => {
