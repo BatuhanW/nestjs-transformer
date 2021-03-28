@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TestHandler } from '../assets/test.handler';
 import { TestDestination } from '../assets/test.destination';
 
-import { happyTransformer, happyEnricher, happyPayloads, happyDestination } from './fixtures';
+import { happyTransformer, happyEnricher, fixtures, happyDestination } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
@@ -43,30 +43,30 @@ describe('BaseHandler', () => {
       const destPerformSpy = jest.spyOn(happyDestination, 'perform');
       const destOnSuccessSpy = jest.spyOn(happyDestination, 'onSuccess');
 
-      await handler.handle(happyPayloads.payload);
+      await handler.handle(fixtures.happy.payload);
 
-      expect(handlerOnStartSpy).toHaveBeenCalledWith(happyPayloads.payload);
+      expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.happy.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
 
-      expect(tfValidateSpy).toHaveBeenCalledWith(happyPayloads.payload);
+      expect(tfValidateSpy).toHaveBeenCalledWith(fixtures.happy.payload);
       expect(tfValidateSpy).toHaveBeenCalledTimes(1);
 
-      expect(tfPerformSpy).toHaveBeenCalledWith(happyPayloads.payload);
+      expect(tfPerformSpy).toHaveBeenCalledWith(fixtures.happy.payload);
       expect(tfPerformSpy).toHaveBeenCalledTimes(1);
 
-      expect(tfOnSuccessSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(tfOnSuccessSpy).toHaveBeenCalledWith(fixtures.happy.transformed);
       expect(tfOnSuccessSpy).toHaveBeenCalledTimes(1);
 
-      expect(enValidateSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(enValidateSpy).toHaveBeenCalledWith(fixtures.happy.transformed);
       expect(enValidateSpy).toHaveBeenCalledTimes(1);
 
-      expect(enPerformSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(enPerformSpy).toHaveBeenCalledWith(fixtures.happy.transformed);
       expect(enPerformSpy).toHaveBeenCalledTimes(1);
 
-      expect(enOnSuccessSpy).toHaveBeenCalledWith(happyPayloads.enriched);
+      expect(enOnSuccessSpy).toHaveBeenCalledWith(fixtures.happy.enriched);
       expect(enOnSuccessSpy).toHaveBeenCalledTimes(1);
 
-      expect(destPerformSpy).toHaveBeenCalledWith(happyPayloads.enriched);
+      expect(destPerformSpy).toHaveBeenCalledWith(fixtures.happy.enriched);
       expect(destPerformSpy).toHaveBeenCalledTimes(1);
 
       expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);

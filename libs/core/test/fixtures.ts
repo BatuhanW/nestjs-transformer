@@ -1,26 +1,30 @@
 import { ValidationResult } from '@core';
-import { TestEnrichedPayload, TestPayload, TestTransformedPayload } from '../assets/interfaces';
+import { TestEnrichedPayload, TestPayload, TestTransformedPayload } from './assets/interfaces';
 
-export const happyPayloads = {
-  payload: {
-    because: "I don't know",
-    imTest: true,
-  },
-  transformed: {
-    transformed: {
+export const fixtures = {
+  happy: {
+    validation: { success: true },
+    payload: {
       because: "I don't know",
       imTest: true,
     },
-  },
-  enriched: {
-    enriched: {
+    transformed: {
       transformed: {
         because: "I don't know",
         imTest: true,
       },
     },
+    enriched: {
+      enriched: {
+        transformed: {
+          because: "I don't know",
+          imTest: true,
+        },
+      },
+    },
   },
 };
+
 /* eslint-disable @typescript-eslint/no-empty-function */
 export const happyTransformer = {
   validate: (_payload: TestPayload): ValidationResult => {
