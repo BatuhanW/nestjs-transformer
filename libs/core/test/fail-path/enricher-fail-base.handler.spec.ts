@@ -11,10 +11,6 @@ import { EnricherValidationError } from '../../src/handler/errors';
 describe('Enricher Fail', () => {
   let handler: TestHandler;
 
-  beforeEach(() => {});
-
-  afterEach(() => {});
-
   describe('Validation error', () => {
     beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
