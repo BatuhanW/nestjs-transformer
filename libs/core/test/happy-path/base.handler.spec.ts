@@ -46,17 +46,30 @@ describe('BaseHandler', () => {
       await handler.handle(happyPayloads.payload);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(happyPayloads.payload);
+      expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
 
       expect(tfValidateSpy).toHaveBeenCalledWith(happyPayloads.payload);
+      expect(tfValidateSpy).toHaveBeenCalledTimes(1);
+
       expect(tfPerformSpy).toHaveBeenCalledWith(happyPayloads.payload);
+      expect(tfPerformSpy).toHaveBeenCalledTimes(1);
 
       expect(tfOnSuccessSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(tfOnSuccessSpy).toHaveBeenCalledTimes(1);
 
       expect(enValidateSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(enValidateSpy).toHaveBeenCalledTimes(1);
+
       expect(enPerformSpy).toHaveBeenCalledWith(happyPayloads.transformed);
+      expect(enPerformSpy).toHaveBeenCalledTimes(1);
+
       expect(enOnSuccessSpy).toHaveBeenCalledWith(happyPayloads.enriched);
+      expect(enOnSuccessSpy).toHaveBeenCalledTimes(1);
 
       expect(destPerformSpy).toHaveBeenCalledWith(happyPayloads.enriched);
+      expect(destPerformSpy).toHaveBeenCalledTimes(1);
+
+      expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
       expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
     });
   });
