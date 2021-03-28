@@ -6,12 +6,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   process.on('uncaughtException', (error) => {
-    console.error({ error });
+    console.error('[Main] unCaughtException', { error });
     process.exit(1);
   });
 
   process.on('unhandledRejection', (error) => {
-    console.error({ error });
+    console.error('[Main] unHandledRejection', { error });
     process.exit(1);
   });
 
