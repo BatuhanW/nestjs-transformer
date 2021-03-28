@@ -11,26 +11,22 @@ import { TransformerValidationError } from '../../src/handler/errors';
 describe('Transformer Fail', () => {
   let handler: TestHandler;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
-    })
-      .overrideProvider(TestTransformer)
-      .useValue(transformers.fail.validation)
-      .overrideProvider(TestEnricher)
-      .useValue(enrichers.success)
-      .overrideProvider(TestDestination)
-      .useValue(destinations.success)
-      .compile();
-
-    handler = module.get<TestHandler>(TestHandler);
-  });
-
-  it('should be defined', () => {
-    expect(handler).toBeDefined();
-  });
-
   describe('Validation error', () => {
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
+      })
+        .overrideProvider(TestTransformer)
+        .useValue(transformers.fail.validation)
+        .overrideProvider(TestEnricher)
+        .useValue(enrichers.success)
+        .overrideProvider(TestDestination)
+        .useValue(destinations.success)
+        .compile();
+
+      handler = module.get<TestHandler>(TestHandler);
+    });
+
     it('should throw error and stop execution', async () => {
       const handlerOnStartSpy = jest.spyOn(TestHandler.prototype, 'onStart');
 
@@ -55,25 +51,101 @@ describe('Transformer Fail', () => {
       expect(tfValidateSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(tfValidateSpy).toHaveBeenCalledTimes(1);
 
-      expect(tfPerformSpy).not.toHaveBeenCalledWith(fixtures.payload);
-      expect(tfPerformSpy).not.toHaveBeenCalledTimes(1);
+      expect(tfPerformSpy).not.toHaveBeenCalled();
 
-      expect(tfOnSuccessSpy).not.toHaveBeenCalledWith(fixtures.transformed);
-      expect(tfOnSuccessSpy).not.toHaveBeenCalledTimes(1);
+      expect(tfOnSuccessSpy).not.toHaveBeenCalled();
 
-      expect(enValidateSpy).not.toHaveBeenCalledWith(fixtures.transformed);
-      expect(enValidateSpy).not.toHaveBeenCalledTimes(1);
+      expect(enValidateSpy).not.toHaveBeenCalled();
 
-      expect(enPerformSpy).not.toHaveBeenCalledWith(fixtures.transformed);
-      expect(enPerformSpy).not.toHaveBeenCalledTimes(1);
+      expect(enPerformSpy).not.toHaveBeenCalled();
 
-      expect(enOnSuccessSpy).not.toHaveBeenCalledWith(fixtures.enriched);
-      expect(enOnSuccessSpy).not.toHaveBeenCalledTimes(1);
+      expect(enOnSuccessSpy).not.toHaveBeenCalled();
 
-      expect(destPerformSpy).not.toHaveBeenCalledWith(fixtures.enriched);
-      expect(destPerformSpy).not.toHaveBeenCalledTimes(1);
+      expect(destPerformSpy).not.toHaveBeenCalled();
 
-      expect(destOnSuccessSpy).not.toHaveBeenCalledTimes(1);
+      expect(destOnSuccessSpy).not.toHaveBeenCalled();
+
+      handlerOnStartSpy.mockClear();
+
+      tfValidateSpy.mockClear();
+      tfPerformSpy.mockClear();
+      tfOnSuccessSpy.mockClear();
+
+      enValidateSpy.mockClear();
+      enPerformSpy.mockClear();
+      enOnSuccessSpy.mockClear();
+
+      destPerformSpy.mockClear();
+      destOnSuccessSpy.mockClear();
+    });
+  });
+
+  describe('Unhandled error', () => {
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
+      })
+        .overrideProvider(TestTransformer)
+        .useValue(transformers.fail.unHandled)
+        .overrideProvider(TestEnricher)
+        .useValue(enrichers.success)
+        .overrideProvider(TestDestination)
+        .useValue(destinations.success)
+        .compile();
+
+      handler = module.get<TestHandler>(TestHandler);
+    });
+
+    it('should throw error and stop execution', async () => {
+      const handlerOnStartSpy = jest.spyOn(TestHandler.prototype, 'onStart');
+
+      const tfValidateSpy = jest.spyOn(transformers.fail.unHandled, 'validate');
+      const tfPerformSpy = jest.spyOn(transformers.fail.unHandled, 'perform');
+      const tfOnSuccessSpy = jest.spyOn(transformers.fail.unHandled, 'onSuccess');
+
+      const enValidateSpy = jest.spyOn(enrichers.success, 'validate');
+      const enPerformSpy = jest.spyOn(enrichers.success, 'perform');
+      const enOnSuccessSpy = jest.spyOn(enrichers.success, 'onSuccess');
+
+      const destPerformSpy = jest.spyOn(destinations.success, 'perform');
+      const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
+
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
+        TypeError("Cannot read property 'transformerFail' of undefined"),
+      );
+
+      expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
+      expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
+
+      expect(tfValidateSpy).toHaveBeenCalledWith(fixtures.payload);
+      expect(tfValidateSpy).toHaveBeenCalledTimes(1);
+
+      expect(tfPerformSpy).toHaveBeenCalledWith(fixtures.payload);
+
+      expect(tfOnSuccessSpy).not.toHaveBeenCalled();
+
+      expect(enValidateSpy).not.toHaveBeenCalled();
+
+      expect(enPerformSpy).not.toHaveBeenCalled();
+
+      expect(enOnSuccessSpy).not.toHaveBeenCalled();
+
+      expect(destPerformSpy).not.toHaveBeenCalled();
+
+      expect(destOnSuccessSpy).not.toHaveBeenCalled();
+
+      handlerOnStartSpy.mockClear();
+
+      tfValidateSpy.mockClear();
+      tfPerformSpy.mockClear();
+      tfOnSuccessSpy.mockClear();
+
+      enValidateSpy.mockClear();
+      enPerformSpy.mockClear();
+      enOnSuccessSpy.mockClear();
+
+      destPerformSpy.mockClear();
+      destOnSuccessSpy.mockClear();
     });
   });
 });

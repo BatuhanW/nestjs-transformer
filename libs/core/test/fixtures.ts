@@ -40,7 +40,7 @@ export const fixtures: Fixtures = {
 
 export const transformers = {
   success: {
-    validate: (_payload: TestPayload): ValidationResult => {
+    validate: (_payload: TestPayload): ValidationSuccessResult => {
       return fixtures.validation.success;
     },
     perform: (payload: TestPayload): TestTransformedPayload => {
@@ -57,6 +57,20 @@ export const transformers = {
         return fixtures.validation.fail;
       },
       perform: (payload: TestPayload): TestTransformedPayload => {
+        return {
+          transformed: payload,
+        };
+      },
+      onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
+      onError: async (_error: Error): Promise<void> => {},
+    },
+    unHandled: {
+      validate: (_payload: TestPayload): ValidationResult => {
+        return fixtures.validation.success;
+      },
+      perform: (payload: TestPayload): TestTransformedPayload => {
+        (payload as any).will.transformerFail;
+
         return {
           transformed: payload,
         };
@@ -86,6 +100,20 @@ export const enrichers = {
         return fixtures.validation.fail;
       },
       perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
+        return {
+          enriched: payload,
+        };
+      },
+      onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
+      onError: async (_error: Error): Promise<void> => {},
+    },
+    unHandled: {
+      validate: (_payload: TestTransformedPayload): ValidationResult => {
+        return fixtures.validation.success;
+      },
+      perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
+        (payload as any).will.enricherFail;
+
         return {
           enriched: payload,
         };
