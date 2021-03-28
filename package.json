@@ -75,6 +75,9 @@
       "<rootDir>/libs/",
       "<rootDir>/apps/"
     ],
+    "setupFilesAfterEnv": [
+      "./jest.setup.ts"
+    ],
     "moduleNameMapper": {
       "@core/(.*)": "<rootDir>/libs/core/src/$1",
       "@core": "<rootDir>/libs/core/src",
