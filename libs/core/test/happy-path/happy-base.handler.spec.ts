@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TestHandler } from '../assets/test.handler';
 import { TestDestination } from '../assets/test.destination';
 
-import { happyTransformer, happyEnricher, fixtures, happyDestination } from '../fixtures';
+import { transformers, enrichers, fixtures, destinations } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
@@ -14,11 +14,11 @@ describe('BaseHandler', () => {
       providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
     })
       .overrideProvider(TestTransformer)
-      .useValue(happyTransformer)
+      .useValue(transformers.happy)
       .overrideProvider(TestEnricher)
-      .useValue(happyEnricher)
+      .useValue(enrichers.happy)
       .overrideProvider(TestDestination)
-      .useValue(happyDestination)
+      .useValue(destinations.happy)
       .compile();
 
     handler = module.get<TestHandler>(TestHandler);
@@ -32,16 +32,16 @@ describe('BaseHandler', () => {
     it('should be happy', async () => {
       const handlerOnStartSpy = jest.spyOn(TestHandler.prototype, 'onStart');
 
-      const tfValidateSpy = jest.spyOn(happyTransformer, 'validate');
-      const tfPerformSpy = jest.spyOn(happyTransformer, 'perform');
-      const tfOnSuccessSpy = jest.spyOn(happyTransformer, 'onSuccess');
+      const tfValidateSpy = jest.spyOn(transformers.happy, 'validate');
+      const tfPerformSpy = jest.spyOn(transformers.happy, 'perform');
+      const tfOnSuccessSpy = jest.spyOn(transformers.happy, 'onSuccess');
 
-      const enValidateSpy = jest.spyOn(happyEnricher, 'validate');
-      const enPerformSpy = jest.spyOn(happyEnricher, 'perform');
-      const enOnSuccessSpy = jest.spyOn(happyEnricher, 'onSuccess');
+      const enValidateSpy = jest.spyOn(enrichers.happy, 'validate');
+      const enPerformSpy = jest.spyOn(enrichers.happy, 'perform');
+      const enOnSuccessSpy = jest.spyOn(enrichers.happy, 'onSuccess');
 
-      const destPerformSpy = jest.spyOn(happyDestination, 'perform');
-      const destOnSuccessSpy = jest.spyOn(happyDestination, 'onSuccess');
+      const destPerformSpy = jest.spyOn(destinations.happy, 'perform');
+      const destOnSuccessSpy = jest.spyOn(destinations.happy, 'onSuccess');
 
       await handler.handle(fixtures.happy.payload);
 
