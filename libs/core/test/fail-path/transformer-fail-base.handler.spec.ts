@@ -6,6 +6,8 @@ import { transformers, enrichers, destinations, fixtures } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
+import { TransformerValidationError } from '../../src/handler/errors';
+
 describe('BaseHandler', () => {
   let handler: TestHandler;
 
@@ -43,7 +45,9 @@ describe('BaseHandler', () => {
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
-      await handler.handle(fixtures.payload);
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
+        TransformerValidationError,
+      );
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
