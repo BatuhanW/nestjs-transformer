@@ -6,13 +6,10 @@ import { AppController } from './app.controller';
 
 import { AppService } from './app.service';
 
-import { VerificationRequestHandler } from './users/handlers/verification-request.handler';
-
-import { VerificationRequestTransformer } from './users/transformers/verification-request.transformer';
-
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
+import { RiskModule } from './risk/risk.module';
 
 @Module({
   imports: [
@@ -41,8 +38,9 @@ import { UsersModule } from './users/users.module';
     // }),
     CommonModule,
     UsersModule,
+    RiskModule,
   ],
   controllers: [AppController],
-  providers: [AppService, VerificationRequestHandler, VerificationRequestTransformer],
+  providers: [AppService],
 })
 export class AppModule {}
