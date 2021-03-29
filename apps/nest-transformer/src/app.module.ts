@@ -7,13 +7,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { VerificationRequestHandler } from './users/handlers/verification-request.handler';
-import { VerificationStateChangeHandler } from './users/handlers/verification-state-change.handler';
 
 import { VerificationRequestTransformer } from './users/transformers/verification-request.transformer';
-import { VerificationStateChangeTransformer } from './users/transformers/verification-state-change.transformer';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -41,14 +40,9 @@ import { CommonModule } from './common/common.module';
     //   consumerConfig: { groupId: 'test-group' },
     // }),
     CommonModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    VerificationRequestHandler,
-    VerificationStateChangeHandler,
-    VerificationRequestTransformer,
-    VerificationStateChangeTransformer,
-  ],
+  providers: [AppService, VerificationRequestHandler, VerificationRequestTransformer],
 })
 export class AppModule {}
