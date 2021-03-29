@@ -14,9 +14,8 @@ import { VerificationStateChangeTransformer } from './users/transformers/verific
 
 import { UserEnricher } from './users/enrichers/user.enricher';
 
-import { AmplitudeDestination } from './users/destinations/amplitude.destination';
-import { BrazeDestination } from './users/destinations/braze.destination';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -44,6 +43,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     //   consumerConfig: { groupId: 'test-group' },
     // }),
     HttpModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [
@@ -53,8 +53,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     VerificationRequestTransformer,
     VerificationStateChangeTransformer,
     UserEnricher,
-    AmplitudeDestination,
-    BrazeDestination,
   ],
 })
 export class AppModule {}

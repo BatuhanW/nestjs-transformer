@@ -3,8 +3,8 @@ import { KafkaSubscriber } from '@adapters/kafka';
 import { BaseHandler } from '@core';
 import { VerificationRequestTransformer } from '../transformers/verification-request.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
-import { AmplitudeDestination } from '../destinations/amplitude.destination';
-import { BrazeDestination } from '../destinations/braze.destination';
+import { AmplitudeDestination } from '../../common/destinations/amplitude.destination';
+import { BrazeDestination } from '../../common/destinations/braze.destination';
 import { TestDataPayload } from '../interfaces';
 
 @Injectable()

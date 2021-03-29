@@ -3,8 +3,8 @@ import { KafkaSubscriber } from '@adapters/kafka';
 import { BaseHandler } from '@core';
 import { VerificationStateChangeTransformer } from '../transformers/verification-state-change.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
-import { AmplitudeDestination } from '../destinations/amplitude.destination';
-import { BrazeDestination } from '../destinations/braze.destination';
+import { AmplitudeDestination } from '../../common/destinations/amplitude.destination';
+import { BrazeDestination } from '../../common/destinations/braze.destination';
 import { TestDataPayload } from '../interfaces';
 
 const topics = [
