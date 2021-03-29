@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseTransformer, ValidationResult } from '@core';
-import { TestDataPayload, TestDataResult } from '../interfaces';
+import { TestDataPayload, TestDataResult } from '../../interfaces';
 
 @Injectable()
 export class VerificationStateChangeTransformer extends BaseTransformer<

@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { BaseEnricher, ValidationResult } from '@core';
-import { EnrichedTestData, TestDataResult } from '../../users/interfaces';
+import { EnrichedTestData, TestDataResult } from '../../interfaces';
 
 @Injectable()
 export class UserEnricher extends BaseEnricher<TestDataResult, EnrichedTestData> {

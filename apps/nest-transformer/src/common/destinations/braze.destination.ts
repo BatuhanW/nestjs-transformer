@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseDestination } from '@core';
-import { TestDataResult } from '../../users/interfaces';
+import { TestDataResult } from '../../interfaces';
 
 @Injectable()
 export class BrazeDestination extends BaseDestination<TestDataResult> {

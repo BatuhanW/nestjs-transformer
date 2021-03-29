@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseDestination } from '@core';
-import { TestDataResult } from '../../users/interfaces';
+import { TestDataResult } from '../../interfaces';
 
 @Injectable()
 export class AmplitudeDestination extends BaseDestination<TestDataResult> {

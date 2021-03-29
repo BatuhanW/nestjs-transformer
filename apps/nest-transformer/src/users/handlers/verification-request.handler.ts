@@ -5,7 +5,7 @@ import { VerificationRequestTransformer } from '../transformers/verification-req
 import { UserEnricher } from '../../common/enrichers/user.enricher';
 import { AmplitudeDestination } from '../../common/destinations/amplitude.destination';
 import { BrazeDestination } from '../../common/destinations/braze.destination';
-import { TestDataPayload } from '../interfaces';
+import { TestDataPayload } from '../../interfaces';
 
 @Injectable()
 @KafkaSubscriber({
