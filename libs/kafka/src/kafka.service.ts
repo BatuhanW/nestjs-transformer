@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { DiscoveryService, Reflector } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Consumer, Kafka } from 'kafkajs';
 
@@ -15,6 +15,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     @Inject(KAFKA_MODULE_OPTIONS)
     private readonly kafkaModuleRegisterOptions: KafkaModuleOptions,
     private readonly discoveryService: DiscoveryService,
+    private readonly reflector: Reflector,
   ) {
     const { kafkaConfig, consumerConfig } = this.kafkaModuleRegisterOptions;
 
@@ -39,28 +40,53 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
     const topicSubscribers = new Map<
       string,
-      { provider: InstanceWrapper; options: KafkaSubscriberDecoratorParams }[]
+      {
+        provider: InstanceWrapper;
+        options: KafkaSubscriberDecoratorParams;
+        methodName?: string | symbol;
+      }[]
     >();
 
-    providers.forEach((provider) => {
-      if (!provider.metatype) return;
+    providers
+      .filter((p) => !!p.metatype)
+      .forEach((provider) => {
+        // const kafkaSubscriberOptions = Reflect.getMetadata(KAFKA_SUBSCRIBER_KEY, provider.metatype);
 
-      const kafkaSubscriberOptions = Reflect.getMetadata(KAFKA_SUBSCRIBER_KEY, provider.metatype);
+        let kafkaSubscriberOptions = this.reflector.get(KAFKA_SUBSCRIBER_KEY, provider.metatype);
+        let methodName: (string | symbol) | undefined;
 
-      if (kafkaSubscriberOptions) {
-        const existingTopicSubscribers =
-          topicSubscribers.get(kafkaSubscriberOptions.topicName) || [];
+        if (!kafkaSubscriberOptions && provider.instance) {
+          const proto = Object.getPrototypeOf(provider.instance);
+          if (proto) {
+            const keyz = Reflect.ownKeys(proto);
 
-        topicSubscribers.set(kafkaSubscriberOptions.topicName, [
-          ...existingTopicSubscribers,
-          { provider, options: kafkaSubscriberOptions },
-        ]);
+            keyz.map((k) => {
+              if (provider.instance[k]) {
+                console.log();
+                const options = this.reflector.get(KAFKA_SUBSCRIBER_KEY, provider.instance[k]);
+                if (options) {
+                  kafkaSubscriberOptions = options;
+                  methodName = k;
+                }
+              }
+            });
+          }
+        }
 
-        console.log('--------------------------------------------');
-        console.log('[Kafka Service] Found provider', provider.name);
-        console.log('--------------------------------------------', '\n');
-      }
-    });
+        if (kafkaSubscriberOptions) {
+          const existingTopicSubscribers =
+            topicSubscribers.get(kafkaSubscriberOptions.topicName) || [];
+
+          topicSubscribers.set(kafkaSubscriberOptions.topicName, [
+            ...existingTopicSubscribers,
+            { provider, options: kafkaSubscriberOptions, methodName },
+          ]);
+
+          console.log('--------------------------------------------');
+          console.log('[Kafka Service] Found provider', provider.name);
+          console.log('--------------------------------------------', '\n');
+        }
+      });
 
     for (const [topicName, data] of topicSubscribers) {
       console.log('--------------------------------------------');
@@ -85,9 +111,13 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         );
 
         await Promise.all(
-          filteredHandlers.map(async ({ provider }) => {
+          filteredHandlers.map(async ({ provider, methodName }) => {
             try {
-              return await provider.instance.handle(messageObject.payload);
+              if (methodName) {
+                return await provider.instance[methodName](messageObject);
+              } else {
+                return await provider.instance.handle(messageObject.payload);
+              }
             } catch (e) {
               await provider.instance.onError(e);
 

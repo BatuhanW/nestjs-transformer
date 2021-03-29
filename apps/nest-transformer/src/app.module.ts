@@ -26,7 +26,7 @@ import { RiskModule } from './risk/risk.module';
               .map((broker) => broker.trim()),
           },
           consumerConfig: {
-            groupId: configService.get('KAFKA_GROUP_ID'),
+            groupId: `${configService.get('KAFKA_GROUP_ID')}-${Math.random() * 100}`,
           },
         };
       },
