@@ -1,4 +1,4 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { KafkaModule } from '@adapters/kafka';
 
@@ -11,8 +11,6 @@ import { VerificationStateChangeHandler } from './users/handlers/verification-st
 
 import { VerificationRequestTransformer } from './users/transformers/verification-request.transformer';
 import { VerificationStateChangeTransformer } from './users/transformers/verification-state-change.transformer';
-
-import { UserEnricher } from './users/enrichers/user.enricher';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
@@ -42,7 +40,6 @@ import { CommonModule } from './common/common.module';
     //   kafkaConfig: { clientId: 'test-client', brokers: ['localhost:9092'] },
     //   consumerConfig: { groupId: 'test-group' },
     // }),
-    HttpModule,
     CommonModule,
   ],
   controllers: [AppController],
@@ -52,7 +49,6 @@ import { CommonModule } from './common/common.module';
     VerificationStateChangeHandler,
     VerificationRequestTransformer,
     VerificationStateChangeTransformer,
-    UserEnricher,
   ],
 })
 export class AppModule {}

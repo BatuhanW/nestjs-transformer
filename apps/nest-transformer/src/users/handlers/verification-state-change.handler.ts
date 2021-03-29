@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka';
 import { BaseHandler } from '@core';
 import { VerificationStateChangeTransformer } from '../transformers/verification-state-change.transformer';
-import { UserEnricher } from '../enrichers/user.enricher';
+import { UserEnricher } from '../../common/enrichers/user.enricher';
 import { AmplitudeDestination } from '../../common/destinations/amplitude.destination';
 import { BrazeDestination } from '../../common/destinations/braze.destination';
 import { TestDataPayload } from '../interfaces';
