@@ -16,4 +16,13 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_DELETE_TOPIC_ENABLE: 'true'
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - kafka-data:/var/run/docker.sock
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+volumes:
+  kafka-data:
+  redis-data:
