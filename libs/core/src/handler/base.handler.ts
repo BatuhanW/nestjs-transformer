@@ -20,8 +20,8 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
           const validationResult = this.transformer.validate(initialPayload);
 
           if (validationResult.success === true) {
-            return of(this.transformer.perform).pipe(
-              map((perform) => perform(initialPayload)),
+            return of(null).pipe(
+              map(() => this.transformer.perform(initialPayload)),
               catchError((error) => {
                 const transformerError = new TransformerRuntimeError(
                   this.enricher.constructor.name,
@@ -38,8 +38,8 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
                 const validationResult = this.enricher.validate(transformedPayload);
 
                 if (validationResult.success === true) {
-                  return of(this.enricher.perform).pipe(
-                    mergeMap((perform) => perform(transformedPayload)),
+                  return of(null).pipe(
+                    mergeMap(() => this.enricher.perform(transformedPayload)),
                     catchError((error) => {
                       const enricherError = new EnricherRuntimeError(
                         this.enricher.constructor.name,
