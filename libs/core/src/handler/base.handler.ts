@@ -1,5 +1,5 @@
 import { of, throwError } from 'rxjs';
-import { mergeMap, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 
 import { DefaultObject } from '../types';
 import { CoreHandler } from './core.handler';
@@ -15,14 +15,37 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
           const validationResult = this.transformer.validate(initialPayload);
 
           if (validationResult.success === true) {
-            return of(this.transformer.perform(initialPayload)).pipe(
+            return of(this.transformer.perform).pipe(
+              map((perform) => perform(initialPayload)),
+              catchError((error) => {
+                const transformerError = new TransformerValidationError(
+                  this.enricher.constructor.name,
+                  initialPayload,
+                  error.message,
+                );
+
+                this.transformer.onError(transformerError);
+
+                return throwError(transformerError);
+              }),
               tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
               mergeMap((transformedPayload) => {
                 const validationResult = this.enricher.validate(transformedPayload);
 
                 if (validationResult.success === true) {
-                  return of(this.enricher.perform(transformedPayload)).pipe(
-                    mergeMap((enrichedPayload) => enrichedPayload),
+                  return of(this.enricher.perform).pipe(
+                    mergeMap((perform) => perform(transformedPayload)),
+                    catchError((error) => {
+                      const enricherError = new EnricherValidationError(
+                        this.enricher.constructor.name,
+                        transformedPayload,
+                        error.message,
+                      );
+
+                      this.enricher.onError(enricherError);
+
+                      return throwError(enricherError);
+                    }),
                     tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
                   );
                 }
