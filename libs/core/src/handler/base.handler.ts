@@ -33,7 +33,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
 
           return of([]).pipe(
             map(() => this.transformer.perform(initialPayload)),
-            catchError((error) => {
+            catchError((error: Error) => {
               const transformerError = new TransformerRuntimeError(
                 this.enricher.constructor.name,
                 initialPayload,
@@ -62,7 +62,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
 
               return of([]).pipe(
                 mergeMap(() => this.enricher.perform(transformedPayload)),
-                catchError((error) => {
+                catchError((error: Error) => {
                   const enricherError = new EnricherRuntimeError(
                     this.enricher.constructor.name,
                     transformedPayload,
@@ -82,7 +82,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
       .toPromise();
 
     await Promise.all(
-      this.destinations.map((destination) =>
+      this.destinations.map(({ transformer, destination }) =>
         destination
           .perform(finalPayload)
           .then(() => destination.onSuccess())

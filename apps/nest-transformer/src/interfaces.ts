@@ -17,3 +17,11 @@ export interface EnrichedTestData {
     count: number;
   };
 }
+
+export interface AmplitudePayload {
+  amplitude: Record<string, any>;
+}
+
+export interface BrazePayload {
+  braze: Record<string, any>;
+}

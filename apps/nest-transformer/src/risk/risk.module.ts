@@ -7,6 +7,8 @@ import { SchedulerService } from './scheduler.service';
 import { VerificationRequestTransformer } from './transformers/verification-request.transformer';
 import { VerificationRequestHandler } from './handlers/verification-request.handler';
 import { SchedulerProcessor } from './scheduler.processor';
+import { RiskAmplitudeTransformer } from './transformers/risk-amplitude.transformer';
+import { RiskBrazeTransformer } from './transformers/risk-braze.transformer';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { SchedulerProcessor } from './scheduler.processor';
     SchedulerProcessor,
     VerificationRequestTransformer,
     VerificationRequestHandler,
+    RiskAmplitudeTransformer,
+    RiskBrazeTransformer,
   ],
 })
 export class RiskModule {}

@@ -6,6 +6,8 @@ import { UserEnricher } from '../../common/enrichers/user.enricher';
 import { AmplitudeDestination } from '../../common/destinations/amplitude.destination';
 import { BrazeDestination } from '../../common/destinations/braze.destination';
 import { TestDataPayload } from '../../interfaces';
+import { UserAmplitudeTransformer } from '../transformers/user-amplitude.transformer';
+import { UserBrazeTransformer } from '../transformers/user-braze.transformer';
 
 const topics = [
   'verification_not_started',
@@ -23,14 +25,19 @@ export class VerificationStateChangeHandler extends BaseHandler<TestDataPayload>
   constructor(
     private verificationStateChangeTransformer: VerificationStateChangeTransformer,
     private userEnricher: UserEnricher,
+    private userAmpTransformer: UserAmplitudeTransformer,
     private ampDestination: AmplitudeDestination,
+    private userBrazeTransformer: UserBrazeTransformer,
     private brazeDestination: BrazeDestination,
   ) {
     super();
 
     this.transformer = this.verificationStateChangeTransformer;
     this.enricher = this.userEnricher;
-    this.destinations = [this.ampDestination, this.brazeDestination];
+    this.destinations = [
+      { transformer: this.userBrazeTransformer, destination: this.ampDestination },
+      { transformer: this.userBrazeTransformer, destination: this.brazeDestination },
+    ];
   }
 
   onStart(payload: TestDataPayload): void {

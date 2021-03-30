@@ -8,7 +8,7 @@ import { EmptyTransformer } from '../transformer/empty.transformer';
 export abstract class CoreHandler<Payload = DefaultObject> implements onError {
   protected transformer?: BaseTransformer = new EmptyTransformer();
   protected enricher?: BaseEnricher = new EmptyEnricher();
-  protected destinations: BaseDestination[] = [];
+  protected destinations: { transformer: BaseTransformer; destination: BaseDestination }[] = [];
 
   /* eslint-disable @typescript-eslint/no-empty-function */
   public onStart(_payload: Payload): void | Promise<void> {}

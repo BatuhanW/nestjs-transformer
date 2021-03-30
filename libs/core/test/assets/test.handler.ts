@@ -16,7 +16,7 @@ export class TestHandler extends BaseHandler<TestPayload> {
 
     this.transformer = testTransformer;
     this.enricher = testEnricher;
-    this.destinations = [testDestination];
+    this.destinations = [{ transformer: testTransformer, destination: testDestination }];
   }
   /* eslint-disable @typescript-eslint/no-empty-function */
   async onStart(_payload: TestPayload): Promise<void> {}
