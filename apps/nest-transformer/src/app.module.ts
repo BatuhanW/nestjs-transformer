@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BullModule } from '@nestjs/bull';
 import { KafkaModule } from '@adapters/kafka';
-
 import { AppController } from './app.controller';
 
 import { AppService } from './app.service';
 
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
 import { RiskModule } from './risk/risk.module';
@@ -14,6 +13,12 @@ import { RiskModule } from './risk/risk.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
     KafkaModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {

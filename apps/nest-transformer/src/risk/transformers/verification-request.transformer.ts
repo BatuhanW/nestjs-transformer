@@ -15,9 +15,14 @@ export class VerificationRequestTransformer extends BaseTransformer<
   }
 
   perform(payload: TestDataPayload): TestDataResult {
+    (payload as any).test.failow;
     return {
       data: payload,
     };
+  }
+
+  onError(error: Error) {
+    console.error('onError Hook transformer', { error });
   }
 
   onSuccess(payload: TestDataResult): void {

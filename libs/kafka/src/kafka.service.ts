@@ -62,7 +62,6 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
             keyz.map((k) => {
               if (provider.instance[k]) {
-                console.log();
                 const options = this.reflector.get(KAFKA_SUBSCRIBER_KEY, provider.instance[k]);
                 if (options) {
                   kafkaSubscriberOptions = options;

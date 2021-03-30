@@ -1,11 +1,29 @@
-import { VerificationRequestHandler } from './handlers/verification-request.handler';
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
+
 import { CommonModule } from '../common/common.module';
-import { VerificationRequestTransformer } from './transformers/verification-request.transformer';
+
 import { SchedulerService } from './scheduler.service';
+import { VerificationRequestTransformer } from './transformers/verification-request.transformer';
+import { VerificationRequestHandler } from './handlers/verification-request.handler';
+import { SchedulerProcessor } from './scheduler.processor';
 
 @Module({
-  imports: [CommonModule],
-  providers: [SchedulerService, VerificationRequestTransformer, VerificationRequestHandler],
+  imports: [
+    BullModule.registerQueue({
+      name: 'scheduler',
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 1000 },
+      },
+    }),
+    CommonModule,
+  ],
+  providers: [
+    SchedulerService,
+    SchedulerProcessor,
+    VerificationRequestTransformer,
+    VerificationRequestHandler,
+  ],
 })
 export class RiskModule {}
