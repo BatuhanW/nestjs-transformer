@@ -32,6 +32,7 @@ describe('Transformer Fail', () => {
 
       const tfValidateSpy = jest.spyOn(transformers.fail.validation, 'validate');
       const tfPerformSpy = jest.spyOn(transformers.fail.validation, 'perform');
+      const tfOnErrorSpy = jest.spyOn(transformers.fail.validation, 'onError');
       const tfOnSuccessSpy = jest.spyOn(transformers.fail.validation, 'onSuccess');
 
       const enValidateSpy = jest.spyOn(enrichers.success, 'validate');
@@ -50,6 +51,11 @@ describe('Transformer Fail', () => {
 
       expect(tfValidateSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(tfValidateSpy).toHaveBeenCalledTimes(1);
+
+      expect(tfOnErrorSpy).toHaveBeenCalledWith(
+        new TransformerValidationError('TestTransformer', fixtures.payload, 'Validation fail!'),
+      );
+      expect(tfOnErrorSpy).toHaveBeenCalledTimes(1);
 
       expect(tfPerformSpy).not.toHaveBeenCalled();
 

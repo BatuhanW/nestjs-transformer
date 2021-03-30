@@ -27,24 +27,28 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
                   );
                 }
 
-                return throwError(
-                  new EnricherValidationError(
-                    this.enricher.constructor.name,
-                    transformedPayload,
-                    validationResult.message,
-                  ),
+                const enricherError = new EnricherValidationError(
+                  this.enricher.constructor.name,
+                  transformedPayload,
+                  validationResult.message,
                 );
+
+                this.enricher.onError(enricherError);
+
+                return throwError(enricherError);
               }),
             );
           }
 
-          return throwError(
-            new TransformerValidationError(
-              this.transformer.constructor.name,
-              initialPayload,
-              validationResult.message,
-            ),
+          const transformerError = new TransformerValidationError(
+            this.transformer.constructor.name,
+            initialPayload,
+            validationResult.message,
           );
+
+          this.transformer.onError(transformerError);
+
+          return throwError(transformerError);
         }),
       )
       .toPromise();

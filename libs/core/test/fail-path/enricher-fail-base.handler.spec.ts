@@ -32,10 +32,12 @@ describe('Enricher Fail', () => {
 
       const tfValidateSpy = jest.spyOn(transformers.success, 'validate');
       const tfPerformSpy = jest.spyOn(transformers.success, 'perform');
+      const tfOnErrorSpy = jest.spyOn(transformers.success, 'onError');
       const tfOnSuccessSpy = jest.spyOn(transformers.success, 'onSuccess');
 
       const enValidateSpy = jest.spyOn(enrichers.fail.validation, 'validate');
       const enPerformSpy = jest.spyOn(enrichers.fail.validation, 'perform');
+      const enOnErrorSpy = jest.spyOn(enrichers.fail.validation, 'onError');
       const enOnSuccessSpy = jest.spyOn(enrichers.fail.validation, 'onSuccess');
 
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
@@ -52,11 +54,17 @@ describe('Enricher Fail', () => {
       expect(tfPerformSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(tfPerformSpy).toHaveBeenCalledTimes(1);
 
+      expect(tfOnErrorSpy).not.toHaveBeenCalled();
       expect(tfOnSuccessSpy).toHaveBeenCalledWith(fixtures.transformed);
       expect(tfOnSuccessSpy).toHaveBeenCalledTimes(1);
 
       expect(enValidateSpy).toHaveBeenCalledWith(fixtures.transformed);
       expect(enValidateSpy).toHaveBeenCalledTimes(1);
+
+      expect(enOnErrorSpy).toHaveBeenCalledWith(
+        new EnricherValidationError('TestEnricher', fixtures.transformed, 'Validation fail!'),
+      );
+      expect(enOnErrorSpy).toHaveBeenCalledTimes(1);
 
       expect(enPerformSpy).not.toHaveBeenCalled();
 
@@ -89,6 +97,7 @@ describe('Enricher Fail', () => {
 
       const tfValidateSpy = jest.spyOn(transformers.success, 'validate');
       const tfPerformSpy = jest.spyOn(transformers.success, 'perform');
+      const tfOnErrorSpy = jest.spyOn(transformers.success, 'onError');
       const tfOnSuccessSpy = jest.spyOn(transformers.success, 'onSuccess');
 
       const enValidateSpy = jest.spyOn(enrichers.fail.unHandled, 'validate');
@@ -111,6 +120,7 @@ describe('Enricher Fail', () => {
       expect(tfPerformSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(tfPerformSpy).toHaveBeenCalledTimes(1);
 
+      expect(tfOnErrorSpy).not.toHaveBeenCalled();
       expect(tfOnSuccessSpy).toHaveBeenCalledWith(fixtures.transformed);
       expect(tfOnSuccessSpy).toHaveBeenCalledTimes(1);
 
