@@ -19,7 +19,7 @@ import { RiskModule } from './risk/risk.module';
         port: 6379,
       },
       defaultJobOptions: {
-        attempts: 3,
+        attempts: 6,
         backoff: { type: 'exponential', delay: 3000 },
       },
     }),

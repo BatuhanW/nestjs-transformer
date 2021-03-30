@@ -12,10 +12,6 @@ import { SchedulerProcessor } from './scheduler.processor';
   imports: [
     BullModule.registerQueue({
       name: 'scheduler',
-      defaultJobOptions: {
-        attempts: 3,
-        backoff: { type: 'exponential', delay: 1000 },
-      },
     }),
     CommonModule,
   ],
