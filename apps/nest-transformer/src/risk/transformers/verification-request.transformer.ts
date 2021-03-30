@@ -15,7 +15,6 @@ export class VerificationRequestTransformer extends BaseTransformer<
   }
 
   perform(payload: TestDataPayload): TestDataResult {
-    (payload as any).test.failow;
     return {
       data: payload,
     };
