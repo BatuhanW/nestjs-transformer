@@ -6,7 +6,7 @@ import { transformers, enrichers, destinations, fixtures } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
-import { TransformerValidationError } from '../../src/handler/errors';
+import { TransformerRuntimeError, TransformerValidationError } from '../../src/handler/errors';
 
 describe('Transformer Fail', () => {
   let handler: TestHandler;
@@ -104,9 +104,7 @@ describe('Transformer Fail', () => {
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
-      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
-        TransformerValidationError,
-      );
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(TransformerRuntimeError);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
@@ -117,11 +115,7 @@ describe('Transformer Fail', () => {
       expect(tfPerformSpy).toHaveBeenCalledWith(fixtures.payload);
 
       expect(tfOnErrorSpy).toHaveBeenCalledWith(
-        new TransformerValidationError(
-          'TestTransformer',
-          fixtures.payload,
-          "Cannot read property 'transformerFail' of undefined",
-        ),
+        new Error("Cannot read property 'transformerFail' of undefined"),
       );
       expect(tfOnErrorSpy).toHaveBeenCalledTimes(1);
 

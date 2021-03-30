@@ -6,7 +6,7 @@ import { transformers, enrichers, destinations, fixtures } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
-import { EnricherValidationError } from '../../src/handler/errors';
+import { EnricherRuntimeError, EnricherValidationError } from '../../src/handler/errors';
 
 describe('Enricher Fail', () => {
   let handler: TestHandler;
@@ -108,7 +108,7 @@ describe('Enricher Fail', () => {
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
-      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(EnricherValidationError);
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(EnricherRuntimeError);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
@@ -130,11 +130,7 @@ describe('Enricher Fail', () => {
       expect(enPerformSpy).toHaveBeenCalledTimes(1);
 
       expect(enOnErrorSpy).toHaveBeenCalledWith(
-        new EnricherValidationError(
-          'TestEnricher',
-          fixtures.transformed,
-          "Cannot read property 'enricherFail' of undefined",
-        ),
+        new Error("Cannot read property 'enricherFail' of undefined"),
       );
       expect(enOnErrorSpy).toHaveBeenCalledTimes(1);
 

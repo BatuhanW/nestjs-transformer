@@ -1,6 +1,6 @@
 import { DefaultObject } from '../types/index';
 
-class ValidationError extends Error {
+class CommonError extends Error {
   incoming_payload: DefaultObject;
   class_name: string;
 
@@ -13,6 +13,10 @@ class ValidationError extends Error {
   }
 }
 
-export class TransformerValidationError extends ValidationError {}
+export class TransformerValidationError extends CommonError {}
 
-export class EnricherValidationError extends ValidationError {}
+export class TransformerRuntimeError extends CommonError {}
+
+export class EnricherValidationError extends CommonError {}
+
+export class EnricherRuntimeError extends CommonError {}
