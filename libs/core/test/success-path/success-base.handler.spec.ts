@@ -11,18 +11,27 @@ import {
 } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
+import { TestDestinationTransformer } from '../assets/test-destination.transformer';
 
 describe('BaseHandler', () => {
   let handler: TestHandler;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TestTransformer, TestEnricher, TestDestination, TestHandler],
+      providers: [
+        TestHandler,
+        TestTransformer,
+        TestEnricher,
+        TestDestinationTransformer,
+        TestDestination,
+      ],
     })
       .overrideProvider(TestTransformer)
       .useValue(transformers.success)
       .overrideProvider(TestEnricher)
       .useValue(enrichers.success)
+      .overrideProvider(TestDestinationTransformer)
+      .useValue(destinationTransformers.success)
       .overrideProvider(TestDestination)
       .useValue(destinations.success)
       .compile();
