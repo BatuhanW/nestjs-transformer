@@ -102,14 +102,13 @@ describe('Enricher Fail', () => {
 
       const enValidateSpy = jest.spyOn(enrichers.fail.unHandled, 'validate');
       const enPerformSpy = jest.spyOn(enrichers.fail.unHandled, 'perform');
+      const enOnErrorSpy = jest.spyOn(enrichers.fail.unHandled, 'onError');
       const enOnSuccessSpy = jest.spyOn(enrichers.fail.unHandled, 'onSuccess');
 
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
-      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
-        TypeError("Cannot read property 'enricherFail' of undefined"),
-      );
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(EnricherValidationError);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
@@ -129,6 +128,15 @@ describe('Enricher Fail', () => {
 
       expect(enPerformSpy).toHaveBeenCalledWith(fixtures.transformed);
       expect(enPerformSpy).toHaveBeenCalledTimes(1);
+
+      expect(enOnErrorSpy).toHaveBeenCalledWith(
+        new EnricherValidationError(
+          'TestEnricher',
+          fixtures.transformed,
+          "Cannot read property 'enricherFail' of undefined",
+        ),
+      );
+      expect(enOnErrorSpy).toHaveBeenCalledTimes(1);
 
       expect(enOnSuccessSpy).not.toHaveBeenCalled();
 
