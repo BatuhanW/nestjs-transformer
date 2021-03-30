@@ -11,8 +11,8 @@ export abstract class CoreHandler<Payload = DefaultObject> implements onError {
   protected destinations: BaseDestination[] = [];
 
   /* eslint-disable @typescript-eslint/no-empty-function */
-  protected onStart(_payload: Payload): void | Promise<void> {}
-  protected onSuccess(): void | Promise<void> {}
+  public onStart(_payload: Payload): void | Promise<void> {}
+  public onSuccess(): void | Promise<void> {}
   /* eslint-enable @typescript-eslint/no-empty-function */
 
   onError(error: Error): void | Promise<void> {
