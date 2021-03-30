@@ -10,3 +10,7 @@ export interface TestTransformedPayload {
 export interface TestEnrichedPayload {
   enriched: TestTransformedPayload;
 }
+
+export interface TestDestTransformedPayload {
+  destTransformed: TestEnrichedPayload;
+}

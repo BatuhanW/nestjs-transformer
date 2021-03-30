@@ -2,7 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TestHandler } from '../assets/test.handler';
 import { TestDestination } from '../assets/test.destination';
 
-import { transformers, enrichers, destinations, fixtures } from '../fixtures';
+import {
+  transformers,
+  enrichers,
+  destinationTransformers,
+  destinations,
+  fixtures,
+} from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
@@ -40,6 +46,7 @@ describe('BaseHandler', () => {
       const enPerformSpy = jest.spyOn(enrichers.success, 'perform');
       const enOnSuccessSpy = jest.spyOn(enrichers.success, 'onSuccess');
 
+      const destTfPerformSpy = jest.spyOn(destinationTransformers.success, 'perform');
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
@@ -66,7 +73,10 @@ describe('BaseHandler', () => {
       expect(enOnSuccessSpy).toHaveBeenCalledWith(fixtures.enriched);
       expect(enOnSuccessSpy).toHaveBeenCalledTimes(1);
 
-      expect(destPerformSpy).toHaveBeenCalledWith(fixtures.enriched);
+      expect(destTfPerformSpy).toHaveBeenCalledWith(fixtures.enriched);
+      expect(destTfPerformSpy).toHaveBeenCalledTimes(1);
+
+      expect(destPerformSpy).toHaveBeenCalledWith(fixtures.destTransformed);
       expect(destPerformSpy).toHaveBeenCalledTimes(1);
 
       expect(destOnSuccessSpy).toHaveBeenCalledTimes(1);
