@@ -10,11 +10,8 @@ export interface TestDataResult {
 }
 
 export interface EnrichedTestData {
-  data: {
-    test: string;
-    test2: {
-      test3: string;
-    };
+  data: TestDataPayload;
+  enrichment: {
     name: string;
     age: number;
     count: number;

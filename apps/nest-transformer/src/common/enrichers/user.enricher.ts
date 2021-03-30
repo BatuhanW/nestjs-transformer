@@ -20,10 +20,8 @@ export class UserEnricher extends BaseEnricher<TestDataResult, EnrichedTestData>
       .toPromise();
 
     return {
-      data: {
-        ...payload.data,
-        ...data,
-      },
+      ...payload,
+      enrichment: data,
     };
   }
 
