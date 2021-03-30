@@ -18,6 +18,10 @@ import { RiskModule } from './risk/risk.module';
         host: 'localhost',
         port: 6379,
       },
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 3000 },
+      },
     }),
     KafkaModule.registerAsync({
       imports: [ConfigModule],
