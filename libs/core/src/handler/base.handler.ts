@@ -19,42 +19,36 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
         mergeMap((initialPayload) => {
           const validationResult = this.transformer.validate(initialPayload);
 
-          if (validationResult.success === true) {
-            return of([]).pipe(
-              map(() => this.transformer.perform(initialPayload)),
-              catchError((error) => {
-                const transformerError = new TransformerRuntimeError(
-                  this.enricher.constructor.name,
-                  initialPayload,
-                  error.message,
-                );
+          if (validationResult.success === false) {
+            const transformerError = new TransformerValidationError(
+              this.transformer.constructor.name,
+              initialPayload,
+              validationResult.message,
+            );
 
-                this.transformer.onError(transformerError);
+            this.transformer.onError(transformerError);
 
-                return throwError(transformerError);
-              }),
-              tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
-              mergeMap((transformedPayload) => {
-                const validationResult = this.enricher.validate(transformedPayload);
+            return throwError(transformerError);
+          }
 
-                if (validationResult.success === true) {
-                  return of([]).pipe(
-                    mergeMap(() => this.enricher.perform(transformedPayload)),
-                    catchError((error) => {
-                      const enricherError = new EnricherRuntimeError(
-                        this.enricher.constructor.name,
-                        transformedPayload,
-                        error.message,
-                      );
+          return of([]).pipe(
+            map(() => this.transformer.perform(initialPayload)),
+            catchError((error) => {
+              const transformerError = new TransformerRuntimeError(
+                this.enricher.constructor.name,
+                initialPayload,
+                error.message,
+              );
 
-                      this.enricher.onError(enricherError);
+              this.transformer.onError(transformerError);
 
-                      return throwError(enricherError);
-                    }),
-                    tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
-                  );
-                }
+              return throwError(transformerError);
+            }),
+            tap((transformedPayload) => this.transformer.onSuccess(transformedPayload)),
+            mergeMap((transformedPayload) => {
+              const validationResult = this.enricher.validate(transformedPayload);
 
+              if (validationResult.success === false) {
                 const enricherError = new EnricherValidationError(
                   this.enricher.constructor.name,
                   transformedPayload,
@@ -64,19 +58,25 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
                 this.enricher.onError(enricherError);
 
                 return throwError(enricherError);
-              }),
-            );
-          }
+              }
 
-          const transformerError = new TransformerValidationError(
-            this.transformer.constructor.name,
-            initialPayload,
-            validationResult.message,
+              return of([]).pipe(
+                mergeMap(() => this.enricher.perform(transformedPayload)),
+                catchError((error) => {
+                  const enricherError = new EnricherRuntimeError(
+                    this.enricher.constructor.name,
+                    transformedPayload,
+                    error.message,
+                  );
+
+                  this.enricher.onError(enricherError);
+
+                  return throwError(enricherError);
+                }),
+                tap((enrichedPayload) => this.enricher.onSuccess(enrichedPayload)),
+              );
+            }),
           );
-
-          this.transformer.onError(transformerError);
-
-          return throwError(transformerError);
         }),
       )
       .toPromise();
