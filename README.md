@@ -30,14 +30,36 @@ Transformer implementation for any message broker. Only Kafka is supported for n
 ### KafkaSubscriber Decorator
 
 This decorator subscribes to the given topic with ability to filter events.
-Then triggers `handle` method of the decorated class when matching event is consumed.
-Only `Handler` classes should be decorated with this decorator.
+
+- If the `class` is decorated with this decorator, then it triggers `handle` method of the decorated class when matching event is consumed.
+  Only `Handler` classes should be decorated with this decorator.
 
 ```typescript
 @KafkaSubscriber({
   topicName: 'users',
   filter: (payload) => payload.event_name === 'deleted',
 })
+class MyHandler extends BaseHandler {
+  // Base Handler has handle method
+}
+```
+
+- If a method in the class is decorated with this decorator, then it triggers the decorated method in the class.
+
+```typescript
+class MyScheduler {
+  constructor(@InjectQueue('scheduler') private schedulerProcessor: Queue) {}
+
+  ---
+
+  @KafkaSubscriber({
+    topicName: 'users',
+    filter: (payload) => payload.event_name === 'deleted',
+  })
+  async schedule(event: Record<string, any>): Promise<void> {
+    await this.schedulerProcessor.add('process', event.payload, {});
+  }
+}
 ```
 
 ### Handler
