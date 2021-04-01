@@ -201,88 +201,112 @@ export class AmplitudeDestination implements BaseDestination<UsersEnrichedPayloa
 ### Entire lifecycle of event from Handler to Destinations
 
 ```bash
+Starting
 --------------------------------------------
+[VerificationRequestHandler] handling event for payload {
+  user_id: 1,
+  order_number: '1',
+  verification_state: 'pending',
+  requester_id: 2
+}
 
-  [Kafka Service] Received payload {
-    event_name: 'id_check_request',
-    payload: {
-      user_id: 1,
-      order_number: '1',
-      verification_state: 'pending',
-      requester_id: 2
-    }
-  }
-
---------------------------------------------
-
-  [VerificationRequestHandler] handling event for payload {
+[VerificationRequestTransformer] transformed payload {
+  data: {
     user_id: 1,
     order_number: '1',
     verification_state: 'pending',
     requester_id: 2
   }
+}
 
---------------------------------------------
-
-  [VerificationRequestHandler] transformed payload {
-    data: {
-      user_id: 1,
-      order_number: '1',
-      verification_state: 'pending',
-      requester_id: 2
+[UserEnricher] enriched payload {
+  data: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2
+  },
+  enrichment: {
+    id: 1,
+    name: 'Leanne Graham',
+    username: 'Bret',
+    email: 'Sincere@april.biz',
+    address: {
+      street: 'Kulas Light',
+      suite: 'Apt. 556',
+      city: 'Gwenborough',
+      zipcode: '92998-3874',
+      geo: [Object]
+    },
+    phone: '1-770-736-8031 x56442',
+    website: 'hildegard.org',
+    company: {
+      name: 'Romaguera-Crona',
+      catchPhrase: 'Multi-layered client-server neural-net',
+      bs: 'harness real-time e-markets'
     }
   }
+}
 
---------------------------------------------
-
-  [VerificationRequestHandler] enriched payload {
-    data: {
-      user_id: 1,
-      order_number: '1',
-      verification_state: 'pending',
-      requester_id: 2,
-      id: 1,
-      name: 'Leanne Graham',
-      username: 'Bret',
-      email: 'Sincere@april.biz',
+[AmplitudeDestination] perform triggered with payload {
+  data: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2
+  },
+  enrichment: {
+    id: 1,
+    name: 'Leanne Graham',
+    username: 'Bret',
+    email: 'Sincere@april.biz',
+    address: {
+      street: 'Kulas Light',
+      suite: 'Apt. 556',
+      city: 'Gwenborough',
+      zipcode: '92998-3874',
+      geo: [Object]
+    },
+    phone: '1-770-736-8031 x56442',
+    website: 'hildegard.org',
+    company: {
+      name: 'Romaguera-Crona',
+      catchPhrase: 'Multi-layered client-server neural-net',
+      bs: 'harness real-time e-markets'
     }
   }
-
---------------------------------------------
-
-  [VerificationRequestHandler] calling destination AmplitudeDestination
-
---------------------------------------------
-
-  [AmplitudeDestination] perform triggered with payload {
-    data: {
-      user_id: 1,
-      order_number: '1',
-      verification_state: 'pending',
-      requester_id: 2,
-      id: 1,
-      name: 'Leanne Graham',
-      username: 'Bret',
-      email: 'Sincere@april.biz',
+}
+[BrazeDestination] perform triggered with payload {
+  data: {
+    user_id: 1,
+    order_number: '1',
+    verification_state: 'pending',
+    requester_id: 2
+  },
+  enrichment: {
+    id: 1,
+    name: 'Leanne Graham',
+    username: 'Bret',
+    email: 'Sincere@april.biz',
+    address: {
+      street: 'Kulas Light',
+      suite: 'Apt. 556',
+      city: 'Gwenborough',
+      zipcode: '92998-3874',
+      geo: [Object]
+    },
+    phone: '1-770-736-8031 x56442',
+    website: 'hildegard.org',
+    company: {
+      name: 'Romaguera-Crona',
+      catchPhrase: 'Multi-layered client-server neural-net',
+      bs: 'harness real-time e-markets'
     }
   }
+}
+[AmplitudeDestination] Success!
+[BrazeDestination] Success!
+[VerificationRequestHandler] Success!
 
---------------------------------------------
-
-  [VerificationRequestHandler] calling destination BrazeDestination
-
---------------------------------------------
-
-  [BrazeDestination] perform triggered with payload {
-    data: {
-      user_id: 1,
-      order_number: '1',
-      verification_state: 'pending',
-      requester_id: 2,
-      id: 1,
-      name: 'Leanne Graham',
-      username: 'Bret',
-      email: 'Sincere@april.biz',
-    }
-  }
+Done
 ```
