@@ -1,4 +1,4 @@
-import { DefaultObject } from '../types';
+import { DefaultObject } from '@core';
 
 export abstract class BaseDestination<Payload = DefaultObject> {
   abstract perform(payload: Payload): Promise<void>;

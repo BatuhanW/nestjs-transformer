@@ -1,4 +1,4 @@
-import { DefaultObject } from '../types/index';
+import { DefaultObject } from '@core';
 
 class CommonError extends Error {
   incoming_payload: DefaultObject;

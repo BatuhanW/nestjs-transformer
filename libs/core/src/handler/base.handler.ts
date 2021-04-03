@@ -1,7 +1,7 @@
 import { of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 
-import { DefaultObject } from '../types';
+import { DefaultObject } from '@core';
 import { CoreHandler } from './core.handler';
 
 import {

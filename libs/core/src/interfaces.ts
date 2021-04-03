@@ -1,3 +1,5 @@
+export type DefaultObject = Record<string, any>;
+
 export interface ValidationSuccessResult {
   success: true;
 }
