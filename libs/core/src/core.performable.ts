@@ -1,7 +1,7 @@
-import { ValidationResult } from './interfaces';
+import { DefaultObject, ValidationResult } from './interfaces';
 import { PerformableRuntimeError, PerformableValidationError } from '@core/errors';
 
-export abstract class CorePerformable<Payload, Result> {
+export abstract class CorePerformable<Payload = DefaultObject, Result = DefaultObject> {
   public async validate(_payload: Payload): Promise<ValidationResult> {
     return { success: true };
   }

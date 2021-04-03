@@ -1,11 +1,16 @@
-import { BaseTransformer, BaseEnricher, BaseDestination, DefaultObject } from '@core';
-import { EmptyEnricher } from '../enricher/empty.enricher';
-
-import { EmptyTransformer } from '../transformer/empty.transformer';
+import {
+  BaseTransformer,
+  BaseEnricher,
+  BaseDestination,
+  DefaultObject,
+  ValidationResult,
+} from '@core';
+import { PerformableRuntimeError, PerformableValidationError } from '@core/errors';
+import { EmptyPerformable } from '@core/empty.performable';
 
 export abstract class CoreHandler<Payload = DefaultObject> {
-  protected transformer?: BaseTransformer = new EmptyTransformer();
-  protected enricher?: BaseEnricher = new EmptyEnricher();
+  protected transformer: BaseTransformer = new EmptyPerformable();
+  protected enricher: BaseEnricher = new EmptyPerformable();
   protected destinations: { transformer: BaseTransformer; destination: BaseDestination }[] = [];
 
   /* eslint-disable @typescript-eslint/no-empty-function */
