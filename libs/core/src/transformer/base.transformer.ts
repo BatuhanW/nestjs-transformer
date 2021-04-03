@@ -1,8 +1,8 @@
 import {
   AnyObject,
   ValidationResult,
-  TransformerRuntimeError,
-  TransformerValidationError,
+  HandleStepRuntimeError,
+  HandleStepValidationError,
 } from '@core';
 
 export abstract class BaseTransformer<Payload = AnyObject, Result = AnyObject> {
@@ -15,9 +15,7 @@ export abstract class BaseTransformer<Payload = AnyObject, Result = AnyObject> {
   // eslint-disable-next-line
   public onSuccess(_payload: Result): void | Promise<void> {}
 
-  public onError(
-    error: TransformerValidationError | TransformerRuntimeError,
-  ): void | Promise<void> {
+  public onError(error: HandleStepValidationError | HandleStepRuntimeError): void | Promise<void> {
     console.dir({
       level: 'ERROR',
       timestamp: new Date().toISOString(),

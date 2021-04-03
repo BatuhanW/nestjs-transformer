@@ -1,4 +1,9 @@
-import { AnyObject, ValidationResult, EnricherRuntimeError, EnricherValidationError } from '@core';
+import {
+  AnyObject,
+  ValidationResult,
+  HandleStepRuntimeError,
+  HandleStepValidationError,
+} from '@core';
 
 export abstract class BaseEnricher<Payload = AnyObject, Result = AnyObject> {
   public validate(_payload: Payload): ValidationResult {
@@ -10,7 +15,7 @@ export abstract class BaseEnricher<Payload = AnyObject, Result = AnyObject> {
   // eslint-disable-next-line
   public onSuccess(_payload: Result): void | Promise<void> {}
 
-  public onError(error: EnricherValidationError | EnricherRuntimeError): void | Promise<void> {
+  public onError(error: HandleStepValidationError | HandleStepRuntimeError): void | Promise<void> {
     console.dir({
       level: 'ERROR',
       timestamp: new Date().toISOString(),

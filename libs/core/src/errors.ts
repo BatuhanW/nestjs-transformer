@@ -13,10 +13,6 @@ class CommonError extends Error {
   }
 }
 
-export class TransformerValidationError extends CommonError {}
+export class HandleStepValidationError extends CommonError {}
 
-export class TransformerRuntimeError extends CommonError {}
-
-export class EnricherValidationError extends CommonError {}
-
-export class EnricherRuntimeError extends CommonError {}
+export class HandleStepRuntimeError extends CommonError {}
