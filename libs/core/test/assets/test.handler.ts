@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BaseHandler } from '../../src';
+import { BaseHandler } from '@core';
+
 import { TestDestination } from './test.destination';
 import { TestEnricher } from './test.enricher';
 import { TestTransformer } from './test.transformer';

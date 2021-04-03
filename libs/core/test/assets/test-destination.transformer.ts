@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TestDestinationTransformer extends BaseTransformer {
-  perform(payload: DefaultObject): DefaultObject {
+  async perform(payload: DefaultObject): Promise<DefaultObject> {
     return payload;
   }
 
