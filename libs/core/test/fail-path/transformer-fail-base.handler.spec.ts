@@ -1,12 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestHandler } from '../assets/test.handler';
-import { TestDestination } from '../assets/test.destination';
-
-import { transformers, enrichers, destinations, fixtures } from '../fixtures';
-import { TestTransformer } from '../assets/test.transformer';
-import { TestEnricher } from '../assets/test.enricher';
 
 import { HandleStepRuntimeError, HandleStepValidationError } from '@core';
+import { TestHandler, TestTransformer, TestEnricher, TestDestination } from '../assets';
+import { transformers, enrichers, destinations, fixtures } from '../fixtures';
 
 describe('Transformer Fail', () => {
   let handler: TestHandler;
