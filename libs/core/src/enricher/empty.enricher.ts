@@ -1,5 +1,4 @@
-import { DefaultObject } from '../types';
-import { BaseEnricher } from './base.enricher';
+import { BaseEnricher, DefaultObject } from '@core';
 
 export class EmptyEnricher extends BaseEnricher {
   async perform(payload: DefaultObject): Promise<DefaultObject> {
