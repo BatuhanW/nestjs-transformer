@@ -1,6 +1,6 @@
-import { BaseTransformer, BaseEnricher, BaseDestination, DefaultObject, onError } from '@core';
+import { BaseTransformer, BaseEnricher, BaseDestination, DefaultObject } from '@core';
 
-export abstract class CoreHandler<Payload = DefaultObject> implements onError {
+export abstract class CoreHandler<Payload = DefaultObject> {
   protected transformer?: BaseTransformer;
   protected enricher?: BaseEnricher;
   protected destinations: { transformer?: BaseTransformer; destination: BaseDestination }[] = [];
