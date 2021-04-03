@@ -6,7 +6,7 @@ import { transformers, enrichers, destinations, fixtures } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
-import { TransformerRuntimeError, TransformerValidationError } from '../../src/handler/errors';
+import { PerformableRuntimeError, PerformableValidationError } from '@core/errors';
 
 describe('Transformer Fail', () => {
   let handler: TestHandler;
@@ -43,7 +43,7 @@ describe('Transformer Fail', () => {
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
       await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
-        TransformerValidationError,
+        PerformableValidationError,
       );
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
@@ -53,7 +53,7 @@ describe('Transformer Fail', () => {
       expect(tfValidateSpy).toHaveBeenCalledTimes(1);
 
       expect(tfOnErrorSpy).toHaveBeenCalledWith(
-        new TransformerValidationError('TestTransformer', fixtures.payload, 'Validation fail!'),
+        new PerformableValidationError('TestTransformer', fixtures.payload, 'Validation fail!'),
       );
       expect(tfOnErrorSpy).toHaveBeenCalledTimes(1);
 
@@ -104,7 +104,7 @@ describe('Transformer Fail', () => {
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
-      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(TransformerRuntimeError);
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(PerformableRuntimeError);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);

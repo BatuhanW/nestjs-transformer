@@ -1,5 +1,5 @@
-import { ValidationResult } from './types';
-import { PerformableRuntimeError, PerformableValidationError } from '@core/handler/errors';
+import { ValidationResult } from './interfaces';
+import { PerformableRuntimeError, PerformableValidationError } from '@core/errors';
 
 export abstract class CorePerformable<Payload, Result> {
   public async validate(_payload: Payload): Promise<ValidationResult> {

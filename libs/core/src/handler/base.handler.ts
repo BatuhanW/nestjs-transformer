@@ -1,15 +1,10 @@
 import { of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 
-import { DefaultObject } from '../types';
+import { DefaultObject } from '../interfaces';
 import { CoreHandler } from './core.handler';
 
-import {
-  TransformerValidationError,
-  TransformerRuntimeError,
-  EnricherValidationError,
-  EnricherRuntimeError,
-} from './errors';
+import { PerformableValidationError, PerformableRuntimeError } from '../errors';
 
 export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {
@@ -20,7 +15,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
           const validationResult = this.transformer.validate(initialPayload);
 
           if (validationResult.success === false) {
-            const transformerError = new TransformerValidationError(
+            const transformerError = new PerformableValidationError(
               this.transformer.constructor.name,
               initialPayload,
               validationResult.message,
@@ -34,7 +29,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
           return of([]).pipe(
             map(() => this.transformer.perform(initialPayload)),
             catchError((error: Error) => {
-              const transformerError = new TransformerRuntimeError(
+              const transformerError = new PerformableRuntimeError(
                 this.enricher.constructor.name,
                 initialPayload,
                 error.message,
@@ -49,7 +44,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
               const validationResult = this.enricher.validate(transformedPayload);
 
               if (validationResult.success === false) {
-                const enricherError = new EnricherValidationError(
+                const enricherError = new PerformableValidationError(
                   this.enricher.constructor.name,
                   transformedPayload,
                   validationResult.message,
@@ -63,7 +58,7 @@ export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<In
               return of([]).pipe(
                 mergeMap(() => this.enricher.perform(transformedPayload)),
                 catchError((error: Error) => {
-                  const enricherError = new EnricherRuntimeError(
+                  const enricherError = new PerformableRuntimeError(
                     this.enricher.constructor.name,
                     transformedPayload,
                     error.message,

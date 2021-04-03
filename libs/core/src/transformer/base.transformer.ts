@@ -1,4 +1,4 @@
-import { DefaultObject, ValidationResult } from '../types';
+import { DefaultObject, ValidationResult } from '../interfaces';
 import { CorePerformable } from '../core.performable';
 
 export abstract class BaseTransformer<

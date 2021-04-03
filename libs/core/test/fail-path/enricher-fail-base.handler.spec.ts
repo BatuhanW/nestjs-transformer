@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestHandler } from '../assets/test.handler';
-import { TestDestination } from '../assets/test.destination';
 
 import { transformers, enrichers, destinations, fixtures } from '../fixtures';
+import { TestHandler } from '../assets/test.handler';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
+import { TestDestination } from '../assets/test.destination';
 
-import { EnricherRuntimeError, EnricherValidationError } from '../../src/handler/errors';
+import { PerformableValidationError, PerformableRuntimeError } from '@core/errors';
 
 describe('Enricher Fail', () => {
   let handler: TestHandler;
@@ -43,7 +43,9 @@ describe('Enricher Fail', () => {
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
-      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(EnricherValidationError);
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
+        PerformableValidationError,
+      );
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
@@ -62,7 +64,7 @@ describe('Enricher Fail', () => {
       expect(enValidateSpy).toHaveBeenCalledTimes(1);
 
       expect(enOnErrorSpy).toHaveBeenCalledWith(
-        new EnricherValidationError('TestEnricher', fixtures.transformed, 'Validation fail!'),
+        new PerformableValidationError('TestEnricher', fixtures.transformed, 'Validation fail!'),
       );
       expect(enOnErrorSpy).toHaveBeenCalledTimes(1);
 
@@ -108,7 +110,7 @@ describe('Enricher Fail', () => {
       const destPerformSpy = jest.spyOn(destinations.success, 'perform');
       const destOnSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
 
-      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(EnricherRuntimeError);
+      await expect(handler.handle(fixtures.payload)).rejects.toThrowError(PerformableRuntimeError);
 
       expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
       expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
