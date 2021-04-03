@@ -6,7 +6,7 @@ import { transformers, enrichers, destinations, fixtures } from '../fixtures';
 import { TestTransformer } from '../assets/test.transformer';
 import { TestEnricher } from '../assets/test.enricher';
 
-import { EnricherRuntimeError, EnricherValidationError } from '../../src/handler/errors';
+import { EnricherRuntimeError, EnricherValidationError } from '@core';
 
 describe('Enricher Fail', () => {
   let handler: TestHandler;

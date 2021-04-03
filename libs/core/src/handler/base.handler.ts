@@ -1,15 +1,14 @@
 import { of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 
-import { AnyObject } from '@core';
 import { CoreHandler } from './core.handler';
-
 import {
+  AnyObject,
   TransformerValidationError,
   TransformerRuntimeError,
   EnricherValidationError,
   EnricherRuntimeError,
-} from './errors';
+} from '@core';
 
 export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {

@@ -1,5 +1,9 @@
-import { TransformerRuntimeError, TransformerValidationError } from '../handler/errors';
-import { AnyObject, ValidationResult } from '@core';
+import {
+  AnyObject,
+  ValidationResult,
+  TransformerRuntimeError,
+  TransformerValidationError,
+} from '@core';
 
 export abstract class BaseTransformer<Payload = AnyObject, Result = AnyObject> {
   public validate(_payload: Payload): ValidationResult {

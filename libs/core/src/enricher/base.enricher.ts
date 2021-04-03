@@ -1,6 +1,4 @@
-import { AnyObject, ValidationResult } from '@core';
-
-import { EnricherRuntimeError, EnricherValidationError } from '../handler/errors';
+import { AnyObject, ValidationResult, EnricherRuntimeError, EnricherValidationError } from '@core';
 
 export abstract class BaseEnricher<Payload = AnyObject, Result = AnyObject> {
   public validate(_payload: Payload): ValidationResult {
