@@ -1,10 +1,10 @@
-import { DefaultObject } from '@core';
+import { AnyObject } from '@core';
 
 class CommonError extends Error {
-  incoming_payload: DefaultObject;
+  incoming_payload: AnyObject;
   class_name: string;
 
-  constructor(className: string, payload: DefaultObject, message: string) {
+  constructor(className: string, payload: AnyObject, message: string) {
     super();
     this.incoming_payload = payload;
     this.class_name = className;

@@ -1,6 +1,6 @@
-import { DefaultObject } from '@core';
+import { AnyObject } from '@core';
 
-export abstract class BaseDestination<Payload = DefaultObject> {
+export abstract class BaseDestination<Payload = AnyObject> {
   abstract perform(payload: Payload): Promise<void>;
 
   // eslint-disable-next-line

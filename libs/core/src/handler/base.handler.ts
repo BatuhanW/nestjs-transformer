@@ -1,7 +1,7 @@
 import { of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 
-import { DefaultObject } from '@core';
+import { AnyObject } from '@core';
 import { CoreHandler } from './core.handler';
 
 import {
@@ -11,7 +11,7 @@ import {
   EnricherRuntimeError,
 } from './errors';
 
-export class BaseHandler<IncomingPayload = DefaultObject> extends CoreHandler<IncomingPayload> {
+export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {
     const finalPayload = await of(payload)
       .pipe(

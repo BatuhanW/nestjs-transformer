@@ -1,8 +1,8 @@
-import { DefaultObject, ValidationResult } from '@core';
+import { AnyObject, ValidationResult } from '@core';
 
 import { EnricherRuntimeError, EnricherValidationError } from '../handler/errors';
 
-export abstract class BaseEnricher<Payload = DefaultObject, Result = DefaultObject> {
+export abstract class BaseEnricher<Payload = AnyObject, Result = AnyObject> {
   public validate(_payload: Payload): ValidationResult {
     return { success: true };
   }

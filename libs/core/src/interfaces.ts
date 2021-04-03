@@ -1,4 +1,4 @@
-export type DefaultObject = Record<string, any>;
+export type AnyObject = Record<string, any>;
 
 export interface ValidationSuccessResult {
   success: true;

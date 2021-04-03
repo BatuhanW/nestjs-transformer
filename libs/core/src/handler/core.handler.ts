@@ -1,6 +1,6 @@
-import { BaseTransformer, BaseEnricher, BaseDestination, DefaultObject } from '@core';
+import { BaseTransformer, BaseEnricher, BaseDestination, AnyObject } from '@core';
 
-export abstract class CoreHandler<Payload = DefaultObject> {
+export abstract class CoreHandler<Payload = AnyObject> {
   protected transformer?: BaseTransformer;
   protected enricher?: BaseEnricher;
   protected destinations: { transformer?: BaseTransformer; destination: BaseDestination }[] = [];
