@@ -5,7 +5,7 @@ import { BrazePayload, EnrichedTestData } from '../../interfaces';
 
 @Injectable()
 export class RiskBrazeTransformer extends BaseTransformer {
-  perform(payload: EnrichedTestData): BrazePayload {
+  async perform(payload: EnrichedTestData): Promise<BrazePayload> {
     return {
       braze: payload,
     };

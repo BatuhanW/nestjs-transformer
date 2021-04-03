@@ -8,19 +8,19 @@ export class VerificationStateChangeTransformer extends BaseTransformer<
   TestDataPayload,
   TestDataResult
 > {
-  validate(_payload: TestDataPayload): ValidationResult {
+  async validate(_payload: TestDataPayload): Promise<ValidationResult> {
     return {
       success: true,
     };
   }
 
-  perform(payload: TestDataPayload): TestDataResult {
+  async perform(payload: TestDataPayload): Promise<TestDataResult> {
     return {
       data: payload,
     };
   }
 
-  onSuccess(payload: TestDataResult): void {
+  async onSuccess(payload: TestDataResult): Promise<void> {
     console.log(`[${this.constructor.name}] transformed payload`, { ...payload }, '\n');
   }
 }

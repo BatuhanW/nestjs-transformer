@@ -8,9 +8,10 @@ export class UserEnricher extends BaseEnricher<TestDataResult, EnrichedTestData>
     super();
   }
 
-  validate(_payload: TestDataResult): ValidationResult {
+  async validate(_payload: TestDataResult): Promise<ValidationResult> {
     return {
-      success: true,
+      success: false,
+      message: 'Oh sheat',
     };
   }
 
@@ -25,7 +26,7 @@ export class UserEnricher extends BaseEnricher<TestDataResult, EnrichedTestData>
     };
   }
 
-  onSuccess(payload: TestDataResult): void {
+  async onSuccess(payload: TestDataResult): Promise<void> {
     console.log(`[${this.constructor.name}] enriched payload`, { ...payload }, '\n');
   }
 }
