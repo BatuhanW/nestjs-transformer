@@ -1,8 +1,7 @@
-import { DefaultObject } from '../types';
-import { BaseTransformer } from './base.transformer';
+import { BaseTransformer, DefaultObject } from '@core';
 
 export class EmptyTransformer extends BaseTransformer {
-  perform(payload: DefaultObject): DefaultObject {
+  async perform(payload: DefaultObject): Promise<DefaultObject> {
     return payload;
   }
 }
