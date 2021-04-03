@@ -5,9 +5,9 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
   async handle(payload: IncomingPayload): Promise<void> {
     await this.onStart(payload);
 
-    const transformedPayload = await this.handleStep('transform', payload);
+    const transformedPayload = await BaseHandler.handleStep(this.transformer, payload);
 
-    const enrichedPayload = await this.handleStep('enrich', transformedPayload);
+    const enrichedPayload = await BaseHandler.handleStep(this.enricher, transformedPayload);
 
     await Promise.all(
       this.destinations.map(({ transformer, destination }) =>
@@ -21,9 +21,7 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     });
   }
 
-  private async handleStep(step: 'transform' | 'enrich', payload: AnyObject): Promise<AnyObject> {
-    const stepHandler = step === 'transform' ? this.transformer : this.enricher;
-
+  private static async handleStep(stepHandler: any, payload: AnyObject): Promise<AnyObject> {
     const validationResult = await stepHandler.validate(payload);
 
     if (validationResult.success === false) {
