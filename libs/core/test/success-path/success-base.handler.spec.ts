@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestHandler } from '../assets/test.handler';
-import { TestDestination } from '../assets/test.destination';
 
+import {
+  TestHandler,
+  TestDestination,
+  TestTransformer,
+  TestEnricher,
+  TestDestinationTransformer,
+} from '../assets';
 import {
   transformers,
   enrichers,
@@ -9,9 +14,6 @@ import {
   destinations,
   fixtures,
 } from '../fixtures';
-import { TestTransformer } from '../assets/test.transformer';
-import { TestEnricher } from '../assets/test.enricher';
-import { TestDestinationTransformer } from '../assets/test-destination.transformer';
 
 describe('BaseHandler', () => {
   let handler: TestHandler;
