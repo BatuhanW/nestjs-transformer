@@ -6,9 +6,9 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
   async handle(payload: IncomingPayload): Promise<void> {
     await this.onStart(payload);
 
-    const transformedPayload = await BaseHandler.handleStep(this.transformer, payload);
+    const transformedPayload = await BaseHandler.handleStep(payload, this.transformer);
 
-    const enrichedPayload = await BaseHandler.handleStep(this.enricher, transformedPayload);
+    const enrichedPayload = await BaseHandler.handleStep(transformedPayload, this.enricher);
 
     await Promise.all(
       this.destinations.map(({ transformer, destination }) =>
@@ -23,10 +23,12 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
   }
 
   private static async handleStep(
-    stepHandler: CorePerformable<AnyObject, AnyObject>,
     payload: AnyObject,
+    stepHandler?: CorePerformable<AnyObject, AnyObject>,
   ): Promise<AnyObject> {
-    const validationResult = await stepHandler.validate(payload);
+    if (!stepHandler) return payload;
+
+    const validationResult = (await stepHandler.validate?.(payload)) ?? { success: true };
 
     if (validationResult.success === false) {
       const stepHandlerError = new HandleStepValidationError(
@@ -35,7 +37,7 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
         validationResult.message,
       );
 
-      await stepHandler.onError(stepHandlerError);
+      await stepHandler.onError?.(stepHandlerError);
 
       throw stepHandlerError;
     }
@@ -51,12 +53,12 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
         error.message,
       );
 
-      await stepHandler.onError(stepHandlerError);
+      await stepHandler.onError?.(stepHandlerError);
 
       throw stepHandlerError;
     }
 
-    await stepHandler.onSuccess(processedPayload);
+    await stepHandler.onSuccess?.(processedPayload);
 
     return processedPayload;
   }
