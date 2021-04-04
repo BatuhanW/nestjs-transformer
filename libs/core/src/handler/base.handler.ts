@@ -1,5 +1,6 @@
 import { CoreHandler } from './core.handler';
 import { AnyObject, HandleStepValidationError, HandleStepRuntimeError } from '@core';
+import { CorePerformable } from '@core/core.performable';
 
 export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {
@@ -21,7 +22,10 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     });
   }
 
-  private static async handleStep(stepHandler: any, payload: AnyObject): Promise<AnyObject> {
+  private static async handleStep(
+    stepHandler: CorePerformable<AnyObject, AnyObject>,
+    payload: AnyObject,
+  ): Promise<AnyObject> {
     const validationResult = await stepHandler.validate(payload);
 
     if (validationResult.success === false) {
@@ -47,12 +51,12 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
         error.message,
       );
 
-      stepHandler.onError(stepHandlerError);
+      await stepHandler.onError(stepHandlerError);
 
       throw stepHandlerError;
     }
 
-    stepHandler.onSuccess(processedPayload);
+    await stepHandler.onSuccess(processedPayload);
 
     return processedPayload;
   }
