@@ -73,6 +73,9 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "coverageDirectory": "./coverage",
+    "coveragePathIgnorePatterns": [
+      "./test"
+    ],
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/libs/",

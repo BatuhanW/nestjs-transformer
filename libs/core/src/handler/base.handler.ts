@@ -22,7 +22,7 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     await this.onSuccess?.();
   }
 
-  protected static async handleStep(
+  public static async handleStep(
     payload: AnyObject,
     stepHandler?: CorePerformable<AnyObject, AnyObject>,
   ): Promise<AnyObject> {
