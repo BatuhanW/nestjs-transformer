@@ -4,7 +4,7 @@ import { CorePerformable } from '@core/core.performable';
 
 export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<void> {
-    await this.onStart(payload);
+    await this.onStart?.(payload);
 
     const transformedPayload = await BaseHandler.handleStep(payload, this.transformer);
 
@@ -17,12 +17,12 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
           .then(() => destination.onSuccess())
           .catch((error) => destination.onError(error)),
       ),
-    ).then(async () => {
-      await this.onSuccess();
-    });
+    );
+
+    await this.onSuccess?.();
   }
 
-  private static async handleStep(
+  protected static async handleStep(
     payload: AnyObject,
     stepHandler?: CorePerformable<AnyObject, AnyObject>,
   ): Promise<AnyObject> {
