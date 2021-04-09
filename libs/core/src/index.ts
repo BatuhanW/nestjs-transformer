@@ -1,4 +1,4 @@
-export * from './destination';
+export * from './actions';
 export * from './enricher';
 export * from './handler';
 export * from './interfaces';

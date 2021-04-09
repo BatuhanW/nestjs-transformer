@@ -96,7 +96,7 @@ export class UserDeletedHandler extends BaseHandler {
 
     this.transformer = this.userTransformer;
     this.enricher = this.userEnricher;
-    this.destinations = [this.amplitudeDestination, this.brazeDestination];
+    this.actions = [this.amplitudeDestination, this.brazeDestination];
   }
 }
 ```

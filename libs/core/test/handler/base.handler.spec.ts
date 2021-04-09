@@ -286,7 +286,7 @@ describe('BaseHandler', () => {
     });
   });
 
-  describe('#destinations', () => {
+  describe('#actions', () => {
     beforeEach(async () => {
       const module = await Test.createTestingModule({
         providers: [TestHandlerWithDestination, TestDestination],

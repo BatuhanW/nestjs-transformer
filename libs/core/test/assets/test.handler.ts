@@ -45,6 +45,6 @@ export class TestHandlerWithDestination extends BaseHandler {
   constructor(private destination: TestDestination) {
     super();
 
-    this.destinations = [{ destination }];
+    this.actions = [{ destination }];
   }
 }
