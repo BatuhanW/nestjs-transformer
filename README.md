@@ -96,17 +96,20 @@ export class UserDeletedHandler extends BaseHandler {
 
     this.transformer = this.userTransformer;
     this.enricher = this.userEnricher;
-    this.actions = [this.amplitudeDestination, this.brazeDestination];
+    this.actions = [
+      { transformer: userTransformer, destination: this.amplitudeDestination },
+      { destination: this.brazeDestination }
+    ];
   }
 }
 ```
 
 ### Transformer
 
-Transformers accepts the passed event payload from Handler, transforms it then returns result to the next class, it could be an `Enricher` if defined, or `Destination`(s).
+Transformers accept the passed event payload from Handler, transforms it then returns result to the next class, it could be an `Enricher` if defined, or `Destination`(s).
 
 Transformer classes should `implement` BaseTransformer generic.
-BaseTransformer's first parameter is input and the second one is output type.
+This generic's first parameter is input type, and the second parameter is output type.
 
 `export class UserTransformer implements BaseTransformer<IncomingPayload, TransformedPayload> { ... }`
 
