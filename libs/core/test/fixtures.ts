@@ -190,7 +190,9 @@ export const destinations = {
     onError: async (_error: Error): Promise<void> => {},
   },
   fail: {
-    perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
+    perform: async (payload: TestEnrichedPayload): Promise<void> => {
+      (payload as any).will.destinationFail;
+    },
     onSuccess: async (): Promise<void> => {},
     onError: async (_error: Error): Promise<void> => {},
   },

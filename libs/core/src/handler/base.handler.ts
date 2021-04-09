@@ -20,7 +20,7 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     return enrichedPayload;
   }
 
-  private static async handleStep(
+  static async handleStep(
     payload: AnyObject,
     stepHandler?: CorePerformable<AnyObject, AnyObject>,
   ): Promise<AnyObject> {

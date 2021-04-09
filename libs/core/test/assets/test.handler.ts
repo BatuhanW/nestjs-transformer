@@ -45,6 +45,15 @@ export class TestHandlerWithDestination extends BaseHandler {
   constructor(private destination: TestDestination) {
     super();
 
-    this.actions = [{ destination }];
+    this.actions = [{ name: 'action', destination }];
+  }
+}
+
+@Injectable()
+export class TestHandlerWithTransformerDestination extends BaseHandler {
+  constructor(private testTransformer: TestTransformer, private destination: TestDestination) {
+    super();
+
+    this.actions = [{ name: 'action', transformer: testTransformer, destination }];
   }
 }

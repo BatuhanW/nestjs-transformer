@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 
 import { TestDestination, TestTransformer, TestEnricher } from '../assets';
-import { transformers, enrichers, fixtures } from '../fixtures';
+import { transformers, enrichers, fixtures, destinations } from '../fixtures';
 import {
   EmptyTestHandler,
   TestHandlerWithDestination,
@@ -9,8 +9,14 @@ import {
   TestHandlerWithOnStart,
   TestHandlerWithOnSuccess,
   TestHandlerWithTransformer,
+  TestHandlerWithTransformerDestination,
 } from '../assets/test.handler';
-import { BaseHandler, HandleStepRuntimeError, HandleStepValidationError } from '@core';
+import {
+  BaseHandler,
+  DestinationRuntimeError,
+  HandleStepRuntimeError,
+  HandleStepValidationError,
+} from '@core';
 
 describe('BaseHandler', () => {
   let handler: BaseHandler;
@@ -287,12 +293,85 @@ describe('BaseHandler', () => {
   });
 
   describe('#actions', () => {
-    beforeEach(async () => {
-      const module = await Test.createTestingModule({
-        providers: [TestHandlerWithDestination, TestDestination],
-      }).compile();
+    describe('#with-destination-only', () => {
+      describe('#success', () => {
+        beforeEach(async () => {
+          const module = await Test.createTestingModule({
+            providers: [TestHandlerWithDestination, TestDestination],
+          })
+            .overrideProvider(TestDestination)
+            .useValue(destinations.success)
+            .compile();
 
-      handler = module.get(TestHandlerWithDestination);
+          handler = module.get(TestHandlerWithDestination);
+        });
+
+        it('should not fail', async () => {
+          const performSpy = jest.spyOn(destinations.success, 'perform');
+          const onSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
+
+          await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
+
+          expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
+          expect(onSuccessSpy).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      describe('#fail', () => {
+        beforeEach(async () => {
+          const module = await Test.createTestingModule({
+            providers: [TestHandlerWithDestination, TestDestination],
+          })
+            .overrideProvider(TestDestination)
+            .useValue(destinations.fail)
+            .compile();
+
+          handler = module.get(TestHandlerWithDestination);
+        });
+
+        it('should fail', async () => {
+          const performSpy = jest.spyOn(destinations.fail, 'perform');
+          const onSuccessSpy = jest.spyOn(destinations.fail, 'onSuccess');
+          const onErrorSpy = jest.spyOn(destinations.fail, 'onError');
+
+          await expect(handler.handleAction(fixtures.payload, 'action')).rejects.toThrowError(
+            DestinationRuntimeError,
+          );
+
+          expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
+          expect(onSuccessSpy).toHaveBeenCalledTimes(0);
+          expect(onErrorSpy).toHaveBeenCalledWith(
+            new Error("Cannot read property 'destinationFail' of undefined"),
+          );
+        });
+      });
+    });
+
+    describe('#with-destination-and-transformer', () => {
+      beforeEach(async () => {
+        const module = await Test.createTestingModule({
+          providers: [TestHandlerWithTransformerDestination, TestTransformer, TestDestination],
+        })
+          .overrideProvider(TestTransformer)
+          .useValue(transformers.success)
+          .overrideProvider(TestDestination)
+          .useValue(destinations.success)
+          .compile();
+
+        handler = module.get(TestHandlerWithTransformerDestination);
+      });
+
+      it('should invoke StepHandler with transformer', async () => {
+        const handleStepSpy = jest.spyOn(BaseHandler, 'handleStep');
+        const performSpy = jest.spyOn(destinations.success, 'perform');
+        const onSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
+
+        await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
+
+        expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, transformers.success);
+        expect(performSpy).toHaveBeenCalledWith(fixtures.transformed);
+        expect(onSuccessSpy).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });
