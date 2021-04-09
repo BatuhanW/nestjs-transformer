@@ -28,7 +28,7 @@ export class VerificationRequestHandler extends BaseHandler {
     this.enricher = this.userEnricher;
     this.actions = [
       { name: 'Amplitude', transformer: this.riskAmpTransformer, destination: this.ampDestination },
-      { name: 'Braze', transformer: this.riskAmpTransformer, destination: this.brazeDestination },
+      { name: 'Braze', transformer: this.riskBrazeTransformer, destination: this.brazeDestination },
     ];
   }
 

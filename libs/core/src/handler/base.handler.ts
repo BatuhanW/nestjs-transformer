@@ -1,5 +1,5 @@
 import { CoreHandler } from './core.handler';
-import { AnyObject, HandleStepValidationError, HandleStepRuntimeError, Action } from '@core';
+import { AnyObject, HandleStepValidationError, HandleStepRuntimeError } from '@core';
 import { CorePerformable } from '@core/core.performable';
 
 export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
@@ -57,10 +57,16 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
   }
 
   async handleAction(enrichedPayload: AnyObject, actionName: string): Promise<void> {
-    const { destination } = this.actions.find((action) => action.name === actionName);
+    const { transformer, destination } = this.actions.find((action) => action.name === actionName);
+
+    let transformedPayload = enrichedPayload;
+
+    if (transformer) {
+      transformedPayload = await BaseHandler.handleStep(enrichedPayload, transformer);
+    }
 
     try {
-      await destination.perform(enrichedPayload);
+      await destination.perform(transformedPayload);
       await destination.onSuccess?.();
     } catch (e) {
       await destination.onError?.(e);
