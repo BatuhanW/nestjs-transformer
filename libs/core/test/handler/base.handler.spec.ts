@@ -81,7 +81,7 @@ describe('BaseHandler', () => {
       handleStepSpy = jest.spyOn(BaseHandler, 'handleStep');
     });
 
-    describe('#transform', () => {
+    describe('#with-hooks', () => {
       describe('#success', () => {
         beforeEach(async () => {
           const module = await Test.createTestingModule({
@@ -191,7 +191,7 @@ describe('BaseHandler', () => {
       });
     });
 
-    describe('#enrich', () => {
+    describe('#without-hooks', () => {
       describe('#success', () => {
         beforeEach(async () => {
           const module = await Test.createTestingModule({
@@ -205,18 +205,14 @@ describe('BaseHandler', () => {
         });
 
         it('should call stepHandler with enricher', async () => {
-          const validateSpy = jest.spyOn(enrichers.success, 'validate');
           const performSpy = jest.spyOn(enrichers.success, 'perform');
-          const onSuccessSpy = jest.spyOn(enrichers.success, 'onSuccess');
 
           await handler.handle(fixtures.payload);
 
           expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, undefined);
           expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, enrichers.success);
 
-          expect(validateSpy).toHaveBeenCalledWith(fixtures.payload);
           expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
-          expect(onSuccessSpy).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -236,8 +232,6 @@ describe('BaseHandler', () => {
           it('should not move forward', async () => {
             const validateSpy = jest.spyOn(enrichers.fail.validation, 'validate');
             const performSpy = jest.spyOn(enrichers.fail.validation, 'perform');
-            const onSuccessSpy = jest.spyOn(enrichers.fail.validation, 'onSuccess');
-            const onErrorSpy = jest.spyOn(enrichers.fail.validation, 'onError');
 
             await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
               HandleStepValidationError,
@@ -247,11 +241,7 @@ describe('BaseHandler', () => {
             expect(handleStepSpy).toHaveBeenCalledTimes(2);
 
             expect(validateSpy).toHaveBeenCalledWith(fixtures.payload);
-            expect(onErrorSpy).toHaveBeenCalledWith(
-              new HandleStepValidationError('TestEnricher', fixtures.payload, 'Validation fail!'),
-            );
             expect(performSpy).not.toHaveBeenCalled();
-            expect(onSuccessSpy).not.toHaveBeenCalled();
           });
         });
 
@@ -268,10 +258,7 @@ describe('BaseHandler', () => {
           });
 
           it('should not move forward', async () => {
-            const validateSpy = jest.spyOn(enrichers.fail.unHandled, 'validate');
             const performSpy = jest.spyOn(enrichers.fail.unHandled, 'perform');
-            const onSuccessSpy = jest.spyOn(enrichers.fail.unHandled, 'onSuccess');
-            const onErrorSpy = jest.spyOn(enrichers.fail.unHandled, 'onError');
 
             await expect(handler.handle(fixtures.payload)).rejects.toThrowError(
               HandleStepRuntimeError,
@@ -279,13 +266,7 @@ describe('BaseHandler', () => {
 
             expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, enrichers.fail.unHandled);
             expect(handleStepSpy).toHaveBeenCalledTimes(2);
-
-            expect(validateSpy).toHaveBeenCalledWith(fixtures.payload);
-            expect(onErrorSpy).toHaveBeenCalledWith(
-              new Error("Cannot read property 'enricherFail' of undefined"),
-            );
             expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
-            expect(onSuccessSpy).not.toHaveBeenCalled();
           });
         });
       });
@@ -294,55 +275,103 @@ describe('BaseHandler', () => {
 
   describe('#actions', () => {
     describe('#with-destination-only', () => {
-      describe('#success', () => {
-        beforeEach(async () => {
-          const module = await Test.createTestingModule({
-            providers: [TestHandlerWithDestination, TestDestination],
-          })
-            .overrideProvider(TestDestination)
-            .useValue(destinations.success)
-            .compile();
+      describe('#with-hooks', () => {
+        describe('#success', () => {
+          beforeEach(async () => {
+            const module = await Test.createTestingModule({
+              providers: [TestHandlerWithDestination, TestDestination],
+            })
+              .overrideProvider(TestDestination)
+              .useValue(destinations.withHooks.success)
+              .compile();
 
-          handler = module.get(TestHandlerWithDestination);
+            handler = module.get(TestHandlerWithDestination);
+          });
+
+          it('should not fail', async () => {
+            const performSpy = jest.spyOn(destinations.withHooks.success, 'perform');
+            const onSuccessSpy = jest.spyOn(destinations.withHooks.success, 'onSuccess');
+
+            await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
+
+            expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
+            expect(onSuccessSpy).toHaveBeenCalledTimes(1);
+          });
         });
 
-        it('should not fail', async () => {
-          const performSpy = jest.spyOn(destinations.success, 'perform');
-          const onSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
+        describe('#fail', () => {
+          beforeEach(async () => {
+            const module = await Test.createTestingModule({
+              providers: [TestHandlerWithDestination, TestDestination],
+            })
+              .overrideProvider(TestDestination)
+              .useValue(destinations.withHooks.fail)
+              .compile();
 
-          await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
+            handler = module.get(TestHandlerWithDestination);
+          });
 
-          expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
-          expect(onSuccessSpy).toHaveBeenCalledTimes(1);
+          it('should fail', async () => {
+            const performSpy = jest.spyOn(destinations.withHooks.fail, 'perform');
+            const onSuccessSpy = jest.spyOn(destinations.withHooks.fail, 'onSuccess');
+            const onErrorSpy = jest.spyOn(destinations.withHooks.fail, 'onError');
+
+            await expect(handler.handleAction(fixtures.payload, 'action')).rejects.toThrowError(
+              DestinationRuntimeError,
+            );
+
+            expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
+            expect(onSuccessSpy).toHaveBeenCalledTimes(0);
+            expect(onErrorSpy).toHaveBeenCalledWith(
+              new Error("Cannot read property 'destinationFail' of undefined"),
+            );
+          });
         });
       });
 
-      describe('#fail', () => {
-        beforeEach(async () => {
-          const module = await Test.createTestingModule({
-            providers: [TestHandlerWithDestination, TestDestination],
-          })
-            .overrideProvider(TestDestination)
-            .useValue(destinations.fail)
-            .compile();
+      describe('#without-hooks', () => {
+        describe('#success', () => {
+          beforeEach(async () => {
+            const module = await Test.createTestingModule({
+              providers: [TestHandlerWithDestination, TestDestination],
+            })
+              .overrideProvider(TestDestination)
+              .useValue(destinations.withoutHooks.success)
+              .compile();
 
-          handler = module.get(TestHandlerWithDestination);
+            handler = module.get(TestHandlerWithDestination);
+          });
+
+          it('should not fail', async () => {
+            const performSpy = jest.spyOn(destinations.withoutHooks.success, 'perform');
+
+            await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
+
+            expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
+          });
         });
 
-        it('should fail', async () => {
-          const performSpy = jest.spyOn(destinations.fail, 'perform');
-          const onSuccessSpy = jest.spyOn(destinations.fail, 'onSuccess');
-          const onErrorSpy = jest.spyOn(destinations.fail, 'onError');
+        describe('#fail', () => {
+          beforeEach(async () => {
+            const module = await Test.createTestingModule({
+              providers: [TestHandlerWithDestination, TestDestination],
+            })
+              .overrideProvider(TestDestination)
+              .useValue(destinations.withoutHooks.fail)
+              .compile();
 
-          await expect(handler.handleAction(fixtures.payload, 'action')).rejects.toThrowError(
-            DestinationRuntimeError,
-          );
+            handler = module.get(TestHandlerWithDestination);
+          });
 
-          expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
-          expect(onSuccessSpy).toHaveBeenCalledTimes(0);
-          expect(onErrorSpy).toHaveBeenCalledWith(
-            new Error("Cannot read property 'destinationFail' of undefined"),
-          );
+          it('should fail', async () => {
+            const performSpy = jest.spyOn(destinations.withoutHooks.fail, 'perform');
+
+            await expect(handler.handleAction(fixtures.payload, 'action')).rejects.toThrowError(
+              DestinationRuntimeError,
+            );
+
+            expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
+          });
         });
       });
     });
@@ -355,7 +384,7 @@ describe('BaseHandler', () => {
           .overrideProvider(TestTransformer)
           .useValue(transformers.success)
           .overrideProvider(TestDestination)
-          .useValue(destinations.success)
+          .useValue(destinations.withoutHooks.success)
           .compile();
 
         handler = module.get(TestHandlerWithTransformerDestination);
@@ -363,14 +392,12 @@ describe('BaseHandler', () => {
 
       it('should invoke StepHandler with transformer', async () => {
         const handleStepSpy = jest.spyOn(BaseHandler, 'handleStep');
-        const performSpy = jest.spyOn(destinations.success, 'perform');
-        const onSuccessSpy = jest.spyOn(destinations.success, 'onSuccess');
+        const performSpy = jest.spyOn(destinations.withoutHooks.success, 'perform');
 
         await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
 
         expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, transformers.success);
         expect(performSpy).toHaveBeenCalledWith(fixtures.transformed);
-        expect(onSuccessSpy).toHaveBeenCalledTimes(1);
       });
     });
   });

@@ -99,16 +99,11 @@ export const transformers = {
 
 export const enrichers = {
   success: {
-    validate: (_payload: TestTransformedPayload): ValidationResult => {
-      return fixtures.validation.success;
-    },
     perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
       return {
         enriched: payload,
       };
     },
-    onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
-    onError: async (_error: Error): Promise<void> => {},
   },
   fail: {
     validation: {
@@ -120,13 +115,8 @@ export const enrichers = {
           enriched: payload,
         };
       },
-      onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
-      onError: async (_error: Error): Promise<void> => {},
     },
     unHandled: {
-      validate: (_payload: TestTransformedPayload): ValidationResult => {
-        return fixtures.validation.success;
-      },
       perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
         (payload as any).will.enricherFail;
 
@@ -134,8 +124,6 @@ export const enrichers = {
           enriched: payload,
         };
       },
-      onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
-      onError: async (_error: Error): Promise<void> => {},
     },
   },
 };
@@ -184,17 +172,29 @@ export const destinationTransformers = {
 };
 
 export const destinations = {
-  success: {
-    perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
-    onSuccess: async (): Promise<void> => {},
-    onError: async (_error: Error): Promise<void> => {},
-  },
-  fail: {
-    perform: async (payload: TestEnrichedPayload): Promise<void> => {
-      (payload as any).will.destinationFail;
+  withHooks: {
+    success: {
+      perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
+      onSuccess: async (): Promise<void> => {},
+      onError: async (_error: Error): Promise<void> => {},
     },
-    onSuccess: async (): Promise<void> => {},
-    onError: async (_error: Error): Promise<void> => {},
+    fail: {
+      perform: async (payload: TestEnrichedPayload): Promise<void> => {
+        (payload as any).will.destinationFail;
+      },
+      onSuccess: async (): Promise<void> => {},
+      onError: async (_error: Error): Promise<void> => {},
+    },
+  },
+  withoutHooks: {
+    success: {
+      perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
+    },
+    fail: {
+      perform: async (payload: TestEnrichedPayload): Promise<void> => {
+        (payload as any).will.destinationFail;
+      },
+    },
   },
 };
 
