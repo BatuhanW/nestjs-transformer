@@ -1,5 +1,10 @@
 import { CoreHandler } from './core.handler';
-import { AnyObject, HandleStepValidationError, HandleStepRuntimeError } from '@core';
+import {
+  AnyObject,
+  HandleStepValidationError,
+  HandleStepRuntimeError,
+  DestinationRuntimeError,
+} from '@core';
 import { CorePerformable } from '@core/core.performable';
 
 export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
@@ -68,8 +73,15 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     try {
       await destination.perform(transformedPayload);
       await destination.onSuccess?.();
-    } catch (e) {
-      await destination.onError?.(e);
+    } catch (error) {
+      const destinationRuntimeError = new DestinationRuntimeError(
+        destination.constructor.name,
+        transformedPayload,
+        error.message,
+      );
+      await destination.onError?.(destinationRuntimeError);
+
+      throw destinationRuntimeError;
     }
   }
 }

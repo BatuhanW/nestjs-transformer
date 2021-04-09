@@ -16,3 +16,5 @@ class CommonError extends Error {
 export class HandleStepValidationError extends CommonError {}
 
 export class HandleStepRuntimeError extends CommonError {}
+
+export class DestinationRuntimeError extends CommonError {}
