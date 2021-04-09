@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka';
-import { BaseHandler } from '@core';
+import { AnyObject, BaseHandler } from '@core';
 import { VerificationRequestTransformer } from '../transformers/verification-request.transformer';
 import { UserEnricher } from '../../common/enrichers/user.enricher';
 import { AmplitudeDestination } from '../../common/destinations/amplitude.destination';
@@ -8,12 +8,10 @@ import { BrazeDestination } from '../../common/destinations/braze.destination';
 import { TestDataPayload } from '../../interfaces';
 import { RiskAmplitudeTransformer } from '../transformers/risk-amplitude.transformer';
 import { RiskBrazeTransformer } from '../transformers/risk-braze.transformer';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
-@KafkaSubscriber({
-  topicName: 'risk.users.queue',
-  filter: (payload) => payload.event_name === 'id_check_request',
-})
 export class VerificationRequestHandler extends BaseHandler {
   constructor(
     private verificationRequestTransformer: VerificationRequestTransformer,
@@ -22,15 +20,32 @@ export class VerificationRequestHandler extends BaseHandler {
     private ampDestination: AmplitudeDestination,
     private riskBrazeTransformer: RiskBrazeTransformer,
     private brazeDestination: BrazeDestination,
+    @InjectQueue('scheduler') private schedulerProcessor: Queue,
   ) {
     super();
 
     this.transformer = this.verificationRequestTransformer;
     this.enricher = this.userEnricher;
     this.actions = [
-      { transformer: this.riskAmpTransformer, destination: this.ampDestination },
-      { transformer: this.riskAmpTransformer, destination: this.brazeDestination },
+      { name: 'Amplitude', transformer: this.riskAmpTransformer, destination: this.ampDestination },
+      { name: 'Braze', transformer: this.riskAmpTransformer, destination: this.brazeDestination },
     ];
+  }
+
+  @KafkaSubscriber({
+    topicName: 'risk.users.queue',
+    filter: (payload) => payload.event_name === 'id_check_request',
+  })
+  async schedule(event: Record<string, any>): Promise<void> {
+    console.log('Scheduling with payload');
+    await this.schedulerProcessor.add('process', event.payload, {});
+    console.log('Scheduled with payload');
+  }
+
+  async scheduleActions(payload: AnyObject): Promise<void> {
+    for (const action of this.actions) {
+      await this.schedulerProcessor.add('handleAction', { name: action.name, payload });
+    }
   }
 
   onStart(payload: TestDataPayload): void {

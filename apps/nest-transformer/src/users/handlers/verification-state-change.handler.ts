@@ -35,8 +35,12 @@ export class VerificationStateChangeHandler extends BaseHandler<TestDataPayload>
     this.transformer = this.verificationStateChangeTransformer;
     this.enricher = this.userEnricher;
     this.actions = [
-      { transformer: this.userBrazeTransformer, destination: this.ampDestination },
-      { transformer: this.userBrazeTransformer, destination: this.brazeDestination },
+      {
+        name: 'Amplitude',
+        transformer: this.userBrazeTransformer,
+        destination: this.ampDestination,
+      },
+      { name: 'Braze', transformer: this.userBrazeTransformer, destination: this.brazeDestination },
     ];
   }
 
