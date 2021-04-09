@@ -19,8 +19,7 @@ import { RiskModule } from './risk/risk.module';
         port: 6379,
       },
       defaultJobOptions: {
-        attempts: 6,
-        backoff: { type: 'exponential', delay: 3000 },
+        attempts: 1,
       },
     }),
     KafkaModule.registerAsync({
@@ -35,7 +34,7 @@ import { RiskModule } from './risk/risk.module';
               .map((broker) => broker.trim()),
           },
           consumerConfig: {
-            groupId: configService.get('KAFKA_GROUP_ID'),
+            groupId: configService.get('KAFKA_GROUP_ID') + ` ${Math.random() * 100}`,
           },
         };
       },
