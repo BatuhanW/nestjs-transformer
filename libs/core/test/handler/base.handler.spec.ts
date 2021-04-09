@@ -26,7 +26,7 @@ describe('BaseHandler', () => {
       });
 
       it('should not fail', async () => {
-        await expect(handler.handle(fixtures.payload)).resolves.toBeUndefined();
+        await expect(handler.handle(fixtures.payload)).resolves.toBeTruthy();
       });
     });
 
@@ -42,7 +42,7 @@ describe('BaseHandler', () => {
       it('should call onStart', async () => {
         const handlerOnStartSpy = jest.spyOn(TestHandlerWithOnStart.prototype, 'onStart');
 
-        await handler.handle(fixtures.payload);
+        await expect(handler.handle(fixtures.payload)).resolves.toBeTruthy();
 
         expect(handlerOnStartSpy).toHaveBeenCalledWith(fixtures.payload);
         expect(handlerOnStartSpy).toHaveBeenCalledTimes(1);
@@ -61,7 +61,7 @@ describe('BaseHandler', () => {
       it('should call onStart', async () => {
         const handlerOnSuccessSpy = jest.spyOn(TestHandlerWithOnSuccess.prototype, 'onSuccess');
 
-        await handler.handle(fixtures.payload);
+        await expect(handler.handle(fixtures.payload)).resolves.toBeTruthy();
 
         expect(handlerOnSuccessSpy).toHaveBeenCalledTimes(1);
       });

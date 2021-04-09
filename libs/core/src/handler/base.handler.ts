@@ -3,19 +3,19 @@ import { AnyObject, HandleStepValidationError, HandleStepRuntimeError, Action } 
 import { CorePerformable } from '@core/core.performable';
 
 export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
-  async handle(payload: IncomingPayload): Promise<void> {
+  async handle(payload: IncomingPayload): Promise<AnyObject> {
     await this.onStart?.(payload);
 
     const transformedPayload = await BaseHandler.handleStep(payload, this.transformer);
 
     const enrichedPayload = await BaseHandler.handleStep(transformedPayload, this.enricher);
 
-    await Promise.all(this.actions.map((action) => this.handleAction(enrichedPayload, action)));
-
     await this.onSuccess?.();
+
+    return enrichedPayload;
   }
 
-  public static async handleStep(
+  private static async handleStep(
     payload: AnyObject,
     stepHandler?: CorePerformable<AnyObject, AnyObject>,
   ): Promise<AnyObject> {
@@ -56,12 +56,14 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     return processedPayload;
   }
 
-  async handleAction(enrichedPayload: AnyObject, action: Action): Promise<void> {
-    const { destination } = action;
+  async handleAction(enrichedPayload: AnyObject, actionName: string): Promise<void> {
+    const { destination } = this.actions.find((action) => action.name === actionName);
 
-    destination
-      .perform(enrichedPayload)
-      .then(() => destination.onSuccess())
-      .catch((error) => destination.onError(error));
+    try {
+      await destination.perform(enrichedPayload);
+      await destination.onSuccess?.();
+    } catch (e) {
+      await destination.onError?.(e);
+    }
   }
 }
