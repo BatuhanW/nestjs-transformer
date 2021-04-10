@@ -5,7 +5,7 @@ import { transformers, enrichers, fixtures } from '../fixtures';
 import { TestHandlerWithEnricher, TestHandlerWithTransformer } from '../assets/test.handler';
 import { BaseHandler, HandleStepRuntimeError, HandleStepValidationError } from '@core';
 
-describe('baseHandler', () => {
+describe('#handler', () => {
   let handler: BaseHandler;
 
   describe('#step-handler', () => {
