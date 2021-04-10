@@ -7,8 +7,9 @@ import {
   TestHandlerWithSkipTrue,
 } from '../assets/test.handler';
 import { fixtures } from '../fixtures';
+import { Type } from '@nestjs/common';
 
-const setupHandler = async (handler) => {
+const setupHandler = async <Handler>(handler: Type<Handler>): Promise<Handler> => {
   const module = await Test.createTestingModule({
     providers: [handler],
   }).compile();
