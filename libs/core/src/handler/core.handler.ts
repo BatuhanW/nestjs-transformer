@@ -5,6 +5,7 @@ export abstract class CoreHandler<Payload = AnyObject> {
   protected enricher?: BaseEnricher;
   protected actions: Action[] = [];
 
+  public skip?(payload: Payload): boolean | Promise<boolean>;
   public onStart?(payload: Payload): void | Promise<void>;
   public onError?(error: Error): void | Promise<void>;
   public onSuccess?(): void | Promise<void>;

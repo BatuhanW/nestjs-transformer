@@ -14,7 +14,6 @@ interface Fixtures {
   payload: TestPayload;
   transformed: TestTransformedPayload;
   enriched: TestEnrichedPayload;
-  destTransformed: TestDestTransformedPayload;
 }
 
 export const fixtures: Fixtures = {
@@ -37,16 +36,6 @@ export const fixtures: Fixtures = {
       transformed: {
         because: "I don't know",
         imTest: true,
-      },
-    },
-  },
-  destTransformed: {
-    destTransformed: {
-      enriched: {
-        transformed: {
-          because: "I don't know",
-          imTest: true,
-        },
       },
     },
   },
@@ -124,49 +113,6 @@ export const enrichers = {
           enriched: payload,
         };
       },
-    },
-  },
-};
-
-export const destinationTransformers = {
-  success: {
-    validate: (_payload: TestPayload): ValidationSuccessResult => {
-      return fixtures.validation.success;
-    },
-    perform: (payload: TestPayload): TestTransformedPayload => {
-      return {
-        transformed: payload,
-      };
-    },
-    onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
-    onError: async (_error: Error): Promise<void> => {},
-  },
-  fail: {
-    validation: {
-      validate: (_payload: TestPayload): ValidationResult => {
-        return fixtures.validation.fail;
-      },
-      perform: (payload: TestPayload): TestTransformedPayload => {
-        return {
-          transformed: payload,
-        };
-      },
-      onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
-      onError: async (_error: Error): Promise<void> => {},
-    },
-    unHandled: {
-      validate: (_payload: TestPayload): ValidationResult => {
-        return fixtures.validation.success;
-      },
-      perform: (payload: TestPayload): TestTransformedPayload => {
-        (payload as any).will.transformerFail;
-
-        return {
-          transformed: payload,
-        };
-      },
-      onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
-      onError: async (_error: Error): Promise<void> => {},
     },
   },
 };

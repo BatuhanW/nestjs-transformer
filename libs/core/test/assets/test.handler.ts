@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseHandler } from '@core';
+import { AnyObject, BaseHandler } from '@core';
 
 import { TestDestination } from './test.destination';
 import { TestEnricher } from './test.enricher';
@@ -20,6 +20,23 @@ export class TestHandlerWithOnStart extends BaseHandler {
 export class TestHandlerWithOnSuccess extends BaseHandler {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async onSuccess(): Promise<void> {}
+}
+
+@Injectable()
+export class TestHandlerWithSkipTrue extends BaseHandler {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async skip(_payload: AnyObject): Promise<boolean> {
+    return true;
+  }
+}
+
+@Injectable()
+export class TestHandlerWithSkipFalse extends BaseHandler {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async skip(_payload: AnyObject): Promise<boolean> {
+    return false;
+  }
 }
 
 @Injectable()

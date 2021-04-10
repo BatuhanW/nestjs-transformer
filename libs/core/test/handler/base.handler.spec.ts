@@ -8,6 +8,8 @@ import {
   TestHandlerWithEnricher,
   TestHandlerWithOnStart,
   TestHandlerWithOnSuccess,
+  TestHandlerWithSkipFalse,
+  TestHandlerWithSkipTrue,
   TestHandlerWithTransformer,
   TestHandlerWithTransformerDestination,
 } from '../assets/test.handler';
@@ -64,12 +66,41 @@ describe('BaseHandler', () => {
         handler = module.get(TestHandlerWithOnSuccess);
       });
 
-      it('should call onStart', async () => {
+      it('should call onSuccess', async () => {
         const handlerOnSuccessSpy = jest.spyOn(TestHandlerWithOnSuccess.prototype, 'onSuccess');
 
         await expect(handler.handle(fixtures.payload)).resolves.toBeTruthy();
 
         expect(handlerOnSuccessSpy).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('#skip', () => {
+    describe('when true', () => {
+      beforeEach(async () => {
+        const module = await Test.createTestingModule({
+          providers: [TestHandlerWithSkipTrue],
+        }).compile();
+
+        handler = module.get(TestHandlerWithSkipTrue);
+      });
+
+      it('should skip', async () => {
+        await expect(handler.handle(fixtures.payload)).resolves.toBeUndefined();
+      });
+    });
+    describe('when false', () => {
+      beforeEach(async () => {
+        const module = await Test.createTestingModule({
+          providers: [TestHandlerWithSkipFalse],
+        }).compile();
+
+        handler = module.get(TestHandlerWithSkipFalse);
+      });
+
+      it('should skip', async () => {
+        await expect(handler.handle(fixtures.payload)).resolves.toEqual(fixtures.payload);
       });
     });
   });
