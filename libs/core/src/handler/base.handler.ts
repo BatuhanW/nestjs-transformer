@@ -73,8 +73,8 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     }
 
     try {
-      await destination.perform(transformedPayload);
-      await destination.onSuccess?.();
+      const result = await destination.perform(transformedPayload);
+      await destination.onSuccess?.(result || undefined);
     } catch (error) {
       const destinationRuntimeError = new DestinationRuntimeError(
         destination.constructor.name,

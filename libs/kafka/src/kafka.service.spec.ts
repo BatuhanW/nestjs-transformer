@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { KafkaService } from './kafka.service';
 
-describe('KafkaService', () => {
+describe('kafkaService', () => {
   let service: KafkaService;
 
   beforeEach(async () => {

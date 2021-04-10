@@ -1,10 +1,5 @@
-import { ValidationFailResult, ValidationResult, ValidationSuccessResult } from '@core';
-import {
-  TestDestTransformedPayload,
-  TestEnrichedPayload,
-  TestPayload,
-  TestTransformedPayload,
-} from './interfaces';
+import { AnyObject, ValidationFailResult, ValidationResult, ValidationSuccessResult } from '@core';
+import { TestEnrichedPayload, TestPayload, TestTransformedPayload } from './interfaces';
 
 interface Fixtures {
   validation: {
@@ -120,16 +115,23 @@ export const enrichers = {
 export const destinations = {
   withHooks: {
     success: {
-      perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
-      onSuccess: async (): Promise<void> => {},
-      onError: async (_error: Error): Promise<void> => {},
+      withPerformResult: {
+        perform: async (payload: TestEnrichedPayload): Promise<AnyObject> => {
+          return payload;
+        },
+        onSuccess: async (_payload?: AnyObject): Promise<void> => {},
+      },
+      withoutPerformResult: {
+        perform: async (_payload: TestEnrichedPayload): Promise<void> => {},
+        onSuccess: async (_payload?: AnyObject): Promise<void> => {},
+      },
     },
     fail: {
       perform: async (payload: TestEnrichedPayload): Promise<void> => {
         (payload as any).will.destinationFail;
       },
-      onSuccess: async (): Promise<void> => {},
       onError: async (_error: Error): Promise<void> => {},
+      onSuccess: async (_payload?: AnyObject): Promise<void> => {},
     },
   },
   withoutHooks: {
