@@ -13,13 +13,13 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
 
     await this.onStart?.(payload);
 
-    const transformedPayload = await BaseHandler.handleStep(payload, this.transformer);
+    const enrichedPayload = await BaseHandler.handleStep(payload, this.enricher);
 
-    const enrichedPayload = await BaseHandler.handleStep(transformedPayload, this.enricher);
+    const transformedPayload = await BaseHandler.handleStep(enrichedPayload, this.transformer);
 
     await this.onSuccess?.();
 
-    return enrichedPayload;
+    return transformedPayload;
   }
 
   static async handleStep(

@@ -3,12 +3,16 @@ export interface TestPayload {
   imTest: boolean;
 }
 
-export interface TestTransformedPayload {
-  transformed: TestPayload;
+export interface TestEnrichedPayload {
+  enriched: TestPayload;
 }
 
-export interface TestEnrichedPayload {
-  enriched: TestTransformedPayload;
+export interface TestTransformedPayload {
+  transformed: TestEnrichedPayload;
+}
+
+export interface TestPlainTransformedPayload {
+  transformed: TestPayload;
 }
 
 export interface TestDestTransformedPayload {

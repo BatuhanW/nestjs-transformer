@@ -1,5 +1,10 @@
 import { AnyObject, ValidationFailResult, ValidationResult, ValidationSuccessResult } from '@core';
-import { TestEnrichedPayload, TestPayload, TestTransformedPayload } from './interfaces';
+import {
+  TestEnrichedPayload,
+  TestPayload,
+  TestPlainTransformedPayload,
+  TestTransformedPayload,
+} from './interfaces';
 
 interface Fixtures {
   validation: {
@@ -7,8 +12,9 @@ interface Fixtures {
     fail: ValidationFailResult;
   };
   payload: TestPayload;
-  transformed: TestTransformedPayload;
   enriched: TestEnrichedPayload;
+  transformed: TestTransformedPayload;
+  plainTransformed: TestPlainTransformedPayload;
 }
 
 export const fixtures: Fixtures = {
@@ -20,32 +26,38 @@ export const fixtures: Fixtures = {
     because: "I don't know",
     imTest: true,
   },
-  transformed: {
-    transformed: {
+  enriched: {
+    enriched: {
       because: "I don't know",
       imTest: true,
     },
   },
-  enriched: {
-    enriched: {
-      transformed: {
+  transformed: {
+    transformed: {
+      enriched: {
         because: "I don't know",
         imTest: true,
       },
+    },
+  },
+  plainTransformed: {
+    transformed: {
+      because: "I don't know",
+      imTest: true,
     },
   },
 };
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
-export const transformers = {
+export const enrichers = {
   success: {
     validate: (_payload: TestPayload): ValidationSuccessResult => {
       return fixtures.validation.success;
     },
-    perform: (payload: TestPayload): TestTransformedPayload => {
+    perform: (payload: TestPayload): TestEnrichedPayload => {
       return {
-        transformed: payload,
+        enriched: payload,
       };
     },
     onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
@@ -56,23 +68,23 @@ export const transformers = {
       validate: (_payload: TestPayload): ValidationResult => {
         return fixtures.validation.fail;
       },
-      perform: (payload: TestPayload): TestTransformedPayload => {
+      perform: (payload: TestPayload): TestEnrichedPayload => {
         return {
-          transformed: payload,
+          enriched: payload,
         };
       },
-      onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
+      onSuccess: async (_payload: TestEnrichedPayload): Promise<void> => {},
       onError: async (_error: Error): Promise<void> => {},
     },
     unHandled: {
       validate: (_payload: TestPayload): ValidationResult => {
         return fixtures.validation.success;
       },
-      perform: (payload: TestPayload): TestTransformedPayload => {
+      perform: (payload: TestPayload): TestEnrichedPayload => {
         (payload as any).will.transformerFail;
 
         return {
-          transformed: payload,
+          enriched: payload,
         };
       },
       onSuccess: async (_payload: TestTransformedPayload): Promise<void> => {},
@@ -81,31 +93,31 @@ export const transformers = {
   },
 };
 
-export const enrichers = {
+export const transformers = {
   success: {
-    perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
+    perform: async (payload: TestEnrichedPayload): Promise<TestTransformedPayload> => {
       return {
-        enriched: payload,
+        transformed: payload,
       };
     },
   },
   fail: {
     validation: {
-      validate: (_payload: TestTransformedPayload): ValidationResult => {
+      validate: (_payload: TestEnrichedPayload): ValidationResult => {
         return fixtures.validation.fail;
       },
-      perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
+      perform: async (payload: TestEnrichedPayload): Promise<TestTransformedPayload> => {
         return {
-          enriched: payload,
+          transformed: payload,
         };
       },
     },
     unHandled: {
-      perform: async (payload: TestTransformedPayload): Promise<TestEnrichedPayload> => {
+      perform: async (payload: TestEnrichedPayload): Promise<TestTransformedPayload> => {
         (payload as any).will.enricherFail;
 
         return {
-          enriched: payload,
+          transformed: payload,
         };
       },
     },

@@ -109,7 +109,7 @@ describe('#handler', () => {
       await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
 
       expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, transformers.success);
-      expect(performSpy).toHaveBeenCalledWith(fixtures.transformed);
+      expect(performSpy).toHaveBeenCalledWith(fixtures.plainTransformed);
     });
   });
 });
