@@ -32,15 +32,15 @@ Transformer implementation for any message broker. Only Kafka is supported for n
 This decorator subscribes to the given topic with ability to filter events.
 
 - If the `class` is decorated with this decorator, then it triggers `handle` method of the decorated class when matching event is consumed.
-  Only `Handler` classes should be decorated with this decorator.
+  Only `Muavin` classes should be decorated with this decorator.
 
 ```typescript
 @KafkaSubscriber({
   topicName: 'users',
   filter: (payload) => payload.event_name === 'deleted',
 })
-class MyHandler extends BaseHandler {
-  // Base Handler has handle method
+class MyMuavin extends Muavin {
+  // Base Muavin has handle method
 }
 ```
 
@@ -62,17 +62,17 @@ class MyScheduler {
 }
 ```
 
-### Handler
+### Muavin
 
-Marks the decorated class as `Handler`.
+Marks the decorated class as `Muavin`.
 The decorated class is responsible for providing a `Transformer`, `Enricher`, and `Destination`(s).
-Decorated class should be extended from `BaseHandler`. (`import { BaseHandler } from '@core'`)
+Decorated class should be extended from `Muavin`. (`import { Muavin } from '@core'`)
 
 ```typescript
 import { Injectable } from '@nestjs/common';
 
 import { KafkaSubscriber } from '@adapters/kafka';
-import { BaseHandler } from '@core';
+import { Muavin } from '@core';
 
 import { UserTransformer } from '../transformers/user.transformer';
 import { UserEnricher } from '../enrichers/user.enricher';
@@ -85,7 +85,7 @@ import { BrazeDestination } from '../destinations/braze.destination';
   topicName: 'users',
   filter: (payload) => payload.event_name === 'created',
 })
-export class UserDeletedHandler extends BaseHandler {
+export class UserDeletedMuavin extends Muavin {
   constructor(
     private userTransformer: UserTransformer,
     private userEnricher: UserEnricher,
@@ -106,7 +106,7 @@ export class UserDeletedHandler extends BaseHandler {
 
 ### Transformer
 
-Transformers accept the passed event payload from Handler, transforms it then returns result to the next class, it could be an `Enricher` if defined, or `Destination`(s).
+Transformers accept the passed event payload from Muavin, transforms it then returns result to the next class, it could be an `Enricher` if defined, or `Destination`(s).
 
 Transformer classes should `implement` BaseTransformer generic.
 This generic's first parameter is input type, and the second parameter is output type.
@@ -201,12 +201,12 @@ export class AmplitudeDestination implements BaseDestination<UsersEnrichedPayloa
 }
 ```
 
-### Entire lifecycle of event from Handler to Destinations
+### Entire lifecycle of event from Muavin to Destinations
 
 ```bash
 Starting
 --------------------------------------------
-[VerificationRequestHandler] handling event for payload {
+[VerificationRequestMuavin] handling event for payload {
   user_id: 1,
   order_number: '1',
   verification_state: 'pending',
@@ -309,7 +309,7 @@ Starting
 }
 [AmplitudeDestination] Success!
 [BrazeDestination] Success!
-[VerificationRequestHandler] Success!
+[VerificationRequestMuavin] Success!
 
 Done
 ```

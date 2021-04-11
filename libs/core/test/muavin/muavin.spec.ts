@@ -2,40 +2,40 @@ import { Test } from '@nestjs/testing';
 
 import { TestTransformer, TestEnricher } from '../assets';
 import { transformers, enrichers, fixtures } from '../fixtures';
-import { TestHandlerWithEnricher, TestHandlerWithTransformer } from '../assets/test.handler';
-import { BaseHandler, HandleStepRuntimeError, HandleStepValidationError } from '@core';
+import { TestMuavinWithEnricher, TestMuavinWithTransformer } from '../assets';
+import { Muavin, HandleStepRuntimeError, HandleStepValidationError } from '@core';
 
-describe('#handler', () => {
-  let handler: BaseHandler;
+describe('#muavin', () => {
+  let muavin: Muavin;
 
   describe('#step-handler', () => {
     let handleStepSpy;
 
     beforeEach(() => {
-      handleStepSpy = jest.spyOn(BaseHandler, 'handleStep');
+      handleStepSpy = jest.spyOn(Muavin, 'handleStep');
     });
 
     describe('#with-hooks', () => {
       describe('#success', () => {
         beforeEach(async () => {
           const module = await Test.createTestingModule({
-            providers: [TestHandlerWithEnricher, TestEnricher],
+            providers: [TestMuavinWithEnricher, TestEnricher],
           })
             .overrideProvider(TestEnricher)
             .useValue(enrichers.success)
             .compile();
 
-          handler = module.get(TestHandlerWithEnricher);
+          muavin = module.get(TestMuavinWithEnricher);
         });
 
-        it('should call stepHandler with enricher', async () => {
+        it('should call stepMuavin with enricher', async () => {
           expect.hasAssertions();
 
           const validateSpy = jest.spyOn(enrichers.success, 'validate');
           const performSpy = jest.spyOn(enrichers.success, 'perform');
           const onSuccessSpy = jest.spyOn(enrichers.success, 'onSuccess');
 
-          await expect(handler.handle(fixtures.payload)).resolves.toStrictEqual(fixtures.enriched);
+          await expect(muavin.handle(fixtures.payload)).resolves.toStrictEqual(fixtures.enriched);
 
           expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, enrichers.success);
           expect(handleStepSpy).toHaveBeenCalledWith(fixtures.enriched, undefined);
@@ -50,13 +50,13 @@ describe('#handler', () => {
         describe('#validation', () => {
           beforeEach(async () => {
             const module = await Test.createTestingModule({
-              providers: [TestHandlerWithEnricher, TestEnricher],
+              providers: [TestMuavinWithEnricher, TestEnricher],
             })
               .overrideProvider(TestEnricher)
               .useValue(enrichers.fail.validation)
               .compile();
 
-            handler = module.get(TestHandlerWithEnricher);
+            muavin = module.get(TestMuavinWithEnricher);
           });
 
           it('should not move forward', async () => {
@@ -67,7 +67,7 @@ describe('#handler', () => {
             const onSuccessSpy = jest.spyOn(enrichers.fail.validation, 'onSuccess');
             const onErrorSpy = jest.spyOn(enrichers.fail.validation, 'onError');
 
-            await expect(handler.handle(fixtures.payload)).rejects.toThrow(
+            await expect(muavin.handle(fixtures.payload)).rejects.toThrow(
               HandleStepValidationError,
             );
 
@@ -90,13 +90,13 @@ describe('#handler', () => {
         describe('#unhandled', () => {
           beforeEach(async () => {
             const module = await Test.createTestingModule({
-              providers: [TestHandlerWithEnricher, TestEnricher],
+              providers: [TestMuavinWithEnricher, TestEnricher],
             })
               .overrideProvider(TestEnricher)
               .useValue(enrichers.fail.unHandled)
               .compile();
 
-            handler = module.get(TestHandlerWithEnricher);
+            muavin = module.get(TestMuavinWithEnricher);
           });
 
           it('should not move forward', async () => {
@@ -107,7 +107,7 @@ describe('#handler', () => {
             const onSuccessSpy = jest.spyOn(enrichers.fail.unHandled, 'onSuccess');
             const onErrorSpy = jest.spyOn(enrichers.fail.unHandled, 'onError');
 
-            await expect(handler.handle(fixtures.payload)).rejects.toThrow(HandleStepRuntimeError);
+            await expect(muavin.handle(fixtures.payload)).rejects.toThrow(HandleStepRuntimeError);
 
             expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, enrichers.fail.unHandled);
             expect(handleStepSpy).toHaveBeenCalledTimes(1);
@@ -127,21 +127,21 @@ describe('#handler', () => {
       describe('#success', () => {
         beforeEach(async () => {
           const module = await Test.createTestingModule({
-            providers: [TestHandlerWithTransformer, TestTransformer],
+            providers: [TestMuavinWithTransformer, TestTransformer],
           })
             .overrideProvider(TestTransformer)
             .useValue(transformers.success)
             .compile();
 
-          handler = module.get(TestHandlerWithTransformer);
+          muavin = module.get(TestMuavinWithTransformer);
         });
 
-        it('should call stepHandler with transformer', async () => {
+        it('should call stepMuavin with transformer', async () => {
           expect.hasAssertions();
 
           const performSpy = jest.spyOn(transformers.success, 'perform');
 
-          await handler.handle(fixtures.payload);
+          await muavin.handle(fixtures.payload);
 
           expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, undefined);
           expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, transformers.success);
@@ -154,13 +154,13 @@ describe('#handler', () => {
         describe('#validation', () => {
           beforeEach(async () => {
             const module = await Test.createTestingModule({
-              providers: [TestHandlerWithTransformer, TestTransformer],
+              providers: [TestMuavinWithTransformer, TestTransformer],
             })
               .overrideProvider(TestTransformer)
               .useValue(transformers.fail.validation)
               .compile();
 
-            handler = module.get(TestHandlerWithTransformer);
+            muavin = module.get(TestMuavinWithTransformer);
           });
 
           it('should not move forward', async () => {
@@ -169,7 +169,7 @@ describe('#handler', () => {
             const validateSpy = jest.spyOn(transformers.fail.validation, 'validate');
             const performSpy = jest.spyOn(transformers.fail.validation, 'perform');
 
-            await expect(handler.handle(fixtures.payload)).rejects.toThrow(
+            await expect(muavin.handle(fixtures.payload)).rejects.toThrow(
               HandleStepValidationError,
             );
 
@@ -187,13 +187,13 @@ describe('#handler', () => {
         describe('#unhandled', () => {
           beforeEach(async () => {
             const module = await Test.createTestingModule({
-              providers: [TestHandlerWithTransformer, TestTransformer],
+              providers: [TestMuavinWithTransformer, TestTransformer],
             })
               .overrideProvider(TestTransformer)
               .useValue(transformers.fail.unHandled)
               .compile();
 
-            handler = module.get(TestHandlerWithTransformer);
+            muavin = module.get(TestMuavinWithTransformer);
           });
 
           it('should not move forward', async () => {
@@ -201,7 +201,7 @@ describe('#handler', () => {
 
             const performSpy = jest.spyOn(transformers.fail.unHandled, 'perform');
 
-            await expect(handler.handle(fixtures.payload)).rejects.toThrow(HandleStepRuntimeError);
+            await expect(muavin.handle(fixtures.payload)).rejects.toThrow(HandleStepRuntimeError);
 
             expect(handleStepSpy).toHaveBeenCalledWith(
               fixtures.payload,

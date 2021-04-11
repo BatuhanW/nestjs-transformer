@@ -4,7 +4,7 @@ import { BullModule } from '@nestjs/bull';
 import { CommonModule } from '../common/common.module';
 
 import { VerificationRequestTransformer } from './transformers/verification-request.transformer';
-import { VerificationRequestHandler } from './handlers/verification-request.handler';
+import { VerificationRequestMuavin } from './verification-request.muavin';
 import { SchedulerProcessor } from './scheduler.processor';
 import { RiskAmplitudeTransformer } from './transformers/risk-amplitude.transformer';
 import { RiskBrazeTransformer } from './transformers/risk-braze.transformer';
@@ -19,7 +19,7 @@ import { RiskBrazeTransformer } from './transformers/risk-braze.transformer';
   providers: [
     SchedulerProcessor,
     VerificationRequestTransformer,
-    VerificationRequestHandler,
+    VerificationRequestMuavin,
     RiskAmplitudeTransformer,
     RiskBrazeTransformer,
   ],

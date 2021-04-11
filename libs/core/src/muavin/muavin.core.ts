@@ -1,6 +1,6 @@
 import { BaseTransformer, BaseEnricher, Action, AnyObject } from '@core';
 
-export abstract class CoreHandler<Payload = AnyObject> {
+export abstract class MuavinCore<Payload = AnyObject> {
   protected transformer?: BaseTransformer;
   protected enricher?: BaseEnricher;
   protected actions: Action[] = [];

@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { KafkaSubscriber } from '@adapters/kafka';
-import { AnyObject, BaseHandler } from '@core';
-import { VerificationRequestTransformer } from '../transformers/verification-request.transformer';
-import { UserEnricher } from '../../common/enrichers/user.enricher';
-import { AmplitudeDestination } from '../../common/destinations/amplitude.destination';
-import { BrazeDestination } from '../../common/destinations/braze.destination';
-import { TestDataPayload } from '../../interfaces';
-import { RiskAmplitudeTransformer } from '../transformers/risk-amplitude.transformer';
-import { RiskBrazeTransformer } from '../transformers/risk-braze.transformer';
+import { AnyObject, Muavin } from '@core';
+import { VerificationRequestTransformer } from './transformers/verification-request.transformer';
+import { UserEnricher } from '../common/enrichers/user.enricher';
+import { AmplitudeDestination } from '../common/destinations/amplitude.destination';
+import { BrazeDestination } from '../common/destinations/braze.destination';
+import { TestDataPayload } from '../interfaces';
+import { RiskAmplitudeTransformer } from './transformers/risk-amplitude.transformer';
+import { RiskBrazeTransformer } from './transformers/risk-braze.transformer';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 
 @Injectable()
-export class VerificationRequestHandler extends BaseHandler {
+export class VerificationRequestMuavin extends Muavin {
   constructor(
     private verificationRequestTransformer: VerificationRequestTransformer,
     private userEnricher: UserEnricher,

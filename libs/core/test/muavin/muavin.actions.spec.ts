@@ -1,34 +1,34 @@
 import { Test } from '@nestjs/testing';
 
-import { BaseDestination, BaseHandler, DestinationRuntimeError } from '@core';
+import { BaseDestination, Muavin, DestinationRuntimeError } from '@core';
 
 import {
-  TestHandlerWithDestination,
-  TestHandlerWithTransformerDestination,
+  TestMuavinWithDestination,
+  TestMuavinWithTransformerDestination,
   TestDestination,
   TestTransformer,
 } from '../assets';
 import { destinations, fixtures, transformers } from '../fixtures';
 
-const setupHandler = async (overrideValue: BaseDestination) => {
+const setupMuavin = async (overrideValue: BaseDestination) => {
   const module = await Test.createTestingModule({
-    providers: [TestHandlerWithDestination, TestDestination],
+    providers: [TestMuavinWithDestination, TestDestination],
   })
     .overrideProvider(TestDestination)
     .useValue(overrideValue)
     .compile();
 
-  return module.get(TestHandlerWithDestination);
+  return module.get(TestMuavinWithDestination);
 };
 
-describe('#handler', () => {
+describe('#muavin', () => {
   describe('#actions', () => {
     describe('#with-destination-hooks', () => {
       describe('#success', () => {
         it('should trigger destination onSuccess hook', async () => {
           expect.hasAssertions();
 
-          const handler = await setupHandler(destinations.withHooks.success.withoutPerformResult);
+          const muavin = await setupMuavin(destinations.withHooks.success.withoutPerformResult);
 
           const performSpy = jest.spyOn(
             destinations.withHooks.success.withoutPerformResult,
@@ -39,7 +39,7 @@ describe('#handler', () => {
             'onSuccess',
           );
 
-          await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
+          await expect(muavin.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
 
           expect(performSpy).toHaveBeenCalledWith(fixtures.payload);
           expect(onSuccessSpy).toHaveBeenCalledWith(undefined);
@@ -50,13 +50,13 @@ describe('#handler', () => {
         it('should trigger destination onError hook', async () => {
           expect.hasAssertions();
 
-          const handler = await setupHandler(destinations.withHooks.fail);
+          const muavin = await setupMuavin(destinations.withHooks.fail);
 
           const performSpy = jest.spyOn(destinations.withHooks.fail, 'perform');
           const onSuccessSpy = jest.spyOn(destinations.withHooks.fail, 'onSuccess');
           const onErrorSpy = jest.spyOn(destinations.withHooks.fail, 'onError');
 
-          await expect(handler.handleAction(fixtures.payload, 'action')).rejects.toThrow(
+          await expect(muavin.handleAction(fixtures.payload, 'action')).rejects.toThrow(
             DestinationRuntimeError,
           );
 
@@ -74,11 +74,11 @@ describe('#handler', () => {
         it('should fail successfully', async () => {
           expect.hasAssertions();
 
-          const handler = await setupHandler(destinations.withoutHooks.fail);
+          const muavin = await setupMuavin(destinations.withoutHooks.fail);
 
           const performSpy = jest.spyOn(destinations.withoutHooks.fail, 'perform');
 
-          await expect(handler.handleAction(fixtures.payload, 'action')).rejects.toThrow(
+          await expect(muavin.handleAction(fixtures.payload, 'action')).rejects.toThrow(
             DestinationRuntimeError,
           );
 
@@ -89,11 +89,11 @@ describe('#handler', () => {
   });
 
   describe('#with-transformer', () => {
-    it('should invoke StepHandler with transformer', async () => {
+    it('should invoke StepMuavin with transformer', async () => {
       expect.hasAssertions();
 
       const module = await Test.createTestingModule({
-        providers: [TestHandlerWithTransformerDestination, TestTransformer, TestDestination],
+        providers: [TestMuavinWithTransformerDestination, TestTransformer, TestDestination],
       })
         .overrideProvider(TestTransformer)
         .useValue(transformers.success)
@@ -101,12 +101,12 @@ describe('#handler', () => {
         .useValue(destinations.withoutHooks.success)
         .compile();
 
-      const handler = module.get(TestHandlerWithTransformerDestination);
+      const muavin = module.get(TestMuavinWithTransformerDestination);
 
-      const handleStepSpy = jest.spyOn(BaseHandler, 'handleStep');
+      const handleStepSpy = jest.spyOn(Muavin, 'handleStep');
       const performSpy = jest.spyOn(destinations.withoutHooks.success, 'perform');
 
-      await expect(handler.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
+      await expect(muavin.handleAction(fixtures.payload, 'action')).resolves.toBeUndefined();
 
       expect(handleStepSpy).toHaveBeenCalledWith(fixtures.payload, transformers.success);
       expect(performSpy).toHaveBeenCalledWith(fixtures.plainTransformed);

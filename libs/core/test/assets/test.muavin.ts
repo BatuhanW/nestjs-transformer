@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AnyObject, BaseHandler } from '@core';
+import { AnyObject, Muavin } from '@core';
 
 import { TestDestination } from './test.destination';
 import { TestEnricher } from './test.enricher';
@@ -8,22 +8,22 @@ import { TestTransformer } from './test.transformer';
 import { TestPayload } from '../interfaces';
 
 @Injectable()
-export class EmptyTestHandler extends BaseHandler {}
+export class EmptyTestMuavin extends Muavin {}
 
 @Injectable()
-export class TestHandlerWithOnStart extends BaseHandler {
+export class TestMuavinWithOnStart extends Muavin {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async onStart(_payload: TestPayload): Promise<void> {}
 }
 
 @Injectable()
-export class TestHandlerWithOnSuccess extends BaseHandler {
+export class TestMuavinWithOnSuccess extends Muavin {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async onSuccess(): Promise<void> {}
 }
 
 @Injectable()
-export class TestHandlerWithSkipTrue extends BaseHandler {
+export class TestMuavinWithSkipTrue extends Muavin {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async skip(_payload: AnyObject): Promise<boolean> {
     return true;
@@ -31,7 +31,7 @@ export class TestHandlerWithSkipTrue extends BaseHandler {
 }
 
 @Injectable()
-export class TestHandlerWithSkipFalse extends BaseHandler {
+export class TestMuavinWithSkipFalse extends Muavin {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async skip(_payload: AnyObject): Promise<boolean> {
@@ -40,7 +40,7 @@ export class TestHandlerWithSkipFalse extends BaseHandler {
 }
 
 @Injectable()
-export class TestHandlerWithTransformer extends BaseHandler {
+export class TestMuavinWithTransformer extends Muavin {
   constructor(private testTransformer: TestTransformer) {
     super();
 
@@ -49,7 +49,7 @@ export class TestHandlerWithTransformer extends BaseHandler {
 }
 
 @Injectable()
-export class TestHandlerWithEnricher extends BaseHandler {
+export class TestMuavinWithEnricher extends Muavin {
   constructor(private testEnricher: TestEnricher) {
     super();
 
@@ -58,7 +58,7 @@ export class TestHandlerWithEnricher extends BaseHandler {
 }
 
 @Injectable()
-export class TestHandlerWithDestination extends BaseHandler {
+export class TestMuavinWithDestination extends Muavin {
   constructor(private destination: TestDestination) {
     super();
 
@@ -67,7 +67,7 @@ export class TestHandlerWithDestination extends BaseHandler {
 }
 
 @Injectable()
-export class TestHandlerWithTransformerDestination extends BaseHandler {
+export class TestMuavinWithTransformerDestination extends Muavin {
   constructor(private testTransformer: TestTransformer, private destination: TestDestination) {
     super();
 

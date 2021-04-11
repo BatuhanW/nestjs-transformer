@@ -1,4 +1,4 @@
-import { CoreHandler } from './core.handler';
+import { MuavinCore } from './muavin.core';
 import {
   AnyObject,
   HandleStepValidationError,
@@ -7,15 +7,15 @@ import {
 } from '@core';
 import { CorePerformable } from '@core/core.performable';
 
-export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<IncomingPayload> {
+export class Muavin<IncomingPayload = AnyObject> extends MuavinCore<IncomingPayload> {
   async handle(payload: IncomingPayload): Promise<AnyObject> {
     if (await this.skip?.(payload)) return;
 
     await this.onStart?.(payload);
 
-    const enrichedPayload = await BaseHandler.handleStep(payload, this.enricher);
+    const enrichedPayload = await Muavin.handleStep(payload, this.enricher);
 
-    const transformedPayload = await BaseHandler.handleStep(enrichedPayload, this.transformer);
+    const transformedPayload = await Muavin.handleStep(enrichedPayload, this.transformer);
 
     await this.onSuccess?.();
 
@@ -69,7 +69,7 @@ export class BaseHandler<IncomingPayload = AnyObject> extends CoreHandler<Incomi
     let transformedPayload = enrichedPayload;
 
     if (transformer) {
-      transformedPayload = await BaseHandler.handleStep(enrichedPayload, transformer);
+      transformedPayload = await Muavin.handleStep(enrichedPayload, transformer);
     }
 
     try {

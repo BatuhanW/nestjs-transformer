@@ -1,11 +1,11 @@
 import { OnGlobalQueueError, OnQueueError, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { VerificationRequestHandler } from './handlers/verification-request.handler';
+import { VerificationRequestMuavin } from './verification-request.muavin';
 import { AnyObject } from '@core';
 
 @Processor('scheduler')
 export class SchedulerProcessor {
-  constructor(private verificationHandler: VerificationRequestHandler) {}
+  constructor(private verificationMuavin: VerificationRequestMuavin) {}
 
   @OnQueueError()
   onError(error: Error): void {
@@ -28,15 +28,15 @@ export class SchedulerProcessor {
   @Process('process')
   async handleProcess(job: Job<Record<string, any>>): Promise<void> {
     console.log('Starting');
-    const payload = await this.verificationHandler.handle(job.data);
+    const payload = await this.verificationMuavin.handle(job.data);
 
-    await this.verificationHandler.scheduleActions(payload);
+    await this.verificationMuavin.scheduleActions(payload);
     console.log('Done');
   }
 
   @Process('handleAction')
   async handleAction(job: Job<AnyObject>): Promise<void> {
     const { name, payload } = job.data;
-    await this.verificationHandler.handleAction(payload, name);
+    await this.verificationMuavin.handleAction(payload, name);
   }
 }
